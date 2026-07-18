@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#1B5E20">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <title>OHZ Bobrowniki</title>
 <style>
 :root{--pri:#1B5E20;--pri-l:#2E7D32;--pri-bg:#E8F5E9;--bg:#F5F5F0;--card:#fff;--txt:#1A1A1A;--txt2:#5F6B5F;--brd:#D5DCD5;--amber:#B8860B;--amber-bg:#FFF8E7;--red:#C62828;--red-bg:#FFEBEE;--blue:#1565C0;--radius:8px;--shadow:0 1px 3px rgba(0,0,0,.08);--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--mono:"SF Mono","Cascadia Code",Consolas,monospace}
@@ -72,7 +74,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 .cal-cell .dn{font:700 14px var(--font);color:var(--txt);margin-bottom:3px}.cal-cell.wknd .dn{color:var(--red)}
 .cal-cell .dt2{font-size:13px;font-weight:700;line-height:1.3;color:var(--pri);word-break:break-word;white-space:pre-line}
 .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:12px}
-.mo.open{display:flex}.mob{background:var(--card);border-radius:var(--radius);width:100%;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+.mo.open{display:flex}.mob{background:var(--card);border-radius:var(--radius);width:100%;max-width:600px;box-shadow:0 8px 32px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
 .moh{padding:12px 14px;font:700 15px var(--font);border-bottom:1px solid var(--brd);display:flex;justify-content:space-between;align-items:center}
 .mobd{padding:14px}.mof{padding:10px 14px;border-top:1px solid var(--brd);display:flex;justify-content:flex-end;gap:6px}
 .mox{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt2)}
@@ -94,7 +96,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <body>
 <div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
 <div id="app">
-<header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
+<header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳ Łączenie...</span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
 <nav class="tab-bar" id="tbar"></nav>
 <section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
@@ -135,7 +137,7 @@ const RT={zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','harmonogr
 const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
 function doLogin(){const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}let r=null;for(const[k,v]of Object.entries(us))if(v===p){r=k;break}if(!r){$('#le').textContent='Nieprawidłowe hasło';return}cR=r;SV('sess',r);showApp()}
 function doLogout(){cR=null;localStorage.removeItem('ohz_sess');$('#app').style.display='none';$('#login-screen').style.display='flex';$('#lp').value='';$('#le').textContent=''}
-function showApp(){$('#login-screen').style.display='none';$('#app').style.display='block';$('#urb').textContent=cR==='zootechnik'?'Zootechnik':'Magazynier';bTabs()}
+function showApp(){$('#login-screen').style.display='none';$('#app').style.display='block';$('#urb').textContent=cR==='zootechnik'?'Zootechnik':'Magazynier';bTabs();startFbSync()}
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
 function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:calcCi,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]()}
 function pT(t){const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' 2026'),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia 2026',kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
@@ -185,7 +187,69 @@ const DN=[
 ];
 
 let sur=LD('sur2',DS),gr=LD('gr2',DG),ml=LD('ml',{}),hrD=LD('hrD',DHR),obD=LD('obD',DHR),nas=LD('nas2',DN),kal=LD('kal',{}),hrE=LD('hrE',{}),obE=LD('obE',{});
-function sa(){SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE)}
+
+// ===== FIREBASE SYNC =====
+const firebaseConfig={apiKey:"AIzaSyC3vYPG90_aMEaKWJuhmzD1tj5lXT8Zh5o",authDomain:"ohz-bobrowniki-po-app.firebaseapp.com",projectId:"ohz-bobrowniki-po-app",storageBucket:"ohz-bobrowniki-po-app.firebasestorage.app",messagingSenderId:"90224575465",appId:"1:90224575465:web:07614843e409aafd600178"};
+let fbDb=null,fbReady=false,fbApplyingRemote=false,fbSaveTimer=null,fbLastPushed='';
+try{
+  firebase.initializeApp(firebaseConfig);
+  fbDb=firebase.firestore();
+}catch(e){console.warn('Firebase init failed',e)}
+
+function setSyncBadge(state){
+  const b=$('#syncb');if(!b)return;
+  if(state==='ok'){b.textContent='☁️ Zsynchronizowano';b.style.background='rgba(255,255,255,.2)'}
+  else if(state==='saving'){b.textContent='💾 Zapisywanie...';b.style.background='rgba(255,193,7,.3)'}
+  else if(state==='offline'){b.textContent='📴 Offline (lokalnie)';b.style.background='rgba(198,40,40,.35)'}
+  else{b.textContent='⏳ Łączenie...';b.style.background='rgba(255,193,7,.3)'}
+}
+
+function collectState(){return{sur,gr,ml,hrD,obD,nas,kal,hrE,obE,_ts:Date.now()}}
+function applyState(d){
+  if(!d)return;
+  fbApplyingRemote=true;
+  if(d.sur)sur=d.sur;if(d.gr)gr=d.gr;if(d.ml)ml=d.ml;if(d.hrD)hrD=d.hrD;if(d.obD)obD=d.obD;
+  if(d.nas)nas=d.nas;if(d.kal)kal=d.kal;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE;
+  SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
+  fbApplyingRemote=false;
+  // refresh whatever tab is visible
+  const activeBtn=document.querySelector('.tab-btn.active');
+  if(activeBtn)oT(activeBtn.dataset.t);
+}
+
+function startFbSync(){
+  if(!fbDb){setSyncBadge('offline');return}
+  fbDb.collection('ohz_data').doc('state').onSnapshot(doc=>{
+    if(doc.exists){
+      const d=doc.data();
+      const incomingTs=JSON.stringify(d._ts);
+      if(incomingTs!==fbLastPushed){ // avoid re-applying our own write
+        applyState(d);
+      }
+      fbReady=true;setSyncBadge('ok');
+    } else {
+      // No remote doc yet — push our current local state as the initial one
+      fbReady=true;pushToFirebase(true);
+    }
+  },err=>{console.warn('Firestore sync error',err);setSyncBadge('offline')});
+}
+
+function pushToFirebase(immediate){
+  if(!fbDb)return;
+  clearTimeout(fbSaveTimer);
+  const doPush=()=>{
+    const st=collectState();
+    fbLastPushed=JSON.stringify(st._ts);
+    setSyncBadge('saving');
+    fbDb.collection('ohz_data').doc('state').set(st).then(()=>setSyncBadge('ok')).catch(e=>{console.warn(e);setSyncBadge('offline')});
+  };
+  if(immediate)doPush();else fbSaveTimer=setTimeout(doPush,800);
+}
+
+function sa(){
+  SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
+  if(!fbApplyingRemote)pushToFirebase(false);
+}
 function gS(id){return sur.find(s=>s.id===id)}
 
 // Daily usage per surowiec (kg) from dawki + cielaki
@@ -226,26 +290,27 @@ function uMlP(i,f,el){const m=+$('#ml-m').value,k='p_2026_'+m;ml[k][i][f]=+el.va
 function rSur(){
   let h='<table class="dt"><thead><tr><th>Surowiec</th><th>Cena PLN/t</th><th>Stan (t)</th><th>Zużycie dz. (kg)</th><th>Wystarczy do</th><th></th></tr></thead><tbody>';
   sur.forEach((s,i)=>{
-    const du=dailyUse(s.id);
-    const stanKg=s.stan_t*1000;
-    let wystarczy='—';
-    if(du>0){const days=Math.floor(stanKg/du);const dt=new Date();dt.setDate(dt.getDate()+days);wystarczy='<span class="'+(days<14?'sur-warn':'sur-ok')+'">'+fmtDate(dt)+' ('+days+' dni)</span>'}
-    h+='<tr><td>'+s.nazwa+' <button class="btn bs" style="padding:1px 4px;font-size:9px;background:none;color:var(--pri);border:1px solid var(--brd)" onclick="eSurN('+i+')">✎</button></td>';
+    const du=dailyUse(s.id);const stanKg=s.stan_t*1000;let wyst='—';
+    if(du>0){const days=Math.floor(stanKg/du);const dt=new Date();dt.setDate(dt.getDate()+days);wyst='<span class="'+(days<14?'sur-warn':'sur-ok')+'">'+fmtDate(dt)+' ('+days+'d)</span>'}
+    h+='<tr><td><span style="display:inline-flex;flex-direction:column;margin-right:4px;line-height:1">'+(i>0?'<button onclick="mvSur('+i+',-1)" style="border:none;background:none;cursor:pointer;font-size:9px;padding:0">▲</button>':'<span style="font-size:9px;padding:0;opacity:.2">▲</span>')+(i<sur.length-1?'<button onclick="mvSur('+i+',1)" style="border:none;background:none;cursor:pointer;font-size:9px;padding:0">▼</button>':'<span style="font-size:9px;padding:0;opacity:.2">▼</span>')+'</span>'+s.nazwa+' <button class="btn bs" style="padding:1px 4px;font-size:9px;background:none;color:var(--pri);border:1px solid var(--brd)" onclick="eSurN('+i+')">✎</button></td>';
     h+='<td><input step="1" value="'+r2(s.cena_t,0)+'" onchange="sur['+i+'].cena_t=+this.value;sa()"></td>';
     h+='<td><input step="0.01" value="'+r2(s.stan_t,2)+'" onchange="sur['+i+'].stan_t=+this.value;sa();rSur()"></td>';
-    h+='<td>'+r2(du,1)+'</td><td style="text-align:left;font-family:var(--font);font-size:11px">'+wystarczy+'</td>';
+    h+='<td>'+r2(du,1)+'</td><td style="text-align:left;font-family:var(--font);font-size:11px">'+wyst+'</td>';
     h+='<td><button class="btn bs bd" onclick="if(confirm(\'Usunąć?\')){sur.splice('+i+',1);sa();rSur()}">✕</button></td></tr>';
   });
   h+='</tbody></table>';$('#sur-w').innerHTML=h;
 }
+function mvSur(i,dir){const j=i+dir;if(j<0||j>=sur.length)return;[sur[i],sur[j]]=[sur[j],sur[i]];sa();rSur();rDk()}
 function eSurN(i){opM('Edytuj nazwę','<div class="fg"><label>Nazwa</label><input type="text" id="esn" value="'+sur[i].nazwa+'"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="sur['+i+'].nazwa=$(\'#esn\').value.trim();sa();clM();rSur();rDk();toast(\'Zapisano\')">Zapisz</button>')}
 function addSur(){opM('Dodaj surowiec','<div class="fg" style="margin-bottom:8px"><label>Nazwa</label><input type="text" id="as-n"></div><div style="display:flex;gap:8px"><div class="fg"><label>SM %</label><input type="number" id="as-sm" value="88"></div><div class="fg"><label>Cena PLN/t</label><input type="number" id="as-c" value="0"></div><div class="fg"><label>Stan (t)</label><input type="number" id="as-s" step="0.01" value="0"></div></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAS()">Dodaj</button>')}
 function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');return}sur.push({id:uid(),nazwa:n,proc_sm:+$('#as-sm').value||88,cena_t:+$('#as-c').value||0,stan_t:+$('#as-s').value||0});sa();clM();rSur();toast('Dodano')}
 
 // DAWKI — FeedExpert (kg Prod only)
 function rDk(){
-  const allS=[];const seen=new Set();
-  gr.forEach(g=>g.sk.forEach(sk=>{if(!seen.has(sk.s)){seen.add(sk.s);allS.push(sk.s)}}));
+  const used=new Set();
+  gr.forEach(g=>g.sk.forEach(sk=>{if(sk.kg>0||gr.some(gg=>gg.sk.find(x=>x.s===sk.s)))used.add(sk.s)}));
+  gr.forEach(g=>g.sk.forEach(sk=>used.add(sk.s)));
+  const allS=sur.filter(s=>used.has(s.id)).map(s=>s.id);
   let h='<table class="fe"><thead><tr><th rowspan="2" style="text-align:left;min-width:150px">Nazwa</th>';
   gr.forEach((g,gi)=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h+='<th class="gh">'+g.nazwa+'<br><span style="font-weight:400;font-size:8px">'+tsz+' szt · '+g.z+'×/d</span> <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pDkGr('+gi+')">📄</button></th>'});
   h+='</tr></thead><tbody>';
@@ -279,7 +344,22 @@ function rDk(){
   $('#dk-s').innerHTML=sh;sa();
 }
 function uDk(gi,sid,el){const g=gr[gi],v=+el.value||0;let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur()}
-function addDkS(){opM('Dodaj surowiec do dawek','<div class="fg"><label>Surowiec</label><select id="ad-s">'+sur.map(s=>'<option value="'+s.id+'">'+s.nazwa+'</option>').join('')+'</select></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr.forEach(g=>{const sid=$(\'#ad-s\').value;if(!g.sk.find(x=>x.s===sid))g.sk.push({s:sid,kg:0})});sa();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
+function addDkS(){
+  opM('Dodaj surowiec do dawek',
+    '<div class="fg" style="margin-bottom:10px"><label>Istniejący surowiec</label><select id="ad-s"><option value="">— wybierz z bazy —</option>'+sur.map(s=>'<option value="'+s.id+'">'+s.nazwa+'</option>').join('')+'</select></div>'+
+    '<div style="border-top:1px solid var(--brd);padding-top:10px;margin-top:6px"><p style="font-size:12px;color:var(--txt2);margin-bottom:8px">...lub dodaj nowy surowiec:</p>'+
+    '<div class="fg" style="margin-bottom:8px"><label>Nazwa nowego</label><input type="text" id="ad-nn"></div>'+
+    '<div style="display:flex;gap:8px"><div class="fg"><label>SM %</label><input type="number" id="ad-sm" value="88"></div><div class="fg"><label>Cena PLN/t</label><input type="number" id="ad-ct" value="0"></div></div></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAddDkS()">Dodaj</button>');
+}
+function okAddDkS(){
+  let sid=$('#ad-s').value;
+  const nn=$('#ad-nn').value.trim();
+  if(!sid&&!nn){toast('Wybierz lub wpisz nazwę');return}
+  if(nn){sid=uid();sur.push({id:sid,nazwa:nn,proc_sm:+$('#ad-sm').value||88,cena_t:+$('#ad-ct').value||0,stan_t:0})}
+  gr.forEach(g=>{if(!g.sk.find(x=>x.s===sid))g.sk.push({s:sid,kg:0})});
+  sa();clM();rDk();rSur();toast('Dodano');
+}
 function moveSek(fromGi,si){
   const sek=gr[fromGi].se[si];
   const opts=gr.filter((_,i)=>i!==fromGi).map((g,i)=>{const ri=i>=fromGi?i+1:i;return'<option value="'+ri+'">'+g.nazwa+'</option>'}).join('');
@@ -288,19 +368,51 @@ function moveSek(fromGi,si){
 }
 function addSek(){opM('Dodaj sektor','<div class="fg" style="margin-bottom:8px"><label>Grupa</label><select id="as-g">'+gr.map((g,i)=>'<option value="'+i+'">'+g.nazwa+'</option>').join('')+'</select></div><div class="fg" style="margin-bottom:8px"><label>Nazwa sektora</label><input type="text" id="as-sn"></div><div class="fg"><label>Sztuk</label><input type="number" id="as-ss" value="10"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr[+$(\'#as-g\').value].se.push({n:$(\'#as-sn\').value.trim()||\'Nowy\',sz:+$(\'#as-ss\').value||0});sa();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
 
-// Per-group PDF (for wagon operator)
+// Per-group PDF — preview with editable values
+let _pv=null; // preview state
 function pDkGr(gi){
-  const g=gr[gi],tsz=g.se.reduce((a,s)=>a+s.sz,0),totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
-  let h='<h3>'+g.nazwa+' — '+fmtDate(new Date())+'</h3>';
+  const g=gr[gi];
+  // Deep copy for preview editing (does NOT change saved dawki)
+  _pv={gi,nazwa:g.nazwa,z:g.z,
+    sk:g.sk.filter(x=>x.kg>0).map(x=>({s:x.s,kg:x.kg})),
+    se:g.se.map(x=>({n:x.n,sz:x.sz})),
+    uwagi:''};
+  renderPV();
+}
+function renderPV(){
+  const p=_pv;const tsz=p.se.reduce((a,s)=>a+s.sz,0);
+  let h='<div style="max-height:75vh;overflow-y:auto;padding:2px">';
+  h+='<h3 style="margin-bottom:6px">'+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
+  h+='<table class="dt" style="margin-bottom:10px"><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
+  let run=0,totKg=0;
+  p.sk.forEach((sk,i)=>{const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz,1);run=r2(run+sk.kg*tsz,1);totKg+=sk.kg;
+    h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td><input type="number" step="0.1" value="'+sk.kg+'" style="width:55px" onchange="_pv.sk['+i+'].kg=+this.value;renderPV()"></td><td>'+nw+'</td><td>'+run+'</td></tr>'});
+  h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg,1)+'</b></td><td><b>'+r2(totKg*tsz,1)+'</b></td><td></td></tr></tfoot></table>';
+  h+='<b style="font-size:12px">Podział na sektory — '+p.z+' RAZY dziennie</b>';
+  h+='<table class="dt" style="margin-top:4px;margin-bottom:10px"><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
+  let sumSz=0;
+  p.se.forEach((s,i)=>{sumSz+=s.sz;
+    h+='<tr><td style="text-align:left">'+s.n+'</td><td><input type="number" min="0" value="'+s.sz+'" style="width:50px" onchange="_pv.se['+i+'].sz=+this.value;renderPV()"></td><td>'+r2(totKg*s.sz,0)+'</td></tr>'});
+  h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+sumSz+'</b></td><td><b>'+r2(totKg*sumSz,0)+'</b></td></tr></tfoot></table>';
+  h+='<div class="fg"><label>Uwagi / notatki do wydruku</label><textarea id="pv-uw" rows="2" style="margin-top:4px;font-size:13px" onchange="_pv.uwagi=this.value">'+p.uwagi+'</textarea></div>';
+  h+='</div>';
+  opM('Podgląd wydruku — '+p.nazwa,h,
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bpdf" onclick="doPrintPV()">🖨️ Drukuj / PDF</button>');
+}
+function doPrintPV(){
+  const p=_pv;const tsz=p.se.reduce((a,s)=>a+s.sz,0);
+  let totKg=p.sk.reduce((a,sk)=>a+sk.kg,0);
+  let h='<h3>'+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
   h+='<table><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
   let run=0;
-  g.sk.forEach(sk=>{if(sk.kg<=0)return;const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz,1);run=r2(run+sk.kg*tsz,1);
+  p.sk.forEach(sk=>{const s=gS(sk.s);if(!s||sk.kg<=0)return;const nw=r2(sk.kg*tsz,1);run=r2(run+sk.kg*tsz,1);
     h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td>'+sk.kg+'</td><td>'+nw+'</td><td>'+run+'</td></tr>'});
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg,1)+'</b></td><td><b>'+r2(totKg*tsz,1)+'</b></td><td></td></tr></tfoot></table>';
-  h+='<h3>Podział na sektory — '+g.z+' RAZY dziennie</h3><table><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
-  g.se.forEach(s=>{h+='<tr><td style="text-align:left">'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>'});
+  h+='<h3>Podział na sektory — '+p.z+' RAZY dziennie</h3><table><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
+  p.se.forEach(s=>{h+='<tr><td style="text-align:left">'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>'});
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
-  prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h);
+  if(p.uwagi)h+='<p style="margin-top:10px;font-style:italic"><b>Uwagi:</b> '+p.uwagi+'</p>';
+  clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h);
 }
 
 // CIELAKI (linked to surowce: preparat mlekozast., Calf Grains, Cielak)
