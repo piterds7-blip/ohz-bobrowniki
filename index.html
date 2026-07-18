@@ -220,7 +220,7 @@ let gtMap=LD('gtMap',{});
 
 // ===== FIREBASE SYNC =====
 const firebaseConfig={apiKey:"AIzaSyC3vYPG90_aMEaKWJuhmzD1tj5lXT8Zh5o",authDomain:"ohz-bobrowniki-po-app.firebaseapp.com",projectId:"ohz-bobrowniki-po-app",storageBucket:"ohz-bobrowniki-po-app.firebasestorage.app",messagingSenderId:"90224575465",appId:"1:90224575465:web:07614843e409aafd600178"};
-let fbDb=null,fbReady=false,fbApplyingRemote=false,fbSaveTimer=null,fbLastPushed='';
+let fbDb=null,fbReady=false,fbApplyingRemote=false,fbSaveTimer=null,fbLastPushed='',fbLocalChangeAt=0;
 try{
   firebase.initializeApp(firebaseConfig);
   fbDb=firebase.firestore();
@@ -237,6 +237,8 @@ function setSyncBadge(state){
 function collectState(){return{sur,gr,ml,hrD,obD,nas,kal,hrE,obE,ciData,hist,lastDed,gtMap,_ts:Date.now()}}
 function applyState(d){
   if(!d)return;
+  // Ignore incoming state if we made a local change less than 3 seconds ago
+  if(Date.now()-fbLocalChangeAt<3000)return;
   fbApplyingRemote=true;
   if(d.sur)sur=d.sur;if(d.gr)gr=d.gr;if(d.ml)ml=d.ml;if(d.hrD)hrD=d.hrD;if(d.obD)obD=d.obD;
   if(d.nas)nas=d.nas;if(d.kal)kal=d.kal;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE;
@@ -278,10 +280,10 @@ function pushToFirebase(immediate){
   if(immediate)doPush();else fbSaveTimer=setTimeout(doPush,800);
 }
 
-function sa(){
+function sa(immediate){
   SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
   SV('ciData',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
-  if(!fbApplyingRemote)pushToFirebase(false);
+  if(!fbApplyingRemote){fbLocalChangeAt=Date.now();pushToFirebase(immediate||false)}
 }
 function gS(id){return sur.find(s=>s.id===id)}
 
@@ -330,7 +332,7 @@ function rSur(){
   });
   h+='</tbody></table>';$('#sur-w').innerHTML=h;
 }
-function mvSur(i,dir){const j=i+dir;if(j<0||j>=sur.length)return;[sur[i],sur[j]]=[sur[j],sur[i]];sa();rSur();rDk()}
+function mvSur(i,dir){const j=i+dir;if(j<0||j>=sur.length)return;[sur[i],sur[j]]=[sur[j],sur[i]];sa(true);rSur();rDk()}
 function delSurFromDk(sid){
   const s=gS(sid);const hasKg=gr.some(g=>g.sk.find(x=>x.s===sid&&x.kg>0));
   if(hasKg&&!confirm('Surowiec „'+(s?s.nazwa:sid)+'" ma niezerowe kg w dawkach. Usunąć wiersz ze wszystkich grup?'))return;
