@@ -101,8 +101,29 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
 <section class="tp" id="tab-dawki"><div class="card"><div class="ch"><span>Dawki TMR — kg świeżej masy / szt. / dobę</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addDkS()">+ Surowiec</button><button class="btn bs bpdf" onclick="pT('dawki')">📄 PDF</button></div></div><div class="tw" id="dk-w"></div></div><div class="card"><div class="ch">Sektory — podział sztuk</div><div class="tw" id="dk-s"></div></div></section>
-<section class="tp" id="tab-dekadowki"><div class="card"><div class="ch">Dekadówki — raporty zużycia</div><div style="padding:40px 20px;text-align:center;color:var(--txt2)"><div style="font-size:40px;margin-bottom:8px">📊</div><p>Moduł w przygotowaniu.</p></div></div></section>
-<section class="tp" id="tab-cielaki"><div class="card"><div class="ch"><span>Cielaki — mleko w proszku</span><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div><div class="fr"><div class="fg"><label>Cielaków</label><input type="number" id="ci-n" min="1" value="15" oninput="calcCi()"></div><div class="fg"><label>g/litr</label><input type="number" id="ci-g" value="130" oninput="calcCi()"></div><div class="fg"><label>L/szt./karm.</label><input type="number" id="ci-l" step="0.5" value="2" oninput="calcCi()"></div><div class="fg"><label>Odpojów/dobę</label><input type="number" id="ci-o" min="1" max="4" value="2" oninput="calcCi()"></div></div><div class="sbar" id="ci-s"></div></div><div class="card"><div class="ch">Pasze dla cieląt (kg/dobę)</div><div class="fr"><div class="fg"><label>Calf Grains</label><input type="number" id="ci-cg" step="0.1" value="0" oninput="calcCi()"></div><div class="fg"><label>Cielak</label><input type="number" id="ci-ck" step="0.1" value="0" oninput="calcCi()"></div></div></div></section>
+<section class="tp" id="tab-dekadowki">
+  <div class="fr">
+    <div class="fg" style="flex:0"><label>Dekada</label>
+      <div style="display:flex;gap:4px">
+        <button class="btn bs bo" onclick="setDek(1)">I</button>
+        <button class="btn bs bo" onclick="setDek(2)">II</button>
+        <button class="btn bs bo" onclick="setDek(3)">III</button>
+      </div>
+    </div>
+    <div class="fg"><label>Od</label><input type="date" id="dk-od" onchange="rDek()"></div>
+    <div class="fg"><label>Do</label><input type="date" id="dk-do" onchange="rDek()"></div>
+    <div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pDek()">📄 PDF</button></div>
+  </div>
+  <div class="card">
+    <div class="ch"><span>Dekadówka — zużycie pasz na grupy technologiczne</span></div>
+    <div class="tw" id="dek-w"></div>
+  </div>
+  <div class="card">
+    <div class="ch"><span>Zapisy historyczne (surowe dane odliczeń)</span><button class="btn bs bo" onclick="if(confirm('Odliczyć zużycie dla dzisiaj (dodatkowe, ręczne)?'))runDailyDeduction(new Date(),true)">Wymuś odliczenie dziś</button></div>
+    <div class="tw" id="dek-hist"></div>
+  </div>
+</section>
+<section class="tp" id="tab-cielaki"><div class="card"><div class="ch"><span>Cielaki — mleko w proszku</span><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div><div class="fr"><div class="fg"><label>Cielaków</label><input type="number" id="ci-n" min="1" value="15" oninput="calcCi()"></div><div class="fg"><label>g/litr</label><input type="number" id="ci-g" value="130" oninput="calcCi()"></div><div class="fg"><label>L/szt./karm.</label><input type="number" id="ci-l" step="0.5" value="2" oninput="calcCi()"></div><div class="fg"><label>Odpojów/dobę</label><input type="number" id="ci-o" min="1" max="4" value="2" oninput="calcCi()"></div></div><div class="sbar" id="ci-s"></div></div><div class="card"><div class="ch">Pasze i mleko pełne dla cieląt (kg lub L / dobę)</div><div class="fr"><div class="fg"><label>Mleko pełne (L/dobę)</label><input type="number" id="ci-mp" step="1" value="0" oninput="calcCi()"></div><div class="fg"><label>Calf Grains (kg/dobę)</label><input type="number" id="ci-cg" step="0.1" value="0" oninput="calcCi()"></div><div class="fg"><label>Cielak (kg/dobę)</label><input type="number" id="ci-ck" step="0.1" value="0" oninput="calcCi()"></div></div><p style="padding:0 12px 10px;font-size:11px;color:var(--txt2)">Mleko pełne rozchoduje się automatycznie z odstawy mleka (zakładka Mleko → kolumna "Cielęta").</p></div></section>
 <section class="tp" id="tab-harmonogram"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="hr-m" onchange="rSch('hr')"></select></div><div class="fg"><label>Rok</label><input type="number" id="hr-y" value="2026" min="2024" max="2030" onchange="rSch('hr')"></div><div class="fg"><label>Grupa</label><select id="hr-g" onchange="rSch('hr')"><option value="obsluga">Obsługa</option><option value="dojarze">Dojarze</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('hr')">📄</button></div></div><div class="card"><div class="ch"><span>Harmonogram pracy</span><button class="btn bs bo" onclick="addPr('hr')">+ Pracownik</button></div><div class="tw" id="hr-w"></div></div></section>
 <section class="tp" id="tab-obecnosc"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ob-m" onchange="rSch('ob')"></select></div><div class="fg"><label>Rok</label><input type="number" id="ob-y" value="2026" min="2024" max="2030" onchange="rSch('ob')"></div><div class="fg"><label>Grupa</label><select id="ob-g" onchange="rSch('ob')"><option value="dojarze">Dojarze</option><option value="obsluga">Obsługa</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('ob')">📄</button></div></div><div class="card"><div class="ch"><span>Lista obecności</span><button class="btn bs bo" onclick="addPr('ob')">+ Pracownik</button></div><div class="tw" id="ob-w"></div></div></section>
 <section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia 2026</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
@@ -139,7 +160,7 @@ function doLogin(){const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wp
 function doLogout(){cR=null;localStorage.removeItem('ohz_sess');$('#app').style.display='none';$('#login-screen').style.display='flex';$('#lp').value='';$('#le').textContent=''}
 function showApp(){$('#login-screen').style.display='none';$('#app').style.display='block';$('#urb').textContent=cR==='zootechnik'?'Zootechnik':'Magazynier';bTabs();startFbSync()}
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:calcCi,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]()}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]()}
 function pT(t){const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' 2026'),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia 2026',kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
 const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
 prn(ti[t](),$('#'+wr[t]).innerHTML)}
@@ -186,7 +207,16 @@ const DN=[
   {id:'n10',f:'SHIUZ Bydgoszcz',d:'2026-01-07',b:'UNISSON SEX',nr:'FR1732918277',p:30,c:140,w:4200},
 ];
 
-let sur=LD('sur2',DS),gr=LD('gr2',DG),ml=LD('ml',{}),hrD=LD('hrD',DHR),obD=LD('obD',DHR),nas=LD('nas2',DN),kal=LD('kal',{}),hrE=LD('hrE',{}),obE=LD('obE',{});
+let sur=LD('sur2',DS),gr=LD('gr2',DG),ml=LD('ml',{}),hrD=LD('hrD',DHR),obD=LD('obD',DHR),nas=LD('nas2',DN),kal=LD('kal',{}),hrE=LD('hrE',{}),obE=LD('obE',{}),ciData=LD('ciData',{n:15,g:130,l:2,o:2,cg:0,ck:0,mp:0}),hist=LD('hist',{}),lastDed=LD('lastDed','');
+// Grupy technologiczne (dla Dekadówek): kluczy → nazwa
+const GT={krowy:'Krowy',jc:'Jałówki Cielne',jr:'Jałówki od 0,5-1,5 roku',cj:'Cielaki jałówki 2 tyg-0,5 roku',cb:'Cielaki byki 2 tyg-0,5 roku',c2:'Cielaki do 2 tygodni',un:'Nieprzypisane'};
+// Domyślne przypisania sektorów → grupy technologiczne (możesz zmieniać w UI)
+const DEF_GT_MAP={
+  'GR 1 i 3':'krowy','GR 6 i 7':'krowy','GR 4':'krowy','GR 2':'krowy','GR Far OFF':'krowy',
+  'Jałówki Rosn':'jr','Jałówki Ciel':'jc'
+};
+// Load sektor→gt mapping (per sektor "grupa|sektor" → gt key)
+let gtMap=LD('gtMap',{});
 
 // ===== FIREBASE SYNC =====
 const firebaseConfig={apiKey:"AIzaSyC3vYPG90_aMEaKWJuhmzD1tj5lXT8Zh5o",authDomain:"ohz-bobrowniki-po-app.firebaseapp.com",projectId:"ohz-bobrowniki-po-app",storageBucket:"ohz-bobrowniki-po-app.firebasestorage.app",messagingSenderId:"90224575465",appId:"1:90224575465:web:07614843e409aafd600178"};
@@ -204,34 +234,36 @@ function setSyncBadge(state){
   else{b.textContent='⏳ Łączenie...';b.style.background='rgba(255,193,7,.3)'}
 }
 
-function collectState(){return{sur,gr,ml,hrD,obD,nas,kal,hrE,obE,_ts:Date.now()}}
+function collectState(){return{sur,gr,ml,hrD,obD,nas,kal,hrE,obE,ciData,hist,lastDed,gtMap,_ts:Date.now()}}
 function applyState(d){
   if(!d)return;
   fbApplyingRemote=true;
   if(d.sur)sur=d.sur;if(d.gr)gr=d.gr;if(d.ml)ml=d.ml;if(d.hrD)hrD=d.hrD;if(d.obD)obD=d.obD;
   if(d.nas)nas=d.nas;if(d.kal)kal=d.kal;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE;
+  if(d.ciData)ciData=d.ciData;if(d.hist)hist=d.hist;if(d.lastDed)lastDed=d.lastDed;if(d.gtMap)gtMap=d.gtMap;
   SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
+  SV('ciData',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
   fbApplyingRemote=false;
-  // refresh whatever tab is visible
   const activeBtn=document.querySelector('.tab-btn.active');
   if(activeBtn)oT(activeBtn.dataset.t);
 }
 
 function startFbSync(){
-  if(!fbDb){setSyncBadge('offline');return}
+  if(!fbDb){setSyncBadge('offline');catchUpDeductions();return}
   fbDb.collection('ohz_data').doc('state').onSnapshot(doc=>{
     if(doc.exists){
       const d=doc.data();
       const incomingTs=JSON.stringify(d._ts);
-      if(incomingTs!==fbLastPushed){ // avoid re-applying our own write
+      if(incomingTs!==fbLastPushed){
         applyState(d);
       }
       fbReady=true;setSyncBadge('ok');
+      if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
     } else {
-      // No remote doc yet — push our current local state as the initial one
       fbReady=true;pushToFirebase(true);
+      if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
     }
-  },err=>{console.warn('Firestore sync error',err);setSyncBadge('offline')});
+  },err=>{console.warn('Firestore sync error',err);setSyncBadge('offline');catchUpDeductions()});
 }
 
 function pushToFirebase(immediate){
@@ -248,6 +280,7 @@ function pushToFirebase(immediate){
 
 function sa(){
   SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
+  SV('ciData',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
   if(!fbApplyingRemote)pushToFirebase(false);
 }
 function gS(id){return sur.find(s=>s.id===id)}
@@ -255,12 +288,9 @@ function gS(id){return sur.find(s=>s.id===id)}
 // Daily usage per surowiec (kg) from dawki + cielaki
 function dailyUse(sid){
   let total=0;
-  // From TMR dawki
   gr.forEach(g=>{const item=g.sk.find(x=>x.s===sid);if(item&&item.kg>0){const tsz=g.se.reduce((a,s)=>a+s.sz,0);total+=item.kg*tsz}});
-  // From cielaki tab (linked surowce)
-  const ciData=LD('ciData',{n:15,g:130,l:2,o:2,cg:0,ck:0});
   const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
-  if(sid===ciLinks.proszek){total+=ciData.n*ciData.l*ciData.g/1000*ciData.o}
+  if(sid===ciLinks.proszek){total+=(ciData.n||0)*(ciData.l||0)*(ciData.g||0)/1000*(ciData.o||0)}
   if(sid===ciLinks.grains){total+=ciData.cg||0}
   if(sid===ciLinks.cielak){total+=ciData.ck||0}
   return total;
@@ -329,13 +359,18 @@ function rDk(){
 
   // Sectors - colored by group
   const cols=['sec-a','sec-b','sec-c','sec-d','sec-a','sec-b','sec-c'];
-  let sh='<table class="dt" style="min-width:auto"><thead><tr><th style="width:80px">Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th><th style="width:30px"></th></tr></thead><tbody>';
+  let sh='<table class="dt" style="min-width:auto"><thead><tr><th style="width:80px">Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th><th style="width:130px">Grupa techn.</th><th style="width:30px"></th></tr></thead><tbody>';
   gr.forEach((g,gi)=>{
     const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);const cc=cols[gi%cols.length];
     g.se.forEach((sk,si)=>{
+      const mapKey=g.nazwa+'|'+sk.n;
+      const curGt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
       sh+='<tr class="'+cc+'"><td style="font-size:11px">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+'</td>';
       sh+='<td><input min="0" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=+this.value;sa();rDk();rSur()"></td>';
       sh+='<td>'+r2(totKg,1)+'</td><td>'+r2(totKg*sk.sz,0)+'</td>';
+      sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
+      Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
+      sh+='</select></td>';
       sh+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:8px" onclick="moveSek('+gi+','+si+')" title="Przenieś">⇄</button> <button class="btn bs bd" style="padding:1px 4px" onclick="if(gr['+gi+'].se.length>1){gr['+gi+'].se.splice('+si+',1);sa();rDk();rSur()}else toast(\'Min. 1\')">✕</button></td></tr>';
     });
   });
@@ -415,14 +450,19 @@ function doPrintPV(){
   clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h);
 }
 
-// CIELAKI (linked to surowce: preparat mlekozast., Calf Grains, Cielak)
+// CIELAKI (linked to surowce: preparat mlekozast., Calf Grains, Cielak, mleko pełne)
 function calcCi(){
   const n=+$('#ci-n').value||0,g=+$('#ci-g').value||130,l=+$('#ci-l').value||2,o=+$('#ci-o').value||2;
-  const cg=+$('#ci-cg').value||0,ck=+$('#ci-ck').value||0;
+  const cg=+$('#ci-cg').value||0,ck=+$('#ci-ck').value||0,mp=+$('#ci-mp').value||0;
+  ciData={n,g,l,o,cg,ck,mp};
+  sa();
   const wK=n*l,pK=r2(n*l*g/1000,2),wD=r2(wK*o,1),pD=r2(pK*o,2);
-  // Save for surowce daily usage calc
-  SV('ciData',{n,g,l,o,cg,ck});
-  $('#ci-s').innerHTML='<div class="si"><div class="v">'+wK+'</div><div class="l">L wody/karm.</div></div><div class="si"><div class="v">'+pK+'</div><div class="l">kg proszku/karm.</div></div><div class="si"><div class="v">'+wD+'</div><div class="l">L wody/dobę</div></div><div class="si"><div class="v">'+pD+'</div><div class="l">kg proszku/dobę</div></div><div class="si"><div class="v">'+cg+'</div><div class="l">Calf Grains/dobę</div></div><div class="si"><div class="v">'+ck+'</div><div class="l">Cielak/dobę</div></div>';
+  $('#ci-s').innerHTML='<div class="si"><div class="v">'+wK+'</div><div class="l">L wody/karm.</div></div><div class="si"><div class="v">'+pK+'</div><div class="l">kg proszku/karm.</div></div><div class="si"><div class="v">'+wD+'</div><div class="l">L wody/dobę</div></div><div class="si"><div class="v">'+pD+'</div><div class="l">kg proszku/dobę</div></div><div class="si"><div class="v">'+mp+'</div><div class="l">L mleka pełn./dobę</div></div><div class="si"><div class="v">'+cg+'</div><div class="l">Calf Grains/dobę</div></div><div class="si"><div class="v">'+ck+'</div><div class="l">Cielak/dobę</div></div>';
+}
+// Load ciData on cielaki tab open
+function loadCiUI(){
+  if(ciData){$('#ci-n').value=ciData.n||15;$('#ci-g').value=ciData.g||130;$('#ci-l').value=ciData.l||2;$('#ci-o').value=ciData.o||2;$('#ci-cg').value=ciData.cg||0;$('#ci-ck').value=ciData.ck||0;$('#ci-mp').value=ciData.mp||0}
+  calcCi();
 }
 
 // HARMONOGRAM & OBECNOŚĆ
@@ -481,13 +521,148 @@ function rKal(){
 function eKal(y,m,d){const k=y+'_'+m;if(!kal[k])kal[k]={};const c=kal[k][d]||'';
   opM(d+' '+MO[m]+' '+y,'<div class="fg"><label>Notatka</label><textarea id="kt" rows="5" style="margin-top:4px;font-size:15px;font-weight:700">'+c+'</textarea></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bs bd" onclick="delete kal[\''+k+'\']['+d+'];sa();clM();rKal()">Wyczyść</button><button class="btn bp" onclick="kal[\''+k+'\']['+d+']=$(\'#kt\').value.trim();sa();clM();rKal();toast(\'Zapisano\')">Zapisz</button>')}
 
-// INIT
+// ===== HISTORIA / ODLICZANIE / DEKADOWKI =====
+
+function isoDate(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dd=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dd}
+function isoToday(){return isoDate(new Date())}
+
+// Build snapshot for a single day: per surowiec_id → per gt_key → kg used that day
+// Also freezes sur names & prices at that moment
+function buildDaySnapshot(){
+  const snap={date:isoToday(),surowce:{},cielaki:{},prices:{},names:{}};
+  // Save current names & prices
+  sur.forEach(s=>{snap.names[s.id]=s.nazwa;snap.prices[s.id]=s.cena_t||0});
+  // For each dawka group: per sektor kg = dawka.kg × sektor.sz; assigned to gt from gtMap
+  gr.forEach(g=>{
+    g.se.forEach(sek=>{
+      const mapKey=g.nazwa+'|'+sek.n;
+      const gt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
+      g.sk.forEach(sk=>{
+        if(!sk.kg||sk.kg<=0)return;
+        const kgDay=sk.kg*sek.sz;
+        if(!snap.surowce[sk.s])snap.surowce[sk.s]={};
+        snap.surowce[sk.s][gt]=(snap.surowce[sk.s][gt]||0)+kgDay;
+      });
+    });
+  });
+  // Cielaki (auto→gt='c2' Cielaki do 2 tygodni)
+  const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
+  const cd=ciData||{};
+  const proszek=(cd.n||0)*(cd.l||0)*(cd.g||0)/1000*(cd.o||0);
+  if(proszek>0){if(!snap.surowce[ciLinks.proszek])snap.surowce[ciLinks.proszek]={};snap.surowce[ciLinks.proszek].c2=(snap.surowce[ciLinks.proszek].c2||0)+proszek}
+  if(cd.cg>0){if(!snap.surowce[ciLinks.grains])snap.surowce[ciLinks.grains]={};snap.surowce[ciLinks.grains].c2=(snap.surowce[ciLinks.grains].c2||0)+cd.cg}
+  if(cd.ck>0){if(!snap.surowce[ciLinks.cielak])snap.surowce[ciLinks.cielak]={};snap.surowce[ciLinks.cielak].c2=(snap.surowce[ciLinks.cielak].c2||0)+cd.ck}
+  // Mleko pełne dla cielaków (osobna metryka - w L a nie kg, zapisujemy pod kluczem "mleko_pelne")
+  if(cd.mp>0){snap.cielaki.mleko_pelne={c2:cd.mp}}
+  return snap;
+}
+
+// Run deduction for a specific date; keyed by ISO date to avoid duplicates
+function runDailyDeduction(dateObj,force){
+  const key=isoDate(dateObj);
+  if(!force&&hist[key])return; // already recorded
+  const snap=buildDaySnapshot();snap.date=key;
+  hist[key]=snap;
+  // Subtract from stan_t (tony)
+  Object.entries(snap.surowce).forEach(([sid,byGt])=>{
+    const totalKg=Object.values(byGt).reduce((a,b)=>a+b,0);
+    const s=sur.find(x=>x.id===sid);
+    if(s){s.stan_t=Math.max(0,s.stan_t-totalKg/1000)}
+  });
+  lastDed=key;
+  sa();
+}
+
+// On app open, catch up any missed days between lastDed+1 and today (inclusive of today only once)
+function catchUpDeductions(){
+  const today=new Date();today.setHours(0,0,0,0);
+  let start;
+  if(!lastDed){start=new Date(today)} // first ever - only today
+  else{start=new Date(lastDed);start.setDate(start.getDate()+1)}
+  let safety=0;
+  while(start<=today&&safety<400){
+    runDailyDeduction(start);
+    start.setDate(start.getDate()+1);safety++;
+  }
+}
+
+// ===== DEKADOWKI UI =====
+function setDek(nr){
+  const now=new Date();const y=now.getFullYear(),m=now.getMonth();
+  let od,ddo;
+  if(nr===1){od=new Date(y,m,1);ddo=new Date(y,m,10)}
+  else if(nr===2){od=new Date(y,m,11);ddo=new Date(y,m,20)}
+  else{od=new Date(y,m,21);ddo=new Date(y,m+1,0)}
+  $('#dk-od').value=isoDate(od);$('#dk-do').value=isoDate(ddo);
+  rDek();
+}
+
+function rDek(){
+  if(!$('#dk-od').value||!$('#dk-do').value){setDek(1);return}
+  const od=$('#dk-od').value,ddo=$('#dk-do').value;
+  // Aggregate: aggr[sur_id][gt_key] = kg
+  const aggr={},aggrCiel={};
+  Object.entries(hist).forEach(([date,snap])=>{
+    if(date<od||date>ddo)return;
+    Object.entries(snap.surowce||{}).forEach(([sid,byGt])=>{
+      if(!aggr[sid])aggr[sid]={};
+      Object.entries(byGt).forEach(([gt,kg])=>{aggr[sid][gt]=(aggr[sid][gt]||0)+kg});
+    });
+    Object.entries(snap.cielaki||{}).forEach(([key,byGt])=>{
+      if(!aggrCiel[key])aggrCiel[key]={};
+      Object.entries(byGt).forEach(([gt,v])=>{aggrCiel[key][gt]=(aggrCiel[key][gt]||0)+v});
+    });
+  });
+
+  // Build matrix: rows = GT (excluding 'un' unless has data), cols = surowce with any data
+  const gtKeys=Object.keys(GT).filter(k=>k!=='un'||Object.values(aggr).some(v=>v.un>0));
+  const surIds=sur.map(s=>s.id).filter(sid=>aggr[sid]&&Object.values(aggr[sid]).some(v=>v>0));
+
+  let h='<table class="dt" style="min-width:'+(180+surIds.length*80)+'px"><thead><tr><th style="text-align:left;position:sticky;left:0;background:var(--pri);z-index:2">Grupa techn.</th>';
+  surIds.forEach(sid=>{const s=sur.find(x=>x.id===sid);h+='<th title="'+s.nazwa+'">'+s.nazwa.substring(0,14)+'</th>'});
+  h+='<th>Mleko pełne (L)</th></tr></thead><tbody>';
+  gtKeys.forEach(gt=>{
+    let hasRow=surIds.some(sid=>(aggr[sid]||{})[gt]>0)||(aggrCiel.mleko_pelne||{})[gt]>0;
+    if(!hasRow&&gt==='un')return;
+    h+='<tr><td style="text-align:left;font-weight:600;position:sticky;left:0;background:#fff">'+GT[gt]+'</td>';
+    surIds.forEach(sid=>{const v=(aggr[sid]||{})[gt]||0;h+='<td>'+(v>0?r2(v,0):'—')+'</td>'});
+    const mp=(aggrCiel.mleko_pelne||{})[gt]||0;
+    h+='<td>'+(mp>0?r2(mp,0):'—')+'</td>';
+    h+='</tr>';
+  });
+  // Total row
+  h+='<tr style="border-top:2px solid var(--amber)"><td style="text-align:left;font-weight:700;background:var(--amber-bg);color:var(--amber);position:sticky;left:0">Razem</td>';
+  surIds.forEach(sid=>{const total=Object.values(aggr[sid]||{}).reduce((a,b)=>a+b,0);h+='<td style="font-weight:700;background:var(--amber-bg);color:var(--amber)">'+r2(total,0)+'</td>'});
+  const mpTot=Object.values(aggrCiel.mleko_pelne||{}).reduce((a,b)=>a+b,0);
+  h+='<td style="font-weight:700;background:var(--amber-bg);color:var(--amber)">'+r2(mpTot,0)+'</td>';
+  h+='</tr></tbody></table>';
+  if(surIds.length===0)h='<div style="padding:30px;text-align:center;color:var(--txt2)">Brak danych za wybrany okres. Odliczenia zapisują się automatycznie każdego dnia — jeśli aplikacja została uruchomiona dopiero dziś, jutro pojawi się pierwszy wpis. Możesz też kliknąć „Wymuś odliczenie dziś".</div>';
+  $('#dek-w').innerHTML=h;
+
+  // History listing
+  let hh='<table class="dt"><thead><tr><th>Data</th><th>Surowce zapisane</th><th>Łączne kg</th><th></th></tr></thead><tbody>';
+  const dates=Object.keys(hist).filter(d=>d>=od&&d<=ddo).sort().reverse();
+  dates.forEach(d=>{
+    const snap=hist[d];const nSur=Object.keys(snap.surowce||{}).length;
+    let total=0;Object.values(snap.surowce||{}).forEach(byGt=>{Object.values(byGt).forEach(v=>{total+=v})});
+    hh+='<tr><td>'+d+'</td><td>'+nSur+' pozycji</td><td>'+r2(total,0)+'</td><td><button class="btn bs bd" onclick="if(confirm(\'Usunąć wpis z '+d+'?\')){delete hist[\''+d+'\'];sa();rDek()}">✕</button></td></tr>';
+  });
+  if(!dates.length)hh+='<tr><td colspan="4" style="text-align:center;color:var(--txt2)">Brak zapisów w tym zakresie</td></tr>';
+  hh+='</tbody></table>';
+  $('#dek-hist').innerHTML=hh;
+}
+
+function pDek(){
+  const od=$('#dk-od').value,ddo=$('#dk-do').value;
+  prn('Dekadówka — zużycie pasz '+od+' → '+ddo,$('#dek-w').innerHTML);
+}
+
 (function(){
   const s=LD('sess',null);if(s&&us[s]){cR=s;showApp()}
   const cm=new Date().getMonth();
   ['ml-m','hr-m','ob-m','kal-m'].forEach(id=>{const e=$('#'+id);if(e)fMS(e,cm)});
   $('#ml-v').addEventListener('change',rMl);$('#ml-m').addEventListener('change',rMl);
-  calcCi();$('#lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+  $('#lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
 </script>
