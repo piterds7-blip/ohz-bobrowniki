@@ -331,6 +331,12 @@ function rSur(){
   h+='</tbody></table>';$('#sur-w').innerHTML=h;
 }
 function mvSur(i,dir){const j=i+dir;if(j<0||j>=sur.length)return;[sur[i],sur[j]]=[sur[j],sur[i]];sa();rSur();rDk()}
+function delSurFromDk(sid){
+  const s=gS(sid);const hasKg=gr.some(g=>g.sk.find(x=>x.s===sid&&x.kg>0));
+  if(hasKg&&!confirm('Surowiec „'+(s?s.nazwa:sid)+'" ma niezerowe kg w dawkach. Usunąć wiersz ze wszystkich grup?'))return;
+  gr.forEach(g=>{g.sk=g.sk.filter(x=>x.s!==sid)});
+  sa();rDk();rSur();toast('Usunięto z dawek');
+}
 function eSurN(i){opM('Edytuj nazwę','<div class="fg"><label>Nazwa</label><input type="text" id="esn" value="'+sur[i].nazwa+'"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="sur['+i+'].nazwa=$(\'#esn\').value.trim();sa();clM();rSur();rDk();toast(\'Zapisano\')">Zapisz</button>')}
 function addSur(){opM('Dodaj surowiec','<div class="fg" style="margin-bottom:8px"><label>Nazwa</label><input type="text" id="as-n"></div><div style="display:flex;gap:8px"><div class="fg"><label>SM %</label><input type="number" id="as-sm" value="88"></div><div class="fg"><label>Cena PLN/t</label><input type="number" id="as-c" value="0"></div><div class="fg"><label>Stan (t)</label><input type="number" id="as-s" step="0.01" value="0"></div></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAS()">Dodaj</button>')}
 function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');return}sur.push({id:uid(),nazwa:n,proc_sm:+$('#as-sm').value||88,cena_t:+$('#as-c').value||0,stan_t:+$('#as-s').value||0});sa();clM();rSur();toast('Dodano')}
@@ -341,12 +347,18 @@ function rDk(){
   gr.forEach(g=>g.sk.forEach(sk=>{if(sk.kg>0||gr.some(gg=>gg.sk.find(x=>x.s===sk.s)))used.add(sk.s)}));
   gr.forEach(g=>g.sk.forEach(sk=>used.add(sk.s)));
   const allS=sur.filter(s=>used.has(s.id)).map(s=>s.id);
-  let h='<table class="fe"><thead><tr><th rowspan="2" style="text-align:left;min-width:150px">Nazwa</th>';
+  let h='<table class="fe"><thead><tr><th rowspan="2" style="text-align:left;min-width:200px">Nazwa</th>';
   gr.forEach((g,gi)=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h+='<th class="gh">'+g.nazwa+'<br><span style="font-weight:400;font-size:8px">'+tsz+' szt · '+g.z+'×/d</span> <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pDkGr('+gi+')">📄</button></th>'});
   h+='</tr></thead><tbody>';
-  allS.forEach(sid=>{
+  allS.forEach((sid,rowIdx)=>{
     const s=gS(sid);if(!s)return;
-    h+='<tr><td title="'+s.nazwa+'">'+s.nazwa+'</td>';
+    const si=sur.indexOf(s);
+    h+='<tr><td title="'+s.nazwa+'"><span style="display:inline-flex;flex-direction:column;margin-right:3px;line-height:1;vertical-align:middle">';
+    h+=(si>0?'<button onclick="mvSur('+si+',-1)" style="border:none;background:none;cursor:pointer;font-size:8px;padding:0">▲</button>':'<span style="font-size:8px;opacity:.2">▲</span>');
+    h+=(si<sur.length-1?'<button onclick="mvSur('+si+',1)" style="border:none;background:none;cursor:pointer;font-size:8px;padding:0">▼</button>':'<span style="font-size:8px;opacity:.2">▼</span>');
+    h+='</span>'+s.nazwa+' <button style="border:1px solid var(--brd);background:none;color:var(--pri);font-size:8px;padding:0 3px;border-radius:3px;cursor:pointer" onclick="eSurN('+si+')">✎</button>';
+    h+=' <button style="border:none;background:none;color:var(--red);font-size:9px;cursor:pointer" onclick="delSurFromDk(\''+sid+'\')" title="Usuń z dawek">✕</button>';
+    h+='</td>';
     gr.forEach((g,gi)=>{
       const item=g.sk.find(x=>x.s===sid);const kg=item?item.kg:0;
       h+='<td><input value="'+kg+'" onchange="uDk('+gi+',\''+sid+'\',this)"></td>';
@@ -407,11 +419,10 @@ function addSek(){opM('Dodaj sektor','<div class="fg" style="margin-bottom:8px">
 let _pv=null; // preview state
 function pDkGr(gi){
   const g=gr[gi];
-  // Deep copy for preview editing (does NOT change saved dawki)
-  _pv={gi,nazwa:g.nazwa,z:g.z,
-    sk:g.sk.filter(x=>x.kg>0).map(x=>({s:x.s,kg:x.kg})),
-    se:g.se.map(x=>({n:x.n,sz:x.sz})),
-    uwagi:''};
+  // Deep copy for preview, sorted by surowce order
+  const surOrder=sur.map(s=>s.id);
+  const sorted=g.sk.filter(x=>x.kg>0).map(x=>({s:x.s,kg:x.kg})).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
+  _pv={gi,nazwa:g.nazwa,z:g.z,sk:sorted,se:g.se.map(x=>({n:x.n,sz:x.sz})),uwagi:''};
   renderPV();
 }
 function renderPV(){
