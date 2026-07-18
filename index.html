@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1B5E20">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<title>OHZ Bobrowniki</title>
+<style>
+:root{--pri:#1B5E20;--pri-l:#2E7D32;--pri-bg:#E8F5E9;--bg:#F5F5F0;--card:#fff;--txt:#1A1A1A;--txt2:#5F6B5F;--brd:#D5DCD5;--amber:#B8860B;--amber-bg:#FFF8E7;--red:#C62828;--red-bg:#FFEBEE;--blue:#1565C0;--radius:8px;--shadow:0 1px 3px rgba(0,0,0,.08);--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--mono:"SF Mono","Cascadia Code",Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);line-height:1.45;min-height:100vh;-webkit-font-smoothing:antialiased}
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1B5E20,#2E7D32,#388E3C);color:#fff;padding:20px}
+.login-box{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border-radius:16px;padding:32px 24px;width:100%;max-width:340px;text-align:center;border:1px solid rgba(255,255,255,.2)}
+.login-box h1{font-size:22px;margin-bottom:4px}.login-box .sub{font-size:13px;opacity:.75;margin-bottom:24px}
+.login-icon{font-size:48px;margin-bottom:12px}
+.login-box input{width:100%;padding:12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.15);color:#fff;font:500 16px var(--font);margin-bottom:12px;text-align:center}
+.login-box input::placeholder{color:rgba(255,255,255,.5)}.login-box input:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.25)}
+.login-box button{width:100%;padding:12px;border:none;border-radius:8px;background:#fff;color:var(--pri);font:700 15px var(--font);cursor:pointer}
+.login-error{color:#FFCDD2;font-size:13px;margin-top:8px;min-height:20px}
+#app{display:none}
+.app-header{background:var(--pri);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.app-header h1{font-size:16px;font-weight:700;flex:1}
+.app-header .ub{font-size:11px;background:rgba(255,255,255,.2);padding:3px 8px;border-radius:10px}
+.blo{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;padding:4px 10px;border-radius:6px;font:600 11px var(--font);cursor:pointer}
+.tab-bar{display:flex;background:var(--card);border-bottom:1px solid var(--brd);overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:44px;z-index:99}.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:9px 12px;border:none;background:none;font:600 11px var(--font);color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab-btn.active{color:var(--pri);border-bottom-color:var(--pri);background:var(--pri-bg)}
+.tp{display:none;padding:10px}.tp.active{display:block}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--brd);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.ch{padding:8px 12px;font:700 13px var(--font);color:var(--pri);border-bottom:1px solid var(--brd);background:var(--pri-bg);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.fr{display:flex;gap:8px;padding:8px 12px;align-items:flex-end;flex-wrap:wrap}
+.fg{display:flex;flex-direction:column;gap:2px;flex:1;min-width:80px}
+.fg label{font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.04em}
+select,input[type=number],input[type=text],input[type=date],input[type=password],textarea{font:400 14px var(--font);padding:7px 8px;border:1px solid var(--brd);border-radius:6px;background:#fff;color:var(--txt);width:100%}
+select{-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F6B5F' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:26px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pri-l);box-shadow:0 0 0 2px rgba(46,125,50,.15)}
+input[type=number]{font-family:var(--mono);font-size:13px;text-align:right}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.dt{width:100%;border-collapse:collapse;font-size:12px}
+table.dt th{background:var(--pri);color:#fff;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.03em;padding:6px 4px;text-align:right;white-space:nowrap}
+table.dt th:first-child{text-align:left}
+table.dt td{padding:4px;border-bottom:1px solid var(--brd);text-align:right;font-family:var(--mono);font-size:12px}
+table.dt td:first-child{text-align:left;font-family:var(--font);font-weight:500}
+table.dt tr:nth-child(even){background:#F8FAF8}
+table.dt td input{width:60px;padding:2px 4px;font-size:11px;border-radius:4px;font-family:var(--mono);text-align:right}
+table.dt td select{width:75px;padding:2px;font-size:11px}
+table.dt tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);border-top:2px solid var(--amber)}
+table.dt .we{background:var(--red-bg)!important}.dt .we td:first-child{color:var(--red);font-weight:700}
+/* FE dawki */
+table.fe{width:100%;border-collapse:collapse;font-size:11px}
+table.fe th{background:var(--pri);color:#fff;font-weight:600;font-size:9px;text-transform:uppercase;padding:5px 3px;text-align:center;white-space:nowrap;border:1px solid #145218}
+table.fe th.gh{background:#145218;font-size:10px}
+table.fe th:first-child{text-align:left}
+table.fe td{padding:3px;border:1px solid var(--brd);text-align:right;font-family:var(--mono);font-size:11px}
+table.fe td:first-child{text-align:left;font-family:var(--font);font-weight:500;white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+table.fe td input{width:48px;padding:2px 3px;font-size:11px;border-radius:3px;font-family:var(--mono);text-align:right;border:1px solid var(--brd)}
+table.fe td input:focus{border-color:var(--pri-l)}
+table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);border-top:2px solid var(--amber);font-size:12px}
+/* Sector colors */
+.sec-a{background:#F0F7F0}.sec-b{background:#FFF8F0}.sec-c{background:#F0F3FF}.sec-d{background:#FFF0F5}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:7px 12px;border:none;border-radius:6px;font:600 12px var(--font);cursor:pointer;white-space:nowrap}
+.bp{background:var(--pri);color:#fff}.bo{background:transparent;color:var(--pri);border:1px solid var(--pri)}.bd{background:var(--red);color:#fff}
+.bs{padding:4px 8px;font-size:11px}.bpdf{background:var(--blue);color:#fff}
+.sbar{background:var(--pri);color:#fff;padding:8px 12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;border-radius:var(--radius);margin-bottom:10px}
+.si{text-align:center}.si .v{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1.2}.si .l{font-size:9px;text-transform:uppercase;letter-spacing:.04em;opacity:.8}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--brd);border:1px solid var(--brd);border-radius:var(--radius);overflow:hidden}
+.cal-hdr{background:var(--pri);color:#fff;padding:6px 2px;text-align:center;font:700 11px var(--font)}.cal-hdr.wknd{background:var(--red)}
+.cal-cell{background:#fff;min-height:85px;padding:4px;cursor:pointer}.cal-cell:hover{background:var(--pri-bg)}
+.cal-cell.wknd{background:var(--red-bg)}.cal-cell.empty{background:#F5F5F5;cursor:default;min-height:40px}
+.cal-cell .dn{font:700 14px var(--font);color:var(--txt);margin-bottom:3px}.cal-cell.wknd .dn{color:var(--red)}
+.cal-cell .dt2{font-size:13px;font-weight:700;line-height:1.3;color:var(--pri);word-break:break-word;white-space:pre-line}
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:12px}
+.mo.open{display:flex}.mob{background:var(--card);border-radius:var(--radius);width:100%;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+.moh{padding:12px 14px;font:700 15px var(--font);border-bottom:1px solid var(--brd);display:flex;justify-content:space-between;align-items:center}
+.mobd{padding:14px}.mof{padding:10px 14px;border-top:1px solid var(--brd);display:flex;justify-content:flex-end;gap:6px}
+.mox{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt2)}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}.toast.show{opacity:1}
+#pa{display:none}
+@media print{body>*{display:none!important}#pa{display:block!important;position:absolute;left:0;top:0;width:100%;padding:12mm;font-size:11pt;color:#000}
+#pa table{border-collapse:collapse;width:100%}#pa table th,#pa table td{border:1px solid #555;padding:4px 6px;font-size:9pt}
+#pa table th{background:#ddd!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#000}
+#pa table tfoot td{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pa h2{font-size:14pt;margin-bottom:4px}#pa h3{font-size:12pt;margin:10px 0 4px}#pa .pm{font-size:9pt;color:#555;margin-bottom:8px}
+#pa .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;border:1px solid #333}
+#pa .cal-hdr{background:#ddd;padding:3px;text-align:center;font-weight:700;font-size:8pt;border:1px solid #999;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#pa .cal-cell{border:1px solid #999;min-height:50px;padding:2px}#pa .cal-cell .dt2{font-size:9pt;font-weight:700}
+@page{size:A4;margin:10mm}}
+@media(max-width:480px){.fr{flex-direction:column;gap:6px}.fg{min-width:0}.sbar{grid-template-columns:repeat(2,1fr)}}
+.sur-warn{color:var(--red);font-weight:700}.sur-ok{color:var(--pri)}
+</style>
+</head>
+<body>
+<div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
+<div id="app">
+<header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
+<nav class="tab-bar" id="tbar"></nav>
+<section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
+<section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
+<section class="tp" id="tab-dawki"><div class="card"><div class="ch"><span>Dawki TMR — kg świeżej masy / szt. / dobę</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addDkS()">+ Surowiec</button><button class="btn bs bpdf" onclick="pT('dawki')">📄 PDF</button></div></div><div class="tw" id="dk-w"></div></div><div class="card"><div class="ch">Sektory — podział sztuk</div><div class="tw" id="dk-s"></div></div></section>
+<section class="tp" id="tab-dekadowki"><div class="card"><div class="ch">Dekadówki — raporty zużycia</div><div style="padding:40px 20px;text-align:center;color:var(--txt2)"><div style="font-size:40px;margin-bottom:8px">📊</div><p>Moduł w przygotowaniu.</p></div></div></section>
+<section class="tp" id="tab-cielaki"><div class="card"><div class="ch"><span>Cielaki — mleko w proszku</span><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div><div class="fr"><div class="fg"><label>Cielaków</label><input type="number" id="ci-n" min="1" value="15" oninput="calcCi()"></div><div class="fg"><label>g/litr</label><input type="number" id="ci-g" value="130" oninput="calcCi()"></div><div class="fg"><label>L/szt./karm.</label><input type="number" id="ci-l" step="0.5" value="2" oninput="calcCi()"></div><div class="fg"><label>Odpojów/dobę</label><input type="number" id="ci-o" min="1" max="4" value="2" oninput="calcCi()"></div></div><div class="sbar" id="ci-s"></div></div><div class="card"><div class="ch">Pasze dla cieląt (kg/dobę)</div><div class="fr"><div class="fg"><label>Calf Grains</label><input type="number" id="ci-cg" step="0.1" value="0" oninput="calcCi()"></div><div class="fg"><label>Cielak</label><input type="number" id="ci-ck" step="0.1" value="0" oninput="calcCi()"></div></div></div></section>
+<section class="tp" id="tab-harmonogram"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="hr-m" onchange="rSch('hr')"></select></div><div class="fg"><label>Rok</label><input type="number" id="hr-y" value="2026" min="2024" max="2030" onchange="rSch('hr')"></div><div class="fg"><label>Grupa</label><select id="hr-g" onchange="rSch('hr')"><option value="obsluga">Obsługa</option><option value="dojarze">Dojarze</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('hr')">📄</button></div></div><div class="card"><div class="ch"><span>Harmonogram pracy</span><button class="btn bs bo" onclick="addPr('hr')">+ Pracownik</button></div><div class="tw" id="hr-w"></div></div></section>
+<section class="tp" id="tab-obecnosc"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ob-m" onchange="rSch('ob')"></select></div><div class="fg"><label>Rok</label><input type="number" id="ob-y" value="2026" min="2024" max="2030" onchange="rSch('ob')"></div><div class="fg"><label>Grupa</label><select id="ob-g" onchange="rSch('ob')"><option value="dojarze">Dojarze</option><option value="obsluga">Obsługa</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('ob')">📄</button></div></div><div class="card"><div class="ch"><span>Lista obecności</span><button class="btn bs bo" onclick="addPr('ob')">+ Pracownik</button></div><div class="tw" id="ob-w"></div></div></section>
+<section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia 2026</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
+<section class="tp" id="tab-kalendarz"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="kal-m" onchange="rKal()"></select></div><div class="fg"><label>Rok</label><input type="number" id="kal-y" value="2026" min="2024" max="2030" onchange="rKal()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('kalendarz')">📄 PDF</button></div></div><div id="kal-w"></div></section>
+</div>
+<div id="pa"></div>
+<div class="mo" id="modal"><div class="mob"><div class="moh"><span id="mt"></span><button class="mox" onclick="clM()">&times;</button></div><div class="mobd" id="mb"></div><div class="mof" id="mf"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const r2=(v,d=1)=>{const f=10**d;return Math.round(v*f)/f};
+const MO=['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+const DP=['Pn','Wt','Śr','Cz','Pt','So','Nd'];
+function dim(y,m){return new Date(y,m+1,0).getDate()}
+function dow(y,m,d){let w=new Date(y,m,d).getDay();return w===0?6:w-1}
+function isWe(y,m,d){const w=new Date(y,m,d).getDay();return w===0||w===6}
+function LD(k,fb){try{const v=localStorage.getItem('ohz_'+k);return v?JSON.parse(v):fb}catch{return fb}}
+function SV(k,v){localStorage.setItem('ohz_'+k,JSON.stringify(v))}
+let _tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2e3)}
+function opM(t,b,f){$('#mt').textContent=t;$('#mb').innerHTML=b;$('#mf').innerHTML=f||'';$('#modal').classList.add('open')}
+function clM(){$('#modal').classList.remove('open')}
+document.addEventListener('click',e=>{if(e.target.id==='modal')clM()});
+function prn(t,h){$('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h;setTimeout(()=>window.print(),200)}
+function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
+function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()}
+
+// AUTH
+const DU={zootechnik:'admin',magazynier:'magazyn'};
+let us=LD('us',DU),cR=null;
+const RT={zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce']};
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
+function doLogin(){const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}let r=null;for(const[k,v]of Object.entries(us))if(v===p){r=k;break}if(!r){$('#le').textContent='Nieprawidłowe hasło';return}cR=r;SV('sess',r);showApp()}
+function doLogout(){cR=null;localStorage.removeItem('ohz_sess');$('#app').style.display='none';$('#login-screen').style.display='flex';$('#lp').value='';$('#le').textContent=''}
+function showApp(){$('#login-screen').style.display='none';$('#app').style.display='block';$('#urb').textContent=cR==='zootechnik'?'Zootechnik':'Magazynier';bTabs()}
+function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:calcCi,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]()}
+function pT(t){const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' 2026'),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia 2026',kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
+const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
+prn(ti[t](),$('#'+wr[t]).innerHTML)}
+
+// DATA
+const DS=[
+  {id:'s1',nazwa:'Kiszonka z kukurydzy OHZ',proc_sm:32,cena_t:120,stan_t:150},
+  {id:'s2',nazwa:'Lucerna 44SM/19,7 BO',proc_sm:44,cena_t:140,stan_t:120},
+  {id:'s3',nazwa:'Słoma pszenna',proc_sm:84,cena_t:250,stan_t:40},
+  {id:'s4',nazwa:'Woda',proc_sm:0,cena_t:0,stan_t:9999},
+  {id:'s5',nazwa:'Dobromilk Start Granulat',proc_sm:87,cena_t:1300,stan_t:25},
+  {id:'s6',nazwa:'Śruta rzepakowa',proc_sm:88,cena_t:1400,stan_t:15},
+  {id:'s7',nazwa:'Śruta sojowa 46%',proc_sm:88,cena_t:1900,stan_t:8},
+  {id:'s8',nazwa:'Pszenica (śruta zbożowa)',proc_sm:86,cena_t:950,stan_t:12},
+  {id:'s9',nazwa:'Kreda',proc_sm:99,cena_t:500,stan_t:2},
+  {id:'s10',nazwa:'Witaminer Baza TOXXL',proc_sm:95,cena_t:4500,stan_t:1.5},
+  {id:'s11',nazwa:'Bufor (soda)',proc_sm:99,cena_t:2800,stan_t:1},
+  {id:'s12',nazwa:'Sianokiszonka BO 10%',proc_sm:45,cena_t:130,stan_t:50},
+  {id:'s13',nazwa:'Preparat mlekozastępczy',proc_sm:95,cena_t:12000,stan_t:0.5},
+  {id:'s14',nazwa:'Calf Grains',proc_sm:88,cena_t:2500,stan_t:1},
+  {id:'s15',nazwa:'Cielak (pasza)',proc_sm:88,cena_t:2200,stan_t:0.8},
+  {id:'s16',nazwa:'Dobromilk GLO MAX Granulat',proc_sm:88,cena_t:1400,stan_t:5},
+];
+const DG=[
+  {id:'g1',nazwa:'GR 1 i 3',z:2,se:[{n:'Sektor I',sz:24},{n:'Sektor III',sz:18}],sk:[{s:'s1',kg:34},{s:'s2',kg:7},{s:'s4',kg:7},{s:'s8',kg:3},{s:'s6',kg:2},{s:'s7',kg:1.5},{s:'s5',kg:3.5},{s:'s10',kg:0.5},{s:'s9',kg:0.1}]},
+  {id:'g2',nazwa:'GR 6 i 7',z:2,se:[{n:'Izolatka',sz:1},{n:'Sektor VI',sz:24},{n:'Sektor VII',sz:26}],sk:[{s:'s1',kg:40},{s:'s2',kg:7},{s:'s4',kg:7},{s:'s8',kg:2.5},{s:'s6',kg:3},{s:'s7',kg:1.5},{s:'s5',kg:4},{s:'s10',kg:0.5},{s:'s9',kg:0.1}]},
+  {id:'g3',nazwa:'GR 4',z:2,se:[{n:'Sektor IV',sz:40}],sk:[{s:'s1',kg:36},{s:'s2',kg:7},{s:'s4',kg:7},{s:'s8',kg:3},{s:'s6',kg:2.5},{s:'s7',kg:1.5},{s:'s5',kg:3.5},{s:'s10',kg:0.5},{s:'s9',kg:0.1}]},
+  {id:'g4',nazwa:'GR 2',z:2,se:[{n:'Sektor II',sz:22},{n:'Porodówka',sz:12}],sk:[{s:'s1',kg:33},{s:'s2',kg:12},{s:'s4',kg:7},{s:'s8',kg:1.5},{s:'s6',kg:2},{s:'s5',kg:2.5}]},
+  {id:'g5',nazwa:'GR Far OFF',z:1,se:[{n:'Zasuszone I etap',sz:38}],sk:[{s:'s2',kg:13},{s:'s3',kg:7}]},
+  {id:'g6',nazwa:'Jałówki Rosn',z:1,se:[{n:'Stara obora',sz:50},{n:'Zbiorówka',sz:26},{n:'Jałówki środek',sz:79},{n:'W kryciu',sz:63}],sk:[{s:'s2',kg:8},{s:'s6',kg:1.4},{s:'s5',kg:1},{s:'s1',kg:13}]},
+  {id:'g7',nazwa:'Jałówki Ciel',z:1,se:[{n:'Jałówki cielne',sz:75},{n:'Łańcuch',sz:15}],sk:[{s:'s2',kg:14},{s:'s3',kg:5},{s:'s6',kg:0.5},{s:'s5',kg:1}]},
+];
+const DHR={obsluga:[{imie:'Ryszard Puszczok'},{imie:'Jarosław Przybysz'}],dojarze:[{imie:'Krzysztof Pawłowski'}],biuro:[]};
+const DN=[
+  {id:'n1',f:'Muugen Sobczyński',d:'2026-01-02',b:'RANKING SEX',nr:'DE0365127425',p:25,c:169,w:4225},
+  {id:'n2',f:'Muugen Sobczyński',d:'2026-01-02',b:'RANKING KON',nr:'DE0365127425',p:35,c:79.01,w:2765.35},
+  {id:'n3',f:'Syczewski Andrzej',d:'2026-01-02',b:'VIVALDI KON',nr:'NL645039889',p:30,c:105,w:3150},
+  {id:'n4',f:'Syczewski Andrzej',d:'2026-01-02',b:'VIVALDI SEX',nr:'NL645039889',p:30,c:180,w:5400},
+  {id:'n5',f:'Syczewski Andrzej',d:'2026-01-02',b:'PIRELLI KON',nr:'NL637919566',p:25,c:95,w:2375},
+  {id:'n6',f:'WCHiRZ Tulce',d:'2026-01-02',b:'DELUX SEX',nr:'DE1406960184',p:20,c:149,w:2980},
+  {id:'n7',f:'WCHiRZ Tulce',d:'2026-01-02',b:'RISE UP KON',nr:'DE0365902523',p:30,c:89,w:2670},
+  {id:'n8',f:'WCHiRZ Tulce',d:'2026-01-02',b:'ENDURO KON',nr:'FR3545142929',p:40,c:99,w:3960},
+  {id:'n9',f:'WCHiRZ Tulce',d:'2026-01-02',b:'ENDURO SEX',nr:'FR3545142929',p:40,c:169,w:6760},
+  {id:'n10',f:'SHIUZ Bydgoszcz',d:'2026-01-07',b:'UNISSON SEX',nr:'FR1732918277',p:30,c:140,w:4200},
+];
+
+let sur=LD('sur2',DS),gr=LD('gr2',DG),ml=LD('ml',{}),hrD=LD('hrD',DHR),obD=LD('obD',DHR),nas=LD('nas2',DN),kal=LD('kal',{}),hrE=LD('hrE',{}),obE=LD('obE',{});
+function sa(){SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE)}
+function gS(id){return sur.find(s=>s.id===id)}
+
+// Daily usage per surowiec (kg) from dawki + cielaki
+function dailyUse(sid){
+  let total=0;
+  // From TMR dawki
+  gr.forEach(g=>{const item=g.sk.find(x=>x.s===sid);if(item&&item.kg>0){const tsz=g.se.reduce((a,s)=>a+s.sz,0);total+=item.kg*tsz}});
+  // From cielaki tab (linked surowce)
+  const ciData=LD('ciData',{n:15,g:130,l:2,o:2,cg:0,ck:0});
+  const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
+  if(sid===ciLinks.proszek){total+=ciData.n*ciData.l*ciData.g/1000*ciData.o}
+  if(sid===ciLinks.grains){total+=ciData.cg||0}
+  if(sid===ciLinks.cielak){total+=ciData.ck||0}
+  return total;
+}
+
+// MLEKO
+function rMl(){
+  const m=+$('#ml-m').value,tp=$('#ml-v').value,k=tp+'_2026_'+m,ds=dim(2026,m);
+  if(!ml[k]){ml[k]=[];for(let d=1;d<=ds;d++){if(tp==='o')ml[k].push({d,sp:0,pr:0,od:0,ci:30,rz:30,sn:0});else ml[k].push({d,kr:0,pr:0,od:0,dj:0})}}
+  const da=ml[k],w=$('#ml-w');
+  if(tp==='o'){
+    let h='<table class="dt"><thead><tr><th style="width:45px">Dzień</th><th>Stan pop.</th><th>Produkcja</th><th>Odstawa</th><th>Cielęta</th><th>Rozchód</th><th>Stan nast.</th></tr></thead><tbody>';
+    da.forEach((r,i)=>{h+='<tr'+(isWe(2026,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.sp+'" onchange="uMl('+i+',\'sp\',this)"></td><td><input value="'+r.pr+'" onchange="uMl('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMl('+i+',\'od\',this)"></td><td><input value="'+r.ci+'" onchange="uMl('+i+',\'ci\',this)"></td><td>'+r2(r.rz,0)+'</td><td>'+r2(r.sn,0)+'</td></tr>'});
+    const tP=da.reduce((s,r)=>s+r.pr,0),tO=da.reduce((s,r)=>s+r.od,0),tC=da.reduce((s,r)=>s+r.ci,0),tR=da.reduce((s,r)=>s+r.rz,0);
+    h+='</tbody><tfoot><tr><td>RAZEM</td><td></td><td>'+tP+'</td><td>'+tO+'</td><td>'+tC+'</td><td>'+tR+'</td><td></td></tr></tfoot></table>';w.innerHTML=h;
+  } else {
+    let h='<table class="dt"><thead><tr><th style="width:45px">Dzień</th><th>Krowy</th><th>Produkcja</th><th>Odstawa</th><th>Śr./szt.</th><th>Dojne</th><th>Śr./dojną</th></tr></thead><tbody>';
+    da.forEach((r,i)=>{const a1=r.kr>0?r2(r.pr/r.kr,1):'—',a2=r.dj>0?r2(r.pr/r.dj,1):'—';
+      h+='<tr'+(isWe(2026,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.kr+'" onchange="uMlP('+i+',\'kr\',this)"></td><td><input value="'+r.pr+'" onchange="uMlP('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMlP('+i+',\'od\',this)"></td><td>'+a1+'</td><td><input value="'+r.dj+'" onchange="uMlP('+i+',\'dj\',this)"></td><td>'+a2+'</td></tr>'});
+    h+='</tbody></table>';w.innerHTML=h;
+  }
+}
+function uMl(i,f,el){const m=+$('#ml-m').value,k='o_2026_'+m;ml[k][i][f]=+el.value||0;const r=ml[k][i];r.rz=(r.od||0)+(r.ci||0);r.sn=r.sp+r.pr-r.rz;sa();rMl()}
+function uMlP(i,f,el){const m=+$('#ml-m').value,k='p_2026_'+m;ml[k][i][f]=+el.value||0;sa();rMl()}
+
+// SUROWCE (tony, PLN/t, + zużycie dzienne + wystarczy do)
+function rSur(){
+  let h='<table class="dt"><thead><tr><th>Surowiec</th><th>Cena PLN/t</th><th>Stan (t)</th><th>Zużycie dz. (kg)</th><th>Wystarczy do</th><th></th></tr></thead><tbody>';
+  sur.forEach((s,i)=>{
+    const du=dailyUse(s.id);
+    const stanKg=s.stan_t*1000;
+    let wystarczy='—';
+    if(du>0){const days=Math.floor(stanKg/du);const dt=new Date();dt.setDate(dt.getDate()+days);wystarczy='<span class="'+(days<14?'sur-warn':'sur-ok')+'">'+fmtDate(dt)+' ('+days+' dni)</span>'}
+    h+='<tr><td>'+s.nazwa+' <button class="btn bs" style="padding:1px 4px;font-size:9px;background:none;color:var(--pri);border:1px solid var(--brd)" onclick="eSurN('+i+')">✎</button></td>';
+    h+='<td><input step="1" value="'+r2(s.cena_t,0)+'" onchange="sur['+i+'].cena_t=+this.value;sa()"></td>';
+    h+='<td><input step="0.01" value="'+r2(s.stan_t,2)+'" onchange="sur['+i+'].stan_t=+this.value;sa();rSur()"></td>';
+    h+='<td>'+r2(du,1)+'</td><td style="text-align:left;font-family:var(--font);font-size:11px">'+wystarczy+'</td>';
+    h+='<td><button class="btn bs bd" onclick="if(confirm(\'Usunąć?\')){sur.splice('+i+',1);sa();rSur()}">✕</button></td></tr>';
+  });
+  h+='</tbody></table>';$('#sur-w').innerHTML=h;
+}
+function eSurN(i){opM('Edytuj nazwę','<div class="fg"><label>Nazwa</label><input type="text" id="esn" value="'+sur[i].nazwa+'"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="sur['+i+'].nazwa=$(\'#esn\').value.trim();sa();clM();rSur();rDk();toast(\'Zapisano\')">Zapisz</button>')}
+function addSur(){opM('Dodaj surowiec','<div class="fg" style="margin-bottom:8px"><label>Nazwa</label><input type="text" id="as-n"></div><div style="display:flex;gap:8px"><div class="fg"><label>SM %</label><input type="number" id="as-sm" value="88"></div><div class="fg"><label>Cena PLN/t</label><input type="number" id="as-c" value="0"></div><div class="fg"><label>Stan (t)</label><input type="number" id="as-s" step="0.01" value="0"></div></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAS()">Dodaj</button>')}
+function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');return}sur.push({id:uid(),nazwa:n,proc_sm:+$('#as-sm').value||88,cena_t:+$('#as-c').value||0,stan_t:+$('#as-s').value||0});sa();clM();rSur();toast('Dodano')}
+
+// DAWKI — FeedExpert (kg Prod only)
+function rDk(){
+  const allS=[];const seen=new Set();
+  gr.forEach(g=>g.sk.forEach(sk=>{if(!seen.has(sk.s)){seen.add(sk.s);allS.push(sk.s)}}));
+  let h='<table class="fe"><thead><tr><th rowspan="2" style="text-align:left;min-width:150px">Nazwa</th>';
+  gr.forEach((g,gi)=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h+='<th class="gh">'+g.nazwa+'<br><span style="font-weight:400;font-size:8px">'+tsz+' szt · '+g.z+'×/d</span> <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pDkGr('+gi+')">📄</button></th>'});
+  h+='</tr></thead><tbody>';
+  allS.forEach(sid=>{
+    const s=gS(sid);if(!s)return;
+    h+='<tr><td title="'+s.nazwa+'">'+s.nazwa+'</td>';
+    gr.forEach((g,gi)=>{
+      const item=g.sk.find(x=>x.s===sid);const kg=item?item.kg:0;
+      h+='<td><input value="'+kg+'" onchange="uDk('+gi+',\''+sid+'\',this)"></td>';
+    });
+    h+='</tr>';
+  });
+  h+='</tbody><tfoot><tr><td>Całość kg</td>';
+  gr.forEach(g=>{h+='<td style="font-size:13px">'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
+  h+='</tr></tfoot></table>';$('#dk-w').innerHTML=h;
+
+  // Sectors - colored by group
+  const cols=['sec-a','sec-b','sec-c','sec-d','sec-a','sec-b','sec-c'];
+  let sh='<table class="dt" style="min-width:auto"><thead><tr><th style="width:80px">Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th><th style="width:30px"></th></tr></thead><tbody>';
+  gr.forEach((g,gi)=>{
+    const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);const cc=cols[gi%cols.length];
+    g.se.forEach((sk,si)=>{
+      sh+='<tr class="'+cc+'"><td style="font-size:11px">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+'</td>';
+      sh+='<td><input min="0" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=+this.value;sa();rDk();rSur()"></td>';
+      sh+='<td>'+r2(totKg,1)+'</td><td>'+r2(totKg*sk.sz,0)+'</td>';
+      sh+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:8px" onclick="moveSek('+gi+','+si+')" title="Przenieś">⇄</button> <button class="btn bs bd" style="padding:1px 4px" onclick="if(gr['+gi+'].se.length>1){gr['+gi+'].se.splice('+si+',1);sa();rDk();rSur()}else toast(\'Min. 1\')">✕</button></td></tr>';
+    });
+  });
+  sh+='</tbody></table>';
+  sh+='<div class="fr"><button class="btn bs bo" onclick="addSek()">+ Sektor</button></div>';
+  $('#dk-s').innerHTML=sh;sa();
+}
+function uDk(gi,sid,el){const g=gr[gi],v=+el.value||0;let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur()}
+function addDkS(){opM('Dodaj surowiec do dawek','<div class="fg"><label>Surowiec</label><select id="ad-s">'+sur.map(s=>'<option value="'+s.id+'">'+s.nazwa+'</option>').join('')+'</select></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr.forEach(g=>{const sid=$(\'#ad-s\').value;if(!g.sk.find(x=>x.s===sid))g.sk.push({s:sid,kg:0})});sa();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
+function moveSek(fromGi,si){
+  const sek=gr[fromGi].se[si];
+  const opts=gr.filter((_,i)=>i!==fromGi).map((g,i)=>{const ri=i>=fromGi?i+1:i;return'<option value="'+ri+'">'+g.nazwa+'</option>'}).join('');
+  opM('Przenieś sektor „'+sek.n+'"','<p style="margin-bottom:10px;font-size:13px">Z grupy: <b>'+gr[fromGi].nazwa+'</b></p><div class="fg"><label>Do grupy</label><select id="ms-g">'+opts+'</select></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="const toGi=+$(\'#ms-g\').value;gr[toGi].se.push(gr['+fromGi+'].se.splice('+si+',1)[0]);sa();clM();rDk();rSur();toast(\'Przeniesiono\')">Przenieś</button>');
+}
+function addSek(){opM('Dodaj sektor','<div class="fg" style="margin-bottom:8px"><label>Grupa</label><select id="as-g">'+gr.map((g,i)=>'<option value="'+i+'">'+g.nazwa+'</option>').join('')+'</select></div><div class="fg" style="margin-bottom:8px"><label>Nazwa sektora</label><input type="text" id="as-sn"></div><div class="fg"><label>Sztuk</label><input type="number" id="as-ss" value="10"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr[+$(\'#as-g\').value].se.push({n:$(\'#as-sn\').value.trim()||\'Nowy\',sz:+$(\'#as-ss\').value||0});sa();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
+
+// Per-group PDF (for wagon operator)
+function pDkGr(gi){
+  const g=gr[gi],tsz=g.se.reduce((a,s)=>a+s.sz,0),totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
+  let h='<h3>'+g.nazwa+' — '+fmtDate(new Date())+'</h3>';
+  h+='<table><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
+  let run=0;
+  g.sk.forEach(sk=>{if(sk.kg<=0)return;const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz,1);run=r2(run+sk.kg*tsz,1);
+    h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td>'+sk.kg+'</td><td>'+nw+'</td><td>'+run+'</td></tr>'});
+  h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg,1)+'</b></td><td><b>'+r2(totKg*tsz,1)+'</b></td><td></td></tr></tfoot></table>';
+  h+='<h3>Podział na sektory — '+g.z+' RAZY dziennie</h3><table><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
+  g.se.forEach(s=>{h+='<tr><td style="text-align:left">'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>'});
+  h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
+  prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h);
+}
+
+// CIELAKI (linked to surowce: preparat mlekozast., Calf Grains, Cielak)
+function calcCi(){
+  const n=+$('#ci-n').value||0,g=+$('#ci-g').value||130,l=+$('#ci-l').value||2,o=+$('#ci-o').value||2;
+  const cg=+$('#ci-cg').value||0,ck=+$('#ci-ck').value||0;
+  const wK=n*l,pK=r2(n*l*g/1000,2),wD=r2(wK*o,1),pD=r2(pK*o,2);
+  // Save for surowce daily usage calc
+  SV('ciData',{n,g,l,o,cg,ck});
+  $('#ci-s').innerHTML='<div class="si"><div class="v">'+wK+'</div><div class="l">L wody/karm.</div></div><div class="si"><div class="v">'+pK+'</div><div class="l">kg proszku/karm.</div></div><div class="si"><div class="v">'+wD+'</div><div class="l">L wody/dobę</div></div><div class="si"><div class="v">'+pD+'</div><div class="l">kg proszku/dobę</div></div><div class="si"><div class="v">'+cg+'</div><div class="l">Calf Grains/dobę</div></div><div class="si"><div class="v">'+ck+'</div><div class="l">Cielak/dobę</div></div>';
+}
+
+// HARMONOGRAM & OBECNOŚĆ
+function rSch(pf){
+  const m=+$('#'+pf+'-m').value,y=+$('#'+pf+'-y').value,gp=$('#'+pf+'-g').value;
+  const data=pf==='hr'?hrD:obD,ent=pf==='hr'?hrE:obE;
+  const wk=data[gp]||[];const ds=dim(y,m);const ek=pf+'_'+y+'_'+m+'_'+gp;if(!ent[ek])ent[ek]={};
+  let h='<table class="dt" style="min-width:'+(80+wk.length*85)+'px"><thead><tr><th style="width:55px">Dzień</th>';
+  wk.forEach(w=>h+='<th>'+w.imie+'</th>');h+='</tr></thead><tbody>';
+  let tot=wk.map(()=>0);
+  for(let d=1;d<=ds;d++){const we=isWe(y,m,d),dw=dow(y,m,d);
+    h+='<tr'+(we?' class="we"':'')+'><td>'+d+' '+DP[dw]+'</td>';
+    wk.forEach((w,wi)=>{const dk=d+'_'+wi,v=ent[ek][dk]||'';if(v==='8')tot[wi]+=8;
+      h+='<td><select data-ek="'+ek+'" data-dk="'+dk+'" data-pf="'+pf+'" onchange="uSch(this)">';
+      ['','8','Wolne','Urlop','L4'].forEach(o=>h+='<option value="'+o+'"'+(v===o?' selected':'')+'>'+(o||'—')+'</option>');h+='</select></td>'});h+='</tr>';}
+  h+='</tbody><tfoot><tr><td>Godz.</td>';tot.forEach(t=>h+='<td>'+t+'</td>');h+='</tr></tfoot></table>';$('#'+pf+'-w').innerHTML=h;}
+function uSch(el){(el.dataset.pf==='hr'?hrE:obE)[el.dataset.ek][el.dataset.dk]=el.value;sa();rSch(el.dataset.pf)}
+function addPr(pf){const gp=$('#'+pf+'-g').value;opM('Dodaj pracownika','<div class="fg"><label>Imię i nazwisko</label><input type="text" id="ap-n"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okPr(\''+pf+'\',\''+gp+'\')">Dodaj</button>')}
+function okPr(pf,gp){const n=$('#ap-n').value.trim();if(!n){toast('Podaj imię');return}(pf==='hr'?hrD:obD)[gp]=((pf==='hr'?hrD:obD)[gp]||[]);(pf==='hr'?hrD:obD)[gp].push({imie:n});sa();clM();rSch(pf);toast('Dodano')}
+function pSch(pf){const m=+$('#'+pf+'-m').value,g=$('#'+pf+'-g').value;prn((pf==='hr'?'Harmonogram pracy':'Lista obecności')+' — '+MO[m]+' '+$('#'+pf+'-y').value+' — '+g,$('#'+pf+'-w').innerHTML)}
+
+// NASIENIE (edycja + usuwanie)
+function rNas(){
+  let h='<table class="dt" style="min-width:700px"><thead><tr><th>Firma</th><th>Data</th><th>Buhaj</th><th>Numer</th><th>Porcje</th><th>Cena</th><th>Wartość</th><th></th></tr></thead><tbody>';
+  let tP=0,tW=0;
+  nas.forEach((n,i)=>{tP+=n.p;tW+=n.w;
+    h+='<tr><td>'+n.f+'</td><td style="font-family:var(--mono)">'+n.d+'</td><td>'+n.b+'</td><td style="font-size:10px">'+n.nr+'</td><td>'+n.p+'</td><td>'+r2(n.c,2)+'</td><td>'+r2(n.w,2)+'</td>';
+    h+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:9px" onclick="eNas('+i+')">✎</button> <button class="btn bs bd" style="padding:1px 4px;font-size:9px" onclick="if(confirm(\'Usunąć?\')){nas.splice('+i+',1);sa();rNas();toast(\'Usunięto\')}">✕</button></td></tr>'});
+  h+='</tbody><tfoot><tr><td colspan="4">RAZEM</td><td>'+tP+'</td><td></td><td>'+r2(tW,2)+'</td><td></td></tr></tfoot></table>';$('#nas-w').innerHTML=h;}
+function addNas(){nasForm('Dodaj zakup nasienia',{f:'',d:'',b:'',nr:'',p:20,c:100},-1)}
+function eNas(i){nasForm('Edytuj wpis',nas[i],i)}
+function nasForm(title,n,idx){
+  opM(title,
+    '<div class="fg" style="margin-bottom:8px"><label>Firma</label><input type="text" id="nf" value="'+(n.f||'')+'"></div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:8px"><div class="fg"><label>Data</label><input type="date" id="nd" value="'+(n.d||'')+'"></div><div class="fg"><label>Buhaj</label><input type="text" id="nb" value="'+(n.b||'')+'"></div></div>'+
+    '<div class="fg" style="margin-bottom:8px"><label>Numer</label><input type="text" id="nn" value="'+(n.nr||'')+'"></div>'+
+    '<div style="display:flex;gap:8px"><div class="fg"><label>Porcje</label><input type="number" id="np" value="'+(n.p||20)+'"></div><div class="fg"><label>Cena netto</label><input type="number" id="nc" step="0.01" value="'+(n.c||100)+'"></div></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okNas('+idx+')">Zapisz</button>');
+}
+function okNas(idx){
+  const p=+$('#np').value||0,c=+$('#nc').value||0;
+  const obj={id:idx>=0?nas[idx].id:uid(),f:$('#nf').value.trim(),d:$('#nd').value,b:$('#nb').value.trim(),nr:$('#nn').value.trim(),p,c,w:r2(p*c,2)};
+  if(idx>=0)nas[idx]=obj;else nas.push(obj);
+  sa();clM();rNas();toast(idx>=0?'Zaktualizowano':'Dodano');
+}
+
+// KALENDARZ
+function rKal(){
+  const m=+$('#kal-m').value,y=+$('#kal-y').value,k=y+'_'+m;if(!kal[k])kal[k]={};const ent=kal[k],ds=dim(y,m),fd=dow(y,m,1);
+  let h='<div class="cal-grid">';DP.forEach((d,i)=>h+='<div class="cal-hdr'+(i>=5?' wknd':'')+'">'+d+'</div>');
+  for(let e=0;e<fd;e++)h+='<div class="cal-cell empty"></div>';
+  for(let d=1;d<=ds;d++){const we=isWe(y,m,d),tx=ent[d]||'';
+    h+='<div class="cal-cell'+(we?' wknd':'')+'" onclick="eKal('+y+','+m+','+d+')"><div class="dn">'+d+'</div><div class="dt2">'+tx.replace(/</g,'&lt;')+'</div></div>'}
+  const rem=(fd+ds)%7;if(rem>0)for(let e=0;e<7-rem;e++)h+='<div class="cal-cell empty"></div>';
+  h+='</div>';$('#kal-w').innerHTML=h;}
+function eKal(y,m,d){const k=y+'_'+m;if(!kal[k])kal[k]={};const c=kal[k][d]||'';
+  opM(d+' '+MO[m]+' '+y,'<div class="fg"><label>Notatka</label><textarea id="kt" rows="5" style="margin-top:4px;font-size:15px;font-weight:700">'+c+'</textarea></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bs bd" onclick="delete kal[\''+k+'\']['+d+'];sa();clM();rKal()">Wyczyść</button><button class="btn bp" onclick="kal[\''+k+'\']['+d+']=$(\'#kt\').value.trim();sa();clM();rKal();toast(\'Zapisano\')">Zapisz</button>')}
+
+// INIT
+(function(){
+  const s=LD('sess',null);if(s&&us[s]){cR=s;showApp()}
+  const cm=new Date().getMonth();
+  ['ml-m','hr-m','ob-m','kal-m'].forEach(id=>{const e=$('#'+id);if(e)fMS(e,cm)});
+  $('#ml-v').addEventListener('change',rMl);$('#ml-m').addEventListener('change',rMl);
+  calcCi();$('#lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
