@@ -224,6 +224,12 @@ const DEF_GT_MAP={
 // Load sektor→gt mapping (per sektor "grupa|sektor" → gt key)
 let gtMap=LD('gtMap',{});
 
+// Migration: assign kat to surowce that don't have it
+const KAT_DEFAULTS={'s1':'obj','s2':'obj','s3':'obj','s4':'obj','s5':'tres','s6':'tres','s7':'tres','s8':'tres','s9':'dod','s10':'dod','s11':'dod','s12':'obj','s13':'tres','s14':'tres','s15':'tres','s16':'tres'};
+sur.forEach(s=>{if(!s.kat)s.kat=KAT_DEFAULTS[s.id]||'obj'});
+// Migration: add realSz to groups that don't have it
+gr.forEach(g=>{if(g.realSz==null)g.realSz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1)});
+
 // ===== FIREBASE SYNC =====
 const firebaseConfig={apiKey:"AIzaSyC3vYPG90_aMEaKWJuhmzD1tj5lXT8Zh5o",authDomain:"ohz-bobrowniki-po-app.firebaseapp.com",projectId:"ohz-bobrowniki-po-app",storageBucket:"ohz-bobrowniki-po-app.firebasestorage.app",messagingSenderId:"90224575465",appId:"1:90224575465:web:07614843e409aafd600178"};
 let fbDb=null,fbReady=false,fbApplyingRemote=false,fbSaveTimer=null,fbLastPushed='',fbLocalChangeAt=0;
@@ -343,6 +349,13 @@ function rSur(){
   h+='</tbody></table>';$('#sur-w').innerHTML=h;
 }
 function mvSur(i,dir){const j=i+dir;if(j<0||j>=sur.length)return;[sur[i],sur[j]]=[sur[j],sur[i]];sa(true);rSur();rDk()}
+function toggleZ(gi){
+  const g=gr[gi];const oldZ=g.z||1;const newZ=oldZ===2?1:2;
+  // Adjust sector sztuk: if going 2→1, double each; if 1→2, halve each
+  if(oldZ===2&&newZ===1){g.se.forEach(s=>{s.sz=s.sz*2})}
+  else if(oldZ===1&&newZ===2){g.se.forEach(s=>{s.sz=Math.round(s.sz/2)})}
+  g.z=newZ;sa(true);rDk();rSur();toast(g.nazwa+': '+newZ+'× dziennie');
+}
 function delSurFromDk(sid){
   const s=gS(sid);const hasKg=gr.some(g=>g.sk.find(x=>x.s===sid&&x.kg>0));
   if(hasKg&&!confirm('Surowiec „'+(s?s.nazwa:sid)+'" ma niezerowe kg w dawkach. Usunąć wiersz ze wszystkich grup?'))return;
@@ -350,8 +363,8 @@ function delSurFromDk(sid){
   sa();rDk();rSur();toast('Usunięto z dawek');
 }
 function eSurN(i){opM('Edytuj nazwę','<div class="fg"><label>Nazwa</label><input type="text" id="esn" value="'+sur[i].nazwa+'"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="sur['+i+'].nazwa=$(\'#esn\').value.trim();sa();clM();rSur();rDk();toast(\'Zapisano\')">Zapisz</button>')}
-function addSur(){opM('Dodaj surowiec','<div class="fg" style="margin-bottom:8px"><label>Nazwa</label><input type="text" id="as-n"></div><div style="display:flex;gap:8px"><div class="fg"><label>SM %</label><input type="number" id="as-sm" value="88"></div><div class="fg"><label>Cena PLN/t</label><input type="number" id="as-c" value="0"></div><div class="fg"><label>Stan (t)</label><input type="number" id="as-s" step="0.01" value="0"></div></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAS()">Dodaj</button>')}
-function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');return}sur.push({id:uid(),nazwa:n,proc_sm:+$('#as-sm').value||88,cena_t:+$('#as-c').value||0,stan_t:+$('#as-s').value||0});sa();clM();rSur();toast('Dodano')}
+function addSur(){opM('Dodaj surowiec','<div class="fg" style="margin-bottom:8px"><label>Nazwa</label><input type="text" id="as-n"></div><div style="display:flex;gap:8px;margin-bottom:8px"><div class="fg"><label>Kategoria</label><select id="as-kat"><option value="obj">Objętościowa</option><option value="tres">Treściwa</option><option value="dod">Dodatek</option></select></div><div class="fg"><label>SM %</label><input type="number" id="as-sm" value="88"></div></div><div style="display:flex;gap:8px"><div class="fg"><label>Cena PLN/t</label><input type="number" id="as-c" value="0"></div><div class="fg"><label>Stan (t)</label><input type="number" id="as-s" step="0.01" value="0"></div></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAS()">Dodaj</button>')}
+function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');return}sur.push({id:uid(),nazwa:n,proc_sm:+$('#as-sm').value||88,cena_t:+$('#as-c').value||0,stan_t:+$('#as-s').value||0,kat:$('#as-kat').value||'obj'});sa();clM();rSur();toast('Dodano')}
 
 // DAWKI — FeedExpert (kg Prod only)
 function rDk(){
@@ -360,7 +373,8 @@ function rDk(){
   gr.forEach(g=>g.sk.forEach(sk=>used.add(sk.s)));
   const allS=sur.filter(s=>used.has(s.id)).map(s=>s.id);
   let h='<table class="fe"><thead><tr><th rowspan="2" style="text-align:left;min-width:200px">Nazwa</th>';
-  gr.forEach((g,gi)=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h+='<th class="gh">'+g.nazwa+'<br><span style="font-weight:400;font-size:8px">'+tsz+' szt · '+g.z+'×/d</span> <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pDkGr('+gi+')">📄</button></th>'});
+  gr.forEach((g,gi)=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);const realSz=g.realSz||(tsz*(g.z||1));const virtualDaily=tsz*(g.z||1);const pct=realSz>0?r2(virtualDaily/realSz*100,1):100;
+    h+='<th class="gh">'+g.nazwa+'<br><input type="number" value="'+realSz+'" style="width:40px;font-size:9px;text-align:center;padding:1px;border-radius:3px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff" onchange="gr['+gi+'].realSz=+this.value;sa();rDk()" title="Realna liczba sztuk"> szt.real<br><span style="font-weight:400;font-size:8px">'+tsz+' szt · <button style="border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;font-size:8px;padding:0 3px;border-radius:3px;cursor:pointer" onclick="toggleZ('+gi+')">'+(g.z||1)+'×/d</button> · '+pct+'%</span> <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pDkGr('+gi+')">📄</button></th>'});
   h+='</tr></thead><tbody>';
   allS.forEach((sid,rowIdx)=>{
     const s=gS(sid);if(!s)return;
@@ -395,7 +409,7 @@ function rDk(){
       sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
       Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
       sh+='</select></td>';
-      sh+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:8px" onclick="moveSek('+gi+','+si+')" title="Przenieś">⇄</button> <button class="btn bs bd" style="padding:1px 4px" onclick="if(gr['+gi+'].se.length>1){gr['+gi+'].se.splice('+si+',1);sa();rDk();rSur()}else toast(\'Min. 1\')">✕</button></td></tr>';
+      sh+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:8px" onclick="moveSek('+gi+','+si+')" title="Przenieś">⇄</button> <button class="btn bs bd" style="padding:1px 4px" onclick="delSek('+gi+','+si+')">✕</button></td></tr>';
     });
   });
   sh+='</tbody></table>';
@@ -408,14 +422,14 @@ function addDkS(){
     '<div class="fg" style="margin-bottom:10px"><label>Istniejący surowiec</label><select id="ad-s"><option value="">— wybierz z bazy —</option>'+sur.map(s=>'<option value="'+s.id+'">'+s.nazwa+'</option>').join('')+'</select></div>'+
     '<div style="border-top:1px solid var(--brd);padding-top:10px;margin-top:6px"><p style="font-size:12px;color:var(--txt2);margin-bottom:8px">...lub dodaj nowy surowiec:</p>'+
     '<div class="fg" style="margin-bottom:8px"><label>Nazwa nowego</label><input type="text" id="ad-nn"></div>'+
-    '<div style="display:flex;gap:8px"><div class="fg"><label>SM %</label><input type="number" id="ad-sm" value="88"></div><div class="fg"><label>Cena PLN/t</label><input type="number" id="ad-ct" value="0"></div></div></div>',
+    '<div style="display:flex;gap:8px"><div class="fg"><label>SM %</label><input type="number" id="ad-sm" value="88"></div><div class="fg"><label>Cena PLN/t</label><input type="number" id="ad-ct" value="0"></div><div class="fg"><label>Kategoria</label><select id="ad-kat"><option value="obj">Objętościowa</option><option value="tres">Treściwa</option><option value="dod">Dodatek</option></select></div></div></div>',
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAddDkS()">Dodaj</button>');
 }
 function okAddDkS(){
   let sid=$('#ad-s').value;
   const nn=$('#ad-nn').value.trim();
   if(!sid&&!nn){toast('Wybierz lub wpisz nazwę');return}
-  if(nn){sid=uid();sur.push({id:sid,nazwa:nn,proc_sm:+$('#ad-sm').value||88,cena_t:+$('#ad-ct').value||0,stan_t:0})}
+  if(nn){sid=uid();sur.push({id:sid,nazwa:nn,proc_sm:+$('#ad-sm').value||88,cena_t:+$('#ad-ct').value||0,stan_t:0,kat:$('#ad-kat')?$('#ad-kat').value:'obj'})}
   gr.forEach(g=>{if(!g.sk.find(x=>x.s===sid))g.sk.push({s:sid,kg:0})});
   sa();clM();rDk();rSur();toast('Dodano');
 }
@@ -424,6 +438,10 @@ function moveSek(fromGi,si){
   const opts=gr.filter((_,i)=>i!==fromGi).map((g,i)=>{const ri=i>=fromGi?i+1:i;return'<option value="'+ri+'">'+g.nazwa+'</option>'}).join('');
   opM('Przenieś sektor „'+sek.n+'"','<p style="margin-bottom:10px;font-size:13px">Z grupy: <b>'+gr[fromGi].nazwa+'</b></p><div class="fg"><label>Do grupy</label><select id="ms-g">'+opts+'</select></div>',
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="const toGi=+$(\'#ms-g\').value;gr[toGi].se.push(gr['+fromGi+'].se.splice('+si+',1)[0]);sa();clM();rDk();rSur();toast(\'Przeniesiono\')">Przenieś</button>');
+}
+function delSek(gi,si){
+  if(gr[gi].se.length>1){gr[gi].se.splice(si,1);sa();rDk();rSur()}
+  else if(confirm('To ostatni sektor w grupie „'+gr[gi].nazwa+'". Usunąć całą grupę?')){gr.splice(gi,1);sa(true);rDk();rSur();toast('Usunięto grupę')}
 }
 function addSek(){opM('Dodaj sektor','<div class="fg" style="margin-bottom:8px"><label>Grupa</label><select id="as-g">'+gr.map((g,i)=>'<option value="'+i+'">'+g.nazwa+'</option>').join('')+'</select></div><div class="fg" style="margin-bottom:8px"><label>Nazwa sektora</label><input type="text" id="as-sn"></div><div class="fg"><label>Sztuk</label><input type="number" id="as-ss" value="10"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr[+$(\'#as-g\').value].se.push({n:$(\'#as-sn\').value.trim()||\'Nowy\',sz:+$(\'#as-ss\').value||0});sa();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
 
@@ -590,10 +608,6 @@ function rKoszty(){
   h1+='<tr><td style="font-weight:700;background:var(--amber-bg);color:var(--amber)">KOSZT zł/szt/dzień</td>';
   gr.forEach(g=>{let cost=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)cost+=sk.kg*(s.cena_t/1000)});
     h1+='<td style="font-weight:700;background:var(--amber-bg);color:var(--amber)">'+r2(cost,2)+'</td>'});h1+='</tr>';
-  // KOSZT zł/szt/miesiąc
-  h1+='<tr><td style="font-weight:700;background:var(--amber-bg)">KOSZT zł/szt/miesiąc</td>';
-  gr.forEach(g=>{let cost=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)cost+=sk.kg*(s.cena_t/1000)});
-    h1+='<td style="font-weight:700;background:var(--amber-bg)">'+r2(cost*30,0)+'</td>'});h1+='</tr>';
   h1+='</tbody></table>';$('#kos-s1').innerHTML=h1;
 
   // === SEKCJA 2: Zużycie surowców wg kategorii ===
