@@ -96,7 +96,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <body>
 <div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
 <div id="app">
-<header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳ Łączenie...</span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
+<header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳</span><span id="hdr-extra"></span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
 <nav class="tab-bar" id="tbar"></nav>
 <section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
@@ -123,7 +123,10 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
     <div class="tw" id="dek-hist"></div>
   </div>
 </section>
-<section class="tp" id="tab-cielaki"><div class="card"><div class="ch"><span>Cielaki — mleko w proszku</span><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div><div class="fr"><div class="fg"><label>Cielaków</label><input type="number" id="ci-n" min="1" value="15" oninput="calcCi()"></div><div class="fg"><label>g/litr</label><input type="number" id="ci-g" value="130" oninput="calcCi()"></div><div class="fg"><label>L/szt./karm.</label><input type="number" id="ci-l" step="0.5" value="2" oninput="calcCi()"></div><div class="fg"><label>Odpojów/dobę</label><input type="number" id="ci-o" min="1" max="4" value="2" oninput="calcCi()"></div></div><div class="sbar" id="ci-s"></div></div><div class="card"><div class="ch">Pasze i mleko pełne dla cieląt (kg lub L / dobę)</div><div class="fr"><div class="fg"><label>Mleko pełne (L/dobę)</label><input type="number" id="ci-mp" step="1" value="0" oninput="calcCi()"></div><div class="fg"><label>Calf Grains (kg/dobę)</label><input type="number" id="ci-cg" step="0.1" value="0" oninput="calcCi()"></div><div class="fg"><label>Cielak (kg/dobę)</label><input type="number" id="ci-ck" step="0.1" value="0" oninput="calcCi()"></div></div><p style="padding:0 12px 10px;font-size:11px;color:var(--txt2)">Mleko pełne rozchoduje się automatycznie z odstawy mleka (zakładka Mleko → kolumna "Cielęta").</p></div></section>
+<section class="tp" id="tab-cielaki"><div class="card"><div class="ch"><span>Cielaki — 3 sektory</span><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div>
+<div id="ci-panels"></div>
+<div class="sbar" id="ci-s"></div>
+</div></section>
 <section class="tp" id="tab-harmonogram"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="hr-m" onchange="rSch('hr')"></select></div><div class="fg"><label>Rok</label><input type="number" id="hr-y" value="2026" min="2024" max="2030" onchange="rSch('hr')"></div><div class="fg"><label>Grupa</label><select id="hr-g" onchange="rSch('hr')"><option value="obsluga">Obsługa</option><option value="dojarze">Dojarze</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('hr')">📄</button></div></div><div class="card"><div class="ch"><span>Harmonogram pracy</span><button class="btn bs bo" onclick="addPr('hr')">+ Pracownik</button></div><div class="tw" id="hr-w"></div></div></section>
 <section class="tp" id="tab-obecnosc"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ob-m" onchange="rSch('ob')"></select></div><div class="fg"><label>Rok</label><input type="number" id="ob-y" value="2026" min="2024" max="2030" onchange="rSch('ob')"></div><div class="fg"><label>Grupa</label><select id="ob-g" onchange="rSch('ob')"><option value="dojarze">Dojarze</option><option value="obsluga">Obsługa</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('ob')">📄</button></div></div><div class="card"><div class="ch"><span>Lista obecności</span><button class="btn bs bo" onclick="addPr('ob')">+ Pracownik</button></div><div class="tw" id="ob-w"></div></div></section>
 <section class="tp" id="tab-koszty">
@@ -157,16 +160,65 @@ function prn(t,h){$('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowni
 function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
 function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()}
 
-// AUTH
-const DU={zootechnik:'admin',magazynier:'magazyn'};
-let us=LD('us',DU),cR=null;
-const RT={zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce']};
+// AUTH — 4 roles
+const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn'};
+let passes=LD('passes',null),cR=null;
+const RT={tworca:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce']};
 const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',koszty:'Koszty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
-function doLogin(){const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}let r=null;for(const[k,v]of Object.entries(us))if(v===p){r=k;break}if(!r){$('#le').textContent='Nieprawidłowe hasło';return}cR=r;SV('sess',r);showApp()}
+const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier'};
+function isRO(){return cR==='prezes'}
+function canPass(){return cR==='tworca'}
+function canEdit(){return cR==='tworca'||cR==='zootechnik'||cR==='magazynier'}
+function doLogin(){
+  const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}
+  const pw=passes||DEF_PASSES;let role=null;
+  for(const[r,v]of Object.entries(pw))if(v===p){role=r;break}
+  if(!role){$('#le').textContent='Nieprawidłowe hasło';return}
+  cR=role;SV('sess',role);showApp();
+}
 function doLogout(){cR=null;localStorage.removeItem('ohz_sess');$('#app').style.display='none';$('#login-screen').style.display='flex';$('#lp').value='';$('#le').textContent=''}
-function showApp(){$('#login-screen').style.display='none';$('#app').style.display='block';$('#urb').textContent=cR==='zootechnik'?'Zootechnik':'Magazynier';bTabs();startFbSync()}
+function showApp(){
+  $('#login-screen').style.display='none';$('#app').style.display='block';
+  $('#urb').textContent=RL[cR]||cR;
+  let ex='';
+  if(canPass())ex+='<button class="blo" onclick="showPassMgr()" style="margin-right:4px">🔑</button>';
+  if(canEdit())ex+='<button class="blo" onclick="exportBackup()" style="margin-right:4px">⬇</button><button class="blo" onclick="importBackup()" style="margin-right:4px">⬆</button>';
+  $('#hdr-extra').innerHTML=ex;
+  bTabs();startFbSync();
+}
+function applyRO(){if(!isRO())return;setTimeout(()=>{$$('.tp.active input,.tp.active select,.tp.active textarea').forEach(el=>el.disabled=true);$$('.tp.active .btn,.tp.active .bpdf,.tp.active button:not(.tab-btn)').forEach(el=>{if(!el.closest('.tab-bar'))el.style.opacity='0.3';el.style.pointerEvents='none'})},60)}
+// Password manager
+function showPassMgr(){
+  const pw=passes||DEF_PASSES;
+  opM('Zarządzanie hasłami',
+    '<div class="fg" style="margin-bottom:8px"><label>Twórca</label><input type="text" id="pw-tw" value="'+(pw.tworca||'')+'"></div>'+
+    '<div class="fg" style="margin-bottom:8px"><label>Zootechnik</label><input type="text" id="pw-zo" value="'+(pw.zootechnik||'')+'"></div>'+
+    '<div class="fg" style="margin-bottom:8px"><label>Prezes</label><input type="text" id="pw-pr" value="'+(pw.prezes||'')+'"></div>'+
+    '<div class="fg"><label>Magazynier</label><input type="text" id="pw-mg" value="'+(pw.magazynier||'')+'"></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="savePasswords()">Zapisz</button>');
+}
+function savePasswords(){
+  passes={tworca:$('#pw-tw').value.trim()||'tworca',zootechnik:$('#pw-zo').value.trim()||'admin',prezes:$('#pw-pr').value.trim()||'prezes',magazynier:$('#pw-mg').value.trim()||'magazyn'};
+  SV('passes',passes);
+  // Also save to Firebase
+  if(fbDb)fbDb.collection('ohz_data').doc('config').set({passes}).catch(e=>console.warn(e));
+  clM();toast('Hasła zapisane');
+}
+// Backup export/import
+function exportBackup(){
+  const data=JSON.stringify(collectState(),null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='ohz_backup_'+isoDate(new Date())+'.json';a.click();toast('Kopia pobrana');
+}
+function importBackup(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{
+    if(!confirm('Wgrać kopię zapasową? To nadpisze WSZYSTKIE obecne dane!'))return;
+    try{const d=JSON.parse(ev.target.result);applyState(d);pushToFirebase(true);toast('Kopia przywrócona')}catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
+}
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]()}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
 function pT(t){const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' 2026'),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia 2026',kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
 const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
 prn(ti[t](),$('#'+wr[t]).innerHTML)}
@@ -213,7 +265,11 @@ const DN=[
   {id:'n10',f:'SHIUZ Bydgoszcz',d:'2026-01-07',b:'UNISSON SEX',nr:'FR1732918277',p:30,c:140,w:4200},
 ];
 
-let sur=LD('sur2',DS),gr=LD('gr2',DG),ml=LD('ml',{}),hrD=LD('hrD',DHR),obD=LD('obD',DHR),nas=LD('nas2',DN),kal=LD('kal',{}),hrE=LD('hrE',{}),obE=LD('obE',{}),ciData=LD('ciData',{n:15,g:130,l:2,o:2,cg:0,ck:0,mp:0}),hist=LD('hist',{}),lastDed=LD('lastDed','');
+let sur=LD('sur2',DS),gr=LD('gr2',DG),ml=LD('ml',{}),hrD=LD('hrD',DHR),obD=LD('obD',DHR),nas=LD('nas2',DN),kal=LD('kal',{}),hrE=LD('hrE',{}),obE=LD('obE',{}),ciData=LD('ciData3',{sektory:[
+  {nazwa:'Stare budki',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:30},
+  {nazwa:'Nowe budki',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:0},
+  {nazwa:'Na automacie',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:0}
+]}),hist=LD('hist',{}),lastDed=LD('lastDed','');
 // Grupy technologiczne (dla Dekadówek): kluczy → nazwa
 const GT={krowy:'Krowy',jc:'Jałówki Cielne',jr:'Jałówki od 0,5-1,5 roku',cj:'Cielaki jałówki 2 tyg-0,5 roku',cb:'Cielaki byki 2 tyg-0,5 roku',c2:'Cielaki do 2 tygodni',un:'Nieprzypisane'};
 // Domyślne przypisania sektorów → grupy technologiczne (możesz zmieniać w UI)
@@ -256,7 +312,7 @@ function applyState(d){
   if(d.nas)nas=d.nas;if(d.kal)kal=d.kal;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE;
   if(d.ciData)ciData=d.ciData;if(d.hist)hist=d.hist;if(d.lastDed)lastDed=d.lastDed;if(d.gtMap)gtMap=d.gtMap;
   SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
-  SV('ciData',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
+  SV('ciData3',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
   fbApplyingRemote=false;
   const activeBtn=document.querySelector('.tab-btn.active');
   if(activeBtn)oT(activeBtn.dataset.t);
@@ -264,6 +320,8 @@ function applyState(d){
 
 function startFbSync(){
   if(!fbDb){setSyncBadge('offline');catchUpDeductions();return}
+  // Load passwords from config
+  fbDb.collection('ohz_data').doc('config').get().then(doc=>{if(doc.exists&&doc.data().passes){passes=doc.data().passes;SV('passes',passes)}}).catch(()=>{});
   fbDb.collection('ohz_data').doc('state').onSnapshot(doc=>{
     if(doc.exists){
       const d=doc.data();
@@ -294,7 +352,7 @@ function pushToFirebase(immediate){
 
 function sa(immediate){
   SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
-  SV('ciData',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
+  SV('ciData3',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
   if(!fbApplyingRemote){fbLocalChangeAt=Date.now();pushToFirebase(immediate||false)}
 }
 function gS(id){return sur.find(s=>s.id===id)}
@@ -304,9 +362,10 @@ function dailyUse(sid){
   let total=0;
   gr.forEach(g=>{const item=g.sk.find(x=>x.s===sid);if(item&&item.kg>0){const tsz=g.se.reduce((a,s)=>a+s.sz,0);total+=item.kg*tsz*(g.z||1)}});
   const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
-  if(sid===ciLinks.proszek){total+=(ciData.n||0)*(ciData.l||0)*(ciData.g||0)/1000*(ciData.o||0)}
-  if(sid===ciLinks.grains){total+=ciData.cg||0}
-  if(sid===ciLinks.cielak){total+=ciData.ck||0}
+  const sek=ciData.sektory||[];
+  if(sid===ciLinks.proszek){sek.forEach(s=>{total+=(s.n||0)*(s.l||0)*(s.g||130)/1000*(s.o||0)})}
+  if(sid===ciLinks.grains){sek.forEach(s=>{total+=(s.cg||0)})}
+  if(sid===ciLinks.cielak){sek.forEach(s=>{total+=(s.ck||0)})}
   return total;
 }
 
@@ -468,6 +527,8 @@ function renderPV(){
   // Table
   h+='<table class="dt" style="margin-bottom:10px"><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
   let run=0;
+  // Niedojady as first row if present
+  if(niedojady>0){run=niedojady;h+='<tr style="background:var(--amber-bg)"><td style="text-align:left;font-weight:700;color:var(--amber)">Niedojady</td><td>—</td><td style="font-weight:700">'+niedojady+'</td><td style="font-weight:700">'+niedojady+'</td></tr>'}
   p.sk.forEach((sk,i)=>{const s=gS(sk.s);if(!s)return;const nwRaw=sk.kg*tsz;const nw=r2(nwRaw*coeff,1);run=r2(run+nwRaw*coeff,1);
     h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td><input type="number" step="0.1" value="'+sk.kg+'" style="width:55px" onchange="_pv.sk['+i+'].kg=+this.value;renderPV()"></td><td>'+nw+'</td><td>'+run+'</td></tr>'});
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM (świeża dawka)</b></td><td><b>'+r2(totKgOrig*coeff,1)+'</b></td><td><b>'+r2(totalSwiezy,1)+'</b></td><td></td></tr></tfoot></table>';
@@ -499,6 +560,7 @@ function doPrintPV(){
   let h='<h3>'+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
   h+='<table><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
   let run=0;
+  if(niedojady>0){run=niedojady;h+='<tr><td style="text-align:left"><b>Niedojady</b></td><td>—</td><td><b>'+niedojady+'</b></td><td><b>'+niedojady+'</b></td></tr>'}
   p.sk.forEach(sk=>{const s=gS(sk.s);if(!s||sk.kg<=0)return;const nwRaw=sk.kg*tsz;const nw=r2(nwRaw*coeff,1);run=r2(run+nwRaw*coeff,1);
     h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td>'+r2(sk.kg*coeff,2)+'</td><td>'+nw+'</td><td>'+run+'</td></tr>'});
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg*coeff,1)+'</b></td><td><b>'+r2(totalSwiezy,1)+'</b></td><td></td></tr></tfoot></table>';
@@ -510,18 +572,37 @@ function doPrintPV(){
   clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h);
 }
 
-// CIELAKI (linked to surowce: preparat mlekozast., Calf Grains, Cielak, mleko pełne)
-function calcCi(){
-  const n=+$('#ci-n').value||0,g=+$('#ci-g').value||130,l=+$('#ci-l').value||2,o=+$('#ci-o').value||2;
-  const cg=+$('#ci-cg').value||0,ck=+$('#ci-ck').value||0,mp=+$('#ci-mp').value||0;
-  ciData={n,g,l,o,cg,ck,mp};
-  sa();
-  const wK=n*l,pK=r2(n*l*g/1000,2),wD=r2(wK*o,1),pD=r2(pK*o,2);
-  $('#ci-s').innerHTML='<div class="si"><div class="v">'+wK+'</div><div class="l">L wody/karm.</div></div><div class="si"><div class="v">'+pK+'</div><div class="l">kg proszku/karm.</div></div><div class="si"><div class="v">'+wD+'</div><div class="l">L wody/dobę</div></div><div class="si"><div class="v">'+pD+'</div><div class="l">kg proszku/dobę</div></div><div class="si"><div class="v">'+mp+'</div><div class="l">L mleka pełn./dobę</div></div><div class="si"><div class="v">'+cg+'</div><div class="l">Calf Grains/dobę</div></div><div class="si"><div class="v">'+ck+'</div><div class="l">Cielak/dobę</div></div>';
+// CIELAKI — 3 sektory (stare budki, nowe budki, automat)
+function ciSektory(){return ciData.sektory||(ciData.sektory=[{nazwa:'Stare budki',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:30},{nazwa:'Nowe budki',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:0},{nazwa:'Na automacie',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:0}])}
+function ciTotals(){
+  const sek=ciSektory();let tW=0,tP=0,tMp=0,tCg=0,tCk=0;
+  sek.forEach(s=>{const pK=s.n*s.l*(s.g||130)/1000*s.o;tP+=pK;tW+=s.n*s.l*s.o;tMp+=(s.mp||0);tCg+=(s.cg||0);tCk+=(s.ck||0)});
+  return{tW:r2(tW,1),tP:r2(tP,2),tMp,tCg,tCk,totalN:sek.reduce((a,s)=>a+s.n,0)};
 }
-// Load ciData on cielaki tab open
+function calcCi(){
+  const sek=ciSektory();sa();
+  const t=ciTotals();
+  // Summary bar
+  $('#ci-s').innerHTML='<div class="si"><div class="v">'+t.totalN+'</div><div class="l">Cielaków razem</div></div><div class="si"><div class="v">'+t.tP+'</div><div class="l">kg proszku/dobę</div></div><div class="si"><div class="v">'+t.tW+'</div><div class="l">L wody/dobę</div></div><div class="si"><div class="v">'+t.tMp+'</div><div class="l">L mleka pełn./dobę</div></div><div class="si"><div class="v">'+t.tCg+'</div><div class="l">Calf Grains/dobę</div></div><div class="si"><div class="v">'+t.tCk+'</div><div class="l">Cielak/dobę</div></div>';
+}
 function loadCiUI(){
-  if(ciData){$('#ci-n').value=ciData.n||15;$('#ci-g').value=ciData.g||130;$('#ci-l').value=ciData.l||2;$('#ci-o').value=ciData.o||2;$('#ci-cg').value=ciData.cg||0;$('#ci-ck').value=ciData.ck||0;$('#ci-mp').value=ciData.mp||0}
+  const sek=ciSektory();
+  let h='';
+  sek.forEach((s,i)=>{
+    const hasMp=i===0; // mleko pełne tylko stare budki
+    h+='<div style="border-bottom:2px solid var(--brd);padding:8px 12px"><b style="color:var(--pri);font-size:13px">'+s.nazwa+'</b>';
+    h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Szt.</label><input type="number" value="'+s.n+'" min="0" onchange="ciSektory()['+i+'].n=+this.value;calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>g/litr</label><input type="number" value="'+(s.g||130)+'" onchange="ciSektory()['+i+'].g=+this.value;calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>L/szt/karm</label><input type="number" value="'+s.l+'" step="0.5" onchange="ciSektory()['+i+'].l=+this.value;calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Odpojów</label><input type="number" value="'+s.o+'" min="1" max="4" onchange="ciSektory()['+i+'].o=+this.value;calcCi()"></div>';
+    if(hasMp)h+='<div class="fg" style="min-width:60px;max-width:80px"><label>Mleko pełne L/d</label><input type="number" value="'+(s.mp||0)+'" step="1" onchange="ciSektory()['+i+'].mp=+this.value;calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:80px"><label>Calf Grains kg/d</label><input type="number" value="'+(s.cg||0)+'" step="0.1" onchange="ciSektory()['+i+'].cg=+this.value;calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Cielak kg/d</label><input type="number" value="'+(s.ck||0)+'" step="0.1" onchange="ciSektory()['+i+'].ck=+this.value;calcCi()"></div>';
+    h+='</div></div>';
+  });
+  h+='<p style="padding:6px 12px;font-size:11px;color:var(--txt2)">Mleko pełne (stare budki) → rozchód w zakładce Mleko. Po ukończeniu sektora cielaki przechodzą na „Zbiorówka" w grupie Jałówki Rosn.</p>';
+  $('#ci-panels').innerHTML=h;
   calcCi();
 }
 
@@ -703,15 +784,15 @@ function buildDaySnapshot(){
       });
     });
   });
-  // Cielaki (auto→gt='c2' Cielaki do 2 tygodni)
+  // Cielaki (3 sektory → gt='c2')
   const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
-  const cd=ciData||{};
-  const proszek=(cd.n||0)*(cd.l||0)*(cd.g||0)/1000*(cd.o||0);
-  if(proszek>0){if(!snap.surowce[ciLinks.proszek])snap.surowce[ciLinks.proszek]={};snap.surowce[ciLinks.proszek].c2=(snap.surowce[ciLinks.proszek].c2||0)+proszek}
-  if(cd.cg>0){if(!snap.surowce[ciLinks.grains])snap.surowce[ciLinks.grains]={};snap.surowce[ciLinks.grains].c2=(snap.surowce[ciLinks.grains].c2||0)+cd.cg}
-  if(cd.ck>0){if(!snap.surowce[ciLinks.cielak])snap.surowce[ciLinks.cielak]={};snap.surowce[ciLinks.cielak].c2=(snap.surowce[ciLinks.cielak].c2||0)+cd.ck}
-  // Mleko pełne dla cielaków (osobna metryka - w L a nie kg, zapisujemy pod kluczem "mleko_pelne")
-  if(cd.mp>0){snap.cielaki.mleko_pelne={c2:cd.mp}}
+  const sek=ciData.sektory||[];
+  let ciProszek=0,ciCg=0,ciCk=0,ciMp=0;
+  sek.forEach(s=>{ciProszek+=(s.n||0)*(s.l||0)*(s.g||130)/1000*(s.o||0);ciCg+=(s.cg||0);ciCk+=(s.ck||0);ciMp+=(s.mp||0)});
+  if(ciProszek>0){if(!snap.surowce[ciLinks.proszek])snap.surowce[ciLinks.proszek]={};snap.surowce[ciLinks.proszek].c2=(snap.surowce[ciLinks.proszek].c2||0)+ciProszek}
+  if(ciCg>0){if(!snap.surowce[ciLinks.grains])snap.surowce[ciLinks.grains]={};snap.surowce[ciLinks.grains].c2=(snap.surowce[ciLinks.grains].c2||0)+ciCg}
+  if(ciCk>0){if(!snap.surowce[ciLinks.cielak])snap.surowce[ciLinks.cielak]={};snap.surowce[ciLinks.cielak].c2=(snap.surowce[ciLinks.cielak].c2||0)+ciCk}
+  if(ciMp>0){snap.cielaki.mleko_pelne={c2:ciMp}}
   return snap;
 }
 
@@ -816,12 +897,19 @@ function pDek(){
 }
 
 (function(){
-  const s=LD('sess',null);if(s&&us[s]){cR=s;showApp()}
+  const s=LD('sess',null);if(s&&(passes||DEF_PASSES)[s]){cR=s;showApp()}
   const cm=new Date().getMonth();
   ['ml-m','hr-m','ob-m','kal-m'].forEach(id=>{const e=$('#'+id);if(e)fMS(e,cm)});
   $('#ml-v').addEventListener('change',rMl);$('#ml-m').addEventListener('change',rMl);
   $('#lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+  // PWA install prompt
+  let deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;
+    const ib=document.createElement('div');ib.id='pwa-install';ib.innerHTML='<div style="position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--pri);color:#fff;padding:12px 20px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;z-index:250;font:500 14px var(--font);max-width:360px"><span>📲 Zainstaluj aplikację na urządzeniu</span><button onclick="installPWA()" style="background:#fff;color:var(--pri);border:none;padding:6px 14px;border-radius:6px;font:700 13px var(--font);cursor:pointer;white-space:nowrap">Instaluj</button><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:18px;cursor:pointer">&times;</button></div>';
+    document.body.appendChild(ib);
+  });
+  window.installPWA=async function(){const ib=$('#pwa-install');if(ib)ib.remove();if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}};
 })();
 </script>
 </body>
