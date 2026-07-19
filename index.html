@@ -126,6 +126,12 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <section class="tp" id="tab-cielaki"><div class="card"><div class="ch"><span>Cielaki — mleko w proszku</span><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div><div class="fr"><div class="fg"><label>Cielaków</label><input type="number" id="ci-n" min="1" value="15" oninput="calcCi()"></div><div class="fg"><label>g/litr</label><input type="number" id="ci-g" value="130" oninput="calcCi()"></div><div class="fg"><label>L/szt./karm.</label><input type="number" id="ci-l" step="0.5" value="2" oninput="calcCi()"></div><div class="fg"><label>Odpojów/dobę</label><input type="number" id="ci-o" min="1" max="4" value="2" oninput="calcCi()"></div></div><div class="sbar" id="ci-s"></div></div><div class="card"><div class="ch">Pasze i mleko pełne dla cieląt (kg lub L / dobę)</div><div class="fr"><div class="fg"><label>Mleko pełne (L/dobę)</label><input type="number" id="ci-mp" step="1" value="0" oninput="calcCi()"></div><div class="fg"><label>Calf Grains (kg/dobę)</label><input type="number" id="ci-cg" step="0.1" value="0" oninput="calcCi()"></div><div class="fg"><label>Cielak (kg/dobę)</label><input type="number" id="ci-ck" step="0.1" value="0" oninput="calcCi()"></div></div><p style="padding:0 12px 10px;font-size:11px;color:var(--txt2)">Mleko pełne rozchoduje się automatycznie z odstawy mleka (zakładka Mleko → kolumna "Cielęta").</p></div></section>
 <section class="tp" id="tab-harmonogram"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="hr-m" onchange="rSch('hr')"></select></div><div class="fg"><label>Rok</label><input type="number" id="hr-y" value="2026" min="2024" max="2030" onchange="rSch('hr')"></div><div class="fg"><label>Grupa</label><select id="hr-g" onchange="rSch('hr')"><option value="obsluga">Obsługa</option><option value="dojarze">Dojarze</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('hr')">📄</button></div></div><div class="card"><div class="ch"><span>Harmonogram pracy</span><button class="btn bs bo" onclick="addPr('hr')">+ Pracownik</button></div><div class="tw" id="hr-w"></div></div></section>
 <section class="tp" id="tab-obecnosc"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ob-m" onchange="rSch('ob')"></select></div><div class="fg"><label>Rok</label><input type="number" id="ob-y" value="2026" min="2024" max="2030" onchange="rSch('ob')"></div><div class="fg"><label>Grupa</label><select id="ob-g" onchange="rSch('ob')"><option value="dojarze">Dojarze</option><option value="obsluga">Obsługa</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('ob')">📄</button></div></div><div class="card"><div class="ch"><span>Lista obecności</span><button class="btn bs bo" onclick="addPr('ob')">+ Pracownik</button></div><div class="tw" id="ob-w"></div></div></section>
+<section class="tp" id="tab-koszty">
+  <div class="card"><div class="ch"><span>Sekcja 1 — Dawki i koszt na sztukę/dzień</span><button class="btn bs bpdf" onclick="pKoszty()">📄 PDF</button></div><div class="tw" id="kos-s1"></div></div>
+  <div class="card"><div class="ch">Sekcja 2 — Zużycie surowców wg kategorii (dzienne/miesięczne)</div><div class="tw" id="kos-s2"></div></div>
+  <div class="card"><div class="ch">Sekcja 3 — Koszt wg grup żywieniowych</div><div class="tw" id="kos-s3"></div></div>
+  <div class="card"><div class="ch">Sekcja 4 — Koszt na sztukę wg kategorii pasz</div><div class="tw" id="kos-s4"></div></div>
+</section>
 <section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia 2026</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
 <section class="tp" id="tab-kalendarz"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="kal-m" onchange="rKal()"></select></div><div class="fg"><label>Rok</label><input type="number" id="kal-y" value="2026" min="2024" max="2030" onchange="rKal()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('kalendarz')">📄 PDF</button></div></div><div id="kal-w"></div></section>
 </div>
@@ -154,35 +160,35 @@ function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.g
 // AUTH
 const DU={zootechnik:'admin',magazynier:'magazyn'};
 let us=LD('us',DU),cR=null;
-const RT={zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce']};
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
+const RT={zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce']};
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',koszty:'Koszty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
 function doLogin(){const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}let r=null;for(const[k,v]of Object.entries(us))if(v===p){r=k;break}if(!r){$('#le').textContent='Nieprawidłowe hasło';return}cR=r;SV('sess',r);showApp()}
 function doLogout(){cR=null;localStorage.removeItem('ohz_sess');$('#app').style.display='none';$('#login-screen').style.display='flex';$('#lp').value='';$('#le').textContent=''}
 function showApp(){$('#login-screen').style.display='none';$('#app').style.display='block';$('#urb').textContent=cR==='zootechnik'?'Zootechnik':'Magazynier';bTabs();startFbSync()}
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]()}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]()}
 function pT(t){const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' 2026'),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia 2026',kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
 const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
 prn(ti[t](),$('#'+wr[t]).innerHTML)}
 
 // DATA
 const DS=[
-  {id:'s1',nazwa:'Kiszonka z kukurydzy OHZ',proc_sm:32,cena_t:120,stan_t:150},
-  {id:'s2',nazwa:'Lucerna 44SM/19,7 BO',proc_sm:44,cena_t:140,stan_t:120},
-  {id:'s3',nazwa:'Słoma pszenna',proc_sm:84,cena_t:250,stan_t:40},
-  {id:'s4',nazwa:'Woda',proc_sm:0,cena_t:0,stan_t:9999},
-  {id:'s5',nazwa:'Dobromilk Start Granulat',proc_sm:87,cena_t:1300,stan_t:25},
-  {id:'s6',nazwa:'Śruta rzepakowa',proc_sm:88,cena_t:1400,stan_t:15},
-  {id:'s7',nazwa:'Śruta sojowa 46%',proc_sm:88,cena_t:1900,stan_t:8},
-  {id:'s8',nazwa:'Pszenica (śruta zbożowa)',proc_sm:86,cena_t:950,stan_t:12},
-  {id:'s9',nazwa:'Kreda',proc_sm:99,cena_t:500,stan_t:2},
-  {id:'s10',nazwa:'Witaminer Baza TOXXL',proc_sm:95,cena_t:4500,stan_t:1.5},
-  {id:'s11',nazwa:'Bufor (soda)',proc_sm:99,cena_t:2800,stan_t:1},
-  {id:'s12',nazwa:'Sianokiszonka BO 10%',proc_sm:45,cena_t:130,stan_t:50},
-  {id:'s13',nazwa:'Preparat mlekozastępczy',proc_sm:95,cena_t:12000,stan_t:0.5},
-  {id:'s14',nazwa:'Calf Grains',proc_sm:88,cena_t:2500,stan_t:1},
-  {id:'s15',nazwa:'Cielak (pasza)',proc_sm:88,cena_t:2200,stan_t:0.8},
-  {id:'s16',nazwa:'Dobromilk GLO MAX Granulat',proc_sm:88,cena_t:1400,stan_t:5},
+  {id:'s1',nazwa:'Kiszonka z kukurydzy OHZ',proc_sm:32,cena_t:120,stan_t:150,kat:'obj'},
+  {id:'s2',nazwa:'Lucerna 44SM/19,7 BO',proc_sm:44,cena_t:140,stan_t:120,kat:'obj'},
+  {id:'s3',nazwa:'Słoma pszenna',proc_sm:84,cena_t:250,stan_t:40,kat:'obj'},
+  {id:'s4',nazwa:'Woda',proc_sm:0,cena_t:0,stan_t:9999,kat:'obj'},
+  {id:'s5',nazwa:'Dobromilk Start Granulat',proc_sm:87,cena_t:1300,stan_t:25,kat:'tres'},
+  {id:'s6',nazwa:'Śruta rzepakowa',proc_sm:88,cena_t:1400,stan_t:15,kat:'tres'},
+  {id:'s7',nazwa:'Śruta sojowa 46%',proc_sm:88,cena_t:1900,stan_t:8,kat:'tres'},
+  {id:'s8',nazwa:'Pszenica (śruta zbożowa)',proc_sm:86,cena_t:950,stan_t:12,kat:'tres'},
+  {id:'s9',nazwa:'Kreda',proc_sm:99,cena_t:500,stan_t:2,kat:'dod'},
+  {id:'s10',nazwa:'Witaminer Baza TOXXL',proc_sm:95,cena_t:4500,stan_t:1.5,kat:'dod'},
+  {id:'s11',nazwa:'Bufor (soda)',proc_sm:99,cena_t:2800,stan_t:1,kat:'dod'},
+  {id:'s12',nazwa:'Sianokiszonka BO 10%',proc_sm:45,cena_t:130,stan_t:50,kat:'obj'},
+  {id:'s13',nazwa:'Preparat mlekozastępczy',proc_sm:95,cena_t:12000,stan_t:0.5,kat:'tres'},
+  {id:'s14',nazwa:'Calf Grains',proc_sm:88,cena_t:2500,stan_t:1,kat:'tres'},
+  {id:'s15',nazwa:'Cielak (pasza)',proc_sm:88,cena_t:2200,stan_t:0.8,kat:'tres'},
+  {id:'s16',nazwa:'Dobromilk GLO MAX Granulat',proc_sm:88,cena_t:1400,stan_t:5,kat:'tres'},
 ];
 const DG=[
   {id:'g1',nazwa:'GR 1 i 3',z:2,se:[{n:'Sektor I',sz:24},{n:'Sektor III',sz:18}],sk:[{s:'s1',kg:34},{s:'s2',kg:7},{s:'s4',kg:7},{s:'s8',kg:3},{s:'s6',kg:2},{s:'s7',kg:1.5},{s:'s5',kg:3.5},{s:'s10',kg:0.5},{s:'s9',kg:0.1}]},
@@ -290,7 +296,7 @@ function gS(id){return sur.find(s=>s.id===id)}
 // Daily usage per surowiec (kg) from dawki + cielaki
 function dailyUse(sid){
   let total=0;
-  gr.forEach(g=>{const item=g.sk.find(x=>x.s===sid);if(item&&item.kg>0){const tsz=g.se.reduce((a,s)=>a+s.sz,0);total+=item.kg*tsz}});
+  gr.forEach(g=>{const item=g.sk.find(x=>x.s===sid);if(item&&item.kg>0){const tsz=g.se.reduce((a,s)=>a+s.sz,0);total+=item.kg*tsz*(g.z||1)}});
   const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
   if(sid===ciLinks.proszek){total+=(ciData.n||0)*(ciData.l||0)*(ciData.g||0)/1000*(ciData.o||0)}
   if(sid===ciLinks.grains){total+=ciData.cg||0}
@@ -320,11 +326,15 @@ function uMlP(i,f,el){const m=+$('#ml-m').value,k='p_2026_'+m;ml[k][i][f]=+el.va
 
 // SUROWCE (tony, PLN/t, + zużycie dzienne + wystarczy do)
 function rSur(){
-  let h='<table class="dt"><thead><tr><th>Surowiec</th><th>Cena PLN/t</th><th>Stan (t)</th><th>Zużycie dz. (kg)</th><th>Wystarczy do</th><th></th></tr></thead><tbody>';
+  let h='<table class="dt"><thead><tr><th>Surowiec</th><th>Kategoria</th><th>Cena PLN/t</th><th>Stan (t)</th><th>Zużycie dz. (kg)</th><th>Wystarczy do</th><th></th></tr></thead><tbody>';
+  const katLabels={obj:'Objętościowa',tres:'Treściwa',dod:'Dodatek'};
   sur.forEach((s,i)=>{
     const du=dailyUse(s.id);const stanKg=s.stan_t*1000;let wyst='—';
     if(du>0){const days=Math.floor(stanKg/du);const dt=new Date();dt.setDate(dt.getDate()+days);wyst='<span class="'+(days<14?'sur-warn':'sur-ok')+'">'+fmtDate(dt)+' ('+days+'d)</span>'}
     h+='<tr><td><span style="display:inline-flex;flex-direction:column;margin-right:4px;line-height:1">'+(i>0?'<button onclick="mvSur('+i+',-1)" style="border:none;background:none;cursor:pointer;font-size:9px;padding:0">▲</button>':'<span style="font-size:9px;padding:0;opacity:.2">▲</span>')+(i<sur.length-1?'<button onclick="mvSur('+i+',1)" style="border:none;background:none;cursor:pointer;font-size:9px;padding:0">▼</button>':'<span style="font-size:9px;padding:0;opacity:.2">▼</span>')+'</span>'+s.nazwa+' <button class="btn bs" style="padding:1px 4px;font-size:9px;background:none;color:var(--pri);border:1px solid var(--brd)" onclick="eSurN('+i+')">✎</button></td>';
+    h+='<td><select style="width:100px;font-size:10px;padding:2px" onchange="sur['+i+'].kat=this.value;sa()">';
+    ['obj','tres','dod'].forEach(k=>{h+='<option value="'+k+'"'+((s.kat||'obj')===k?' selected':'')+'>'+katLabels[k]+'</option>'});
+    h+='</select></td>';
     h+='<td><input step="1" value="'+r2(s.cena_t,0)+'" onchange="sur['+i+'].cena_t=+this.value;sa()"></td>';
     h+='<td><input step="0.01" value="'+r2(s.stan_t,2)+'" onchange="sur['+i+'].stan_t=+this.value;sa();rSur()"></td>';
     h+='<td>'+r2(du,1)+'</td><td style="text-align:left;font-family:var(--font);font-size:11px">'+wyst+'</td>';
@@ -389,7 +399,7 @@ function rDk(){
     });
   });
   sh+='</tbody></table>';
-  sh+='<div class="fr"><button class="btn bs bo" onclick="addSek()">+ Sektor</button></div>';
+  sh+='<div class="fr"><button class="btn bs bo" onclick="addSek()">+ Sektor</button><button class="btn bs bp" onclick="addGrp()">+ Nowa grupa</button></div>';
   $('#dk-s').innerHTML=sh;sa();
 }
 function uDk(gi,sid,el){const g=gr[gi],v=+el.value||0;let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur()}
@@ -429,19 +439,33 @@ function pDkGr(gi){
 }
 function renderPV(){
   const p=_pv;const tsz=p.se.reduce((a,s)=>a+s.sz,0);
+  const niedojady=p.niedojady||0;
   let h='<div style="max-height:75vh;overflow-y:auto;padding:2px">';
   h+='<h3 style="margin-bottom:6px">'+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
+  // Calc reduction
+  let totKgOrig=0;p.sk.forEach(sk=>totKgOrig+=sk.kg);
+  const totalWozOrig=r2(totKgOrig*tsz,1);
+  const totalSwiezy=niedojady>0?Math.max(0,totalWozOrig-niedojady):totalWozOrig;
+  const coeff=totalWozOrig>0&&niedojady>0?totalSwiezy/totalWozOrig:1;
+  // Table
   h+='<table class="dt" style="margin-bottom:10px"><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
-  let run=0,totKg=0;
-  p.sk.forEach((sk,i)=>{const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz,1);run=r2(run+sk.kg*tsz,1);totKg+=sk.kg;
+  let run=0;
+  p.sk.forEach((sk,i)=>{const s=gS(sk.s);if(!s)return;const nwRaw=sk.kg*tsz;const nw=r2(nwRaw*coeff,1);run=r2(run+nwRaw*coeff,1);
     h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td><input type="number" step="0.1" value="'+sk.kg+'" style="width:55px" onchange="_pv.sk['+i+'].kg=+this.value;renderPV()"></td><td>'+nw+'</td><td>'+run+'</td></tr>'});
-  h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg,1)+'</b></td><td><b>'+r2(totKg*tsz,1)+'</b></td><td></td></tr></tfoot></table>';
-  h+='<b style="font-size:12px">Podział na sektory — '+p.z+' RAZY dziennie</b>';
+  h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM (świeża dawka)</b></td><td><b>'+r2(totKgOrig*coeff,1)+'</b></td><td><b>'+r2(totalSwiezy,1)+'</b></td><td></td></tr></tfoot></table>';
+  // Niedojady
+  h+='<div style="background:var(--amber-bg);border:1px solid #e0c060;border-radius:6px;padding:8px 10px;margin-bottom:10px">';
+  h+='<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap"><div class="fg" style="max-width:120px"><label>Niedojady (kg)</label><input type="number" id="pv-nied" min="0" step="10" value="'+niedojady+'" onchange="_pv.niedojady=+this.value;renderPV()"></div>';
+  h+='<div class="fg" style="flex:2"><label>Źródło niedojadów</label><input type="text" id="pv-nied-src" value="'+(p.niedSrc||'')+'" onchange="_pv.niedSrc=this.value" placeholder="np. z GR 1 i 3 — wczorajsze"></div></div>';
+  if(niedojady>0){h+='<div style="margin-top:6px;font-size:12px;color:var(--amber)"><b>Dawka pełna:</b> '+totalWozOrig+' kg | <b>Niedojady:</b> '+niedojady+' kg | <b>Świeża dawka:</b> '+r2(totalSwiezy,1)+' kg | <b>Redukcja:</b> '+r2((1-coeff)*100,0)+'%</div>'}
+  h+='</div>';
+  // Sektory
+  h+='<b style="font-size:12px">Podział na sektory</b>';
   h+='<table class="dt" style="margin-top:4px;margin-bottom:10px"><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
   let sumSz=0;
   p.se.forEach((s,i)=>{sumSz+=s.sz;
-    h+='<tr><td style="text-align:left">'+s.n+'</td><td><input type="number" min="0" value="'+s.sz+'" style="width:50px" onchange="_pv.se['+i+'].sz=+this.value;renderPV()"></td><td>'+r2(totKg*s.sz,0)+'</td></tr>'});
-  h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+sumSz+'</b></td><td><b>'+r2(totKg*sumSz,0)+'</b></td></tr></tfoot></table>';
+    h+='<tr><td style="text-align:left">'+s.n+'</td><td><input type="number" min="0" value="'+s.sz+'" style="width:50px" onchange="_pv.se['+i+'].sz=+this.value;renderPV()"></td><td>'+r2(totKgOrig*s.sz,0)+'</td></tr>'});
+  h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+sumSz+'</b></td><td><b>'+r2(totKgOrig*sumSz,0)+'</b></td></tr></tfoot></table>';
   h+='<div class="fg"><label>Uwagi / notatki do wydruku</label><textarea id="pv-uw" rows="2" style="margin-top:4px;font-size:13px" onchange="_pv.uwagi=this.value">'+p.uwagi+'</textarea></div>';
   h+='</div>';
   opM('Podgląd wydruku — '+p.nazwa,h,
@@ -450,13 +474,18 @@ function renderPV(){
 function doPrintPV(){
   const p=_pv;const tsz=p.se.reduce((a,s)=>a+s.sz,0);
   let totKg=p.sk.reduce((a,sk)=>a+sk.kg,0);
+  const niedojady=p.niedojady||0;
+  const totalWoz=r2(totKg*tsz,1);
+  const totalSwiezy=niedojady>0?Math.max(0,totalWoz-niedojady):totalWoz;
+  const coeff=totalWoz>0&&niedojady>0?totalSwiezy/totalWoz:1;
   let h='<h3>'+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
   h+='<table><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
   let run=0;
-  p.sk.forEach(sk=>{const s=gS(sk.s);if(!s||sk.kg<=0)return;const nw=r2(sk.kg*tsz,1);run=r2(run+sk.kg*tsz,1);
-    h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td>'+sk.kg+'</td><td>'+nw+'</td><td>'+run+'</td></tr>'});
-  h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg,1)+'</b></td><td><b>'+r2(totKg*tsz,1)+'</b></td><td></td></tr></tfoot></table>';
-  h+='<h3>Podział na sektory — '+p.z+' RAZY dziennie</h3><table><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
+  p.sk.forEach(sk=>{const s=gS(sk.s);if(!s||sk.kg<=0)return;const nwRaw=sk.kg*tsz;const nw=r2(nwRaw*coeff,1);run=r2(run+nwRaw*coeff,1);
+    h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td>'+r2(sk.kg*coeff,2)+'</td><td>'+nw+'</td><td>'+run+'</td></tr>'});
+  h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg*coeff,1)+'</b></td><td><b>'+r2(totalSwiezy,1)+'</b></td><td></td></tr></tfoot></table>';
+  if(niedojady>0){h+='<p style="margin-top:6px"><b>Niedojady:</b> '+niedojady+' kg'+(p.niedSrc?' ('+p.niedSrc+')':'')+' | <b>Dawka świeża:</b> '+r2(totalSwiezy,1)+' kg + niedojady '+niedojady+' kg = razem '+totalWoz+' kg</p>'}
+  h+='<h3>Podział na sektory</h3><table><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
   p.se.forEach(s=>{h+='<tr><td style="text-align:left">'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>'});
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
   if(p.uwagi)h+='<p style="margin-top:10px;font-style:italic"><b>Uwagi:</b> '+p.uwagi+'</p>';
@@ -523,6 +552,107 @@ function okNas(idx){
 }
 
 // KALENDARZ
+// ===== ADD GROUP =====
+function addGrp(){
+  opM('Dodaj nową grupę żywieniową',
+    '<div class="fg" style="margin-bottom:8px"><label>Nazwa grupy</label><input type="text" id="ag-n" placeholder="np. Nowa grupa krów"></div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:8px"><div class="fg"><label>Zadawań / dobę</label><input type="number" id="ag-z" min="1" max="4" value="1"></div><div class="fg"><label>Nazwa 1. sektora</label><input type="text" id="ag-sn" placeholder="np. Sektor X"></div><div class="fg"><label>Sztuk</label><input type="number" id="ag-ss" value="20"></div></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAddGrp()">Dodaj</button>');
+}
+function okAddGrp(){
+  const n=$('#ag-n').value.trim();if(!n){toast('Podaj nazwę grupy');return}
+  gr.push({id:uid(),nazwa:n,z:+$('#ag-z').value||1,se:[{n:$('#ag-sn').value.trim()||'Sektor 1',sz:+$('#ag-ss').value||0}],sk:[]});
+  sa(true);clM();rDk();toast('Dodano grupę „'+n+'"');
+}
+
+// ===== KOSZTY =====
+function rKoszty(){
+  const katLabels={obj:'Objętościowe',tres:'Treściwe',dod:'Dodatki paszowe'};
+  const katOrder=['obj','tres','dod'];
+  // Collect used surowce
+  const usedSids=new Set();gr.forEach(g=>g.sk.forEach(sk=>{if(sk.kg>0)usedSids.add(sk.s)}));
+  const usedSur=sur.filter(s=>usedSids.has(s.id));
+
+  // === SEKCJA 1: Dawki i koszt na sztukę/dzień ===
+  let h1='<table class="fe"><thead><tr><th style="text-align:left;min-width:160px">Surowiec (cena zł/kg)</th>';
+  gr.forEach(g=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h1+='<th class="gh" style="font-size:9px">'+g.nazwa+'<br>('+tsz+' szt)</th>'});
+  h1+='</tr></thead><tbody>';
+  usedSur.forEach(s=>{
+    const cenaKg=r2(s.cena_t/1000,2);
+    h1+='<tr><td>'+s.nazwa+' ('+cenaKg+')</td>';
+    gr.forEach(g=>{const item=g.sk.find(x=>x.s===s.id);const kg=item?item.kg:0;h1+='<td>'+(kg>0?kg:'–')+'</td>'});
+    h1+='</tr>';
+  });
+  // SUMA kg TMR/szt
+  h1+='<tr style="border-top:2px solid var(--amber)"><td style="font-weight:700;background:var(--amber-bg)">SUMA kg TMR/szt</td>';
+  gr.forEach(g=>{h1+='<td style="font-weight:700;background:var(--amber-bg)">'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});h1+='</tr>';
+  // KOSZT zł/szt/dzień
+  h1+='<tr><td style="font-weight:700;background:var(--amber-bg);color:var(--amber)">KOSZT zł/szt/dzień</td>';
+  gr.forEach(g=>{let cost=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)cost+=sk.kg*(s.cena_t/1000)});
+    h1+='<td style="font-weight:700;background:var(--amber-bg);color:var(--amber)">'+r2(cost,2)+'</td>'});h1+='</tr>';
+  // KOSZT zł/szt/miesiąc
+  h1+='<tr><td style="font-weight:700;background:var(--amber-bg)">KOSZT zł/szt/miesiąc</td>';
+  gr.forEach(g=>{let cost=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)cost+=sk.kg*(s.cena_t/1000)});
+    h1+='<td style="font-weight:700;background:var(--amber-bg)">'+r2(cost*30,0)+'</td>'});h1+='</tr>';
+  h1+='</tbody></table>';$('#kos-s1').innerHTML=h1;
+
+  // === SEKCJA 2: Zużycie surowców wg kategorii ===
+  let totalDzien=0,totalMiesiac=0,totalKoszDz=0;
+  let h2='<table class="dt"><thead><tr><th style="text-align:left">Surowiec</th><th>Cena zł/kg</th><th>kg/dzień</th><th>kg/miesiąc</th><th>zł/dzień</th><th>zł/miesiąc</th><th>Udział</th></tr></thead><tbody>';
+  // First pass: calc grand total for %
+  usedSur.forEach(s=>{const du=dailyUse(s.id);totalKoszDz+=du*(s.cena_t/1000)});
+  katOrder.forEach(kat=>{
+    const surInKat=usedSur.filter(s=>(s.kat||'obj')===kat);
+    if(!surInKat.length)return;
+    h2+='<tr><td colspan="7" style="font-weight:700;background:var(--pri-bg);color:var(--pri);text-transform:uppercase;font-size:11px">'+katLabels[kat]+'</td></tr>';
+    let katDz=0,katMz=0,katKDz=0,katKMz=0;
+    surInKat.forEach(s=>{
+      const du=dailyUse(s.id);const cenaKg=s.cena_t/1000;const kgMz=du*30;const zlDz=du*cenaKg;const zlMz=zlDz*30;
+      const udzial=totalKoszDz>0?r2(zlDz/totalKoszDz*100,1):0;
+      katDz+=du;katMz+=kgMz;katKDz+=zlDz;katKMz+=zlMz;
+      h2+='<tr><td>'+s.nazwa+'</td><td>'+r2(cenaKg,2)+'</td><td>'+r2(du,0)+'</td><td>'+r2(kgMz,0)+'</td><td>'+r2(zlDz,2)+'</td><td>'+r2(zlMz,0)+'</td><td>'+udzial+'%</td></tr>';
+    });
+    h2+='<tr style="background:var(--pri-bg)"><td style="font-weight:700">Razem '+katLabels[kat].toLowerCase()+'</td><td></td><td style="font-weight:700">'+r2(katDz,0)+'</td><td style="font-weight:700">'+r2(katMz,0)+'</td><td style="font-weight:700">'+r2(katKDz,2)+'</td><td style="font-weight:700">'+r2(katKMz,0)+'</td><td></td></tr>';
+    totalDzien+=katDz;totalMiesiac+=katMz;
+  });
+  h2+='</tbody><tfoot><tr><td>RAZEM STADO</td><td></td><td>'+r2(totalDzien,0)+'</td><td>'+r2(totalMiesiac,0)+'</td><td>'+r2(totalKoszDz,2)+'</td><td>'+r2(totalKoszDz*30,0)+'</td><td>100%</td></tr></tfoot></table>';
+  $('#kos-s2').innerHTML=h2;
+
+  // === SEKCJA 3: Koszt wg grup ===
+  let h3='<table class="dt"><thead><tr><th style="text-align:left">Grupa</th><th>Sztuk</th><th>kg TMR/szt</th><th>zł/szt/dzień</th><th>zł/grupa/dzień</th><th>zł/grupa/m-c</th><th>Udział</th></tr></thead><tbody>';
+  let grandGrDz=0;
+  gr.forEach(g=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1);let costSzt=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)costSzt+=sk.kg*(s.cena_t/1000)});
+    grandGrDz+=costSzt*tsz});
+  gr.forEach(g=>{
+    const tsz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1);const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
+    let costSzt=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)costSzt+=sk.kg*(s.cena_t/1000)});
+    const grDz=costSzt*tsz;const grMz=grDz*30;const udzial=grandGrDz>0?r2(grDz/grandGrDz*100,1):0;
+    h3+='<tr><td>'+g.nazwa+'</td><td>'+tsz+'</td><td>'+r2(totKg,1)+'</td><td>'+r2(costSzt,2)+'</td><td>'+r2(grDz,2)+'</td><td>'+r2(grMz,0)+'</td><td>'+udzial+'%</td></tr>';
+  });
+  h3+='</tbody><tfoot><tr><td>RAZEM STADO</td><td></td><td></td><td></td><td>'+r2(grandGrDz,2)+'</td><td>'+r2(grandGrDz*30,0)+'</td><td>100%</td></tr></tfoot></table>';
+  $('#kos-s3').innerHTML=h3;
+
+  // === SEKCJA 4: Koszt na sztukę wg kategorii ===
+  let h4='<table class="dt"><thead><tr><th style="text-align:left">Grupa</th><th>Sztuk</th><th>Objęt. zł/szt</th><th>Treśc. zł/szt</th><th>Dodat. zł/szt</th><th>RAZEM zł/szt</th><th>Obj.%</th><th>Treś.%</th><th>Dod.%</th></tr></thead><tbody>';
+  let totObj=0,totTres=0,totDod=0;
+  gr.forEach(g=>{
+    const tsz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1);
+    let cObj=0,cTres=0,cDod=0;
+    g.sk.forEach(sk=>{const s=gS(sk.s);if(!s)return;const c=sk.kg*(s.cena_t/1000);const k=s.kat||'obj';
+      if(k==='obj')cObj+=c;else if(k==='tres')cTres+=c;else cDod+=c});
+    const tot=cObj+cTres+cDod;
+    totObj+=cObj*tsz;totTres+=cTres*tsz;totDod+=cDod*tsz;
+    h4+='<tr><td>'+g.nazwa+'</td><td>'+tsz+'</td><td>'+r2(cObj,2)+'</td><td>'+r2(cTres,2)+'</td><td>'+r2(cDod,2)+'</td><td style="font-weight:700">'+r2(tot,2)+'</td>';
+    h4+='<td>'+(tot>0?r2(cObj/tot*100,0):0)+'%</td><td>'+(tot>0?r2(cTres/tot*100,0):0)+'%</td><td>'+(tot>0?r2(cDod/tot*100,0):0)+'%</td></tr>';
+  });
+  const gTot=totObj+totTres+totDod;
+  h4+='</tbody><tfoot><tr><td>STADO zł/dzień</td><td></td><td>'+r2(totObj,2)+'</td><td>'+r2(totTres,2)+'</td><td>'+r2(totDod,2)+'</td><td>'+r2(gTot,2)+'</td>';
+  h4+='<td>'+(gTot>0?r2(totObj/gTot*100,0):0)+'%</td><td>'+(gTot>0?r2(totTres/gTot*100,0):0)+'%</td><td>'+(gTot>0?r2(totDod/gTot*100,0):0)+'%</td></tr>';
+  h4+='<tr><td>STADO zł/miesiąc</td><td></td><td>'+r2(totObj*30,0)+'</td><td>'+r2(totTres*30,0)+'</td><td>'+r2(totDod*30,0)+'</td><td>'+r2(gTot*30,0)+'</td><td colspan="3"></td></tr>';
+  h4+='</tfoot></table>';$('#kos-s4').innerHTML=h4;
+}
+function pKoszty(){prn('Analiza kosztów żywienia stada — OHZ Bobrowniki',$('#kos-s1').innerHTML+'<br><br>'+$('#kos-s2').innerHTML+'<br><br>'+$('#kos-s3').innerHTML+'<br><br>'+$('#kos-s4').innerHTML)}
+
 function rKal(){
   const m=+$('#kal-m').value,y=+$('#kal-y').value,k=y+'_'+m;if(!kal[k])kal[k]={};const ent=kal[k],ds=dim(y,m),fd=dow(y,m,1);
   let h='<div class="cal-grid">';DP.forEach((d,i)=>h+='<div class="cal-hdr'+(i>=5?' wknd':'')+'">'+d+'</div>');
@@ -547,12 +677,13 @@ function buildDaySnapshot(){
   sur.forEach(s=>{snap.names[s.id]=s.nazwa;snap.prices[s.id]=s.cena_t||0});
   // For each dawka group: per sektor kg = dawka.kg × sektor.sz; assigned to gt from gtMap
   gr.forEach(g=>{
+    const feedingsPerDay=g.z||1;
     g.se.forEach(sek=>{
       const mapKey=g.nazwa+'|'+sek.n;
       const gt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
       g.sk.forEach(sk=>{
         if(!sk.kg||sk.kg<=0)return;
-        const kgDay=sk.kg*sek.sz;
+        const kgDay=sk.kg*sek.sz*feedingsPerDay;
         if(!snap.surowce[sk.s])snap.surowce[sk.s]={};
         snap.surowce[sk.s][gt]=(snap.surowce[sk.s][gt]||0)+kgDay;
       });
