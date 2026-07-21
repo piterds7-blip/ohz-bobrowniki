@@ -360,7 +360,14 @@ function gS(id){return sur.find(s=>s.id===id)}
 // Daily usage per surowiec (kg) from dawki + cielaki
 function dailyUse(sid){
   let total=0;
-  gr.forEach(g=>{const item=g.sk.find(x=>x.s===sid);if(item&&item.kg>0){const tsz=g.se.reduce((a,s)=>a+s.sz,0);total+=item.kg*tsz*(g.z||1)}});
+  gr.forEach(g=>{
+    const item=g.sk.find(x=>x.s===sid);
+    if(item&&item.kg>0){const tsz=g.se.reduce((a,s)=>a+s.sz,0);total+=item.kg*tsz*(g.z||1)}
+    // Sector extras
+    g.se.forEach(sek=>{
+      if(sek.sk_extra){sek.sk_extra.forEach(ex=>{if(ex.s===sid&&ex.kg>0)total+=ex.kg*sek.sz*(g.z||1)})}
+    });
+  });
   const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
   const sek=ciData.sektory||[];
   if(sid===ciLinks.proszek){sek.forEach(s=>{total+=(s.n||0)*(s.l||0)*(s.g||130)/1000*(s.o||0)})}
@@ -454,7 +461,7 @@ function rDk(){
   gr.forEach(g=>{h+='<td style="font-size:13px">'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
   h+='</tr></tfoot></table>';$('#dk-w').innerHTML=h;
 
-  // Sectors - colored by group
+  // Sectors - colored by group, with extra ingredients per sector
   const cols=['sec-a','sec-b','sec-c','sec-d','sec-a','sec-b','sec-c'];
   let sh='<table class="dt" style="min-width:auto"><thead><tr><th style="width:80px">Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th><th style="width:130px">Grupa techn.</th><th style="width:30px"></th></tr></thead><tbody>';
   gr.forEach((g,gi)=>{
@@ -462,13 +469,23 @@ function rDk(){
     g.se.forEach((sk,si)=>{
       const mapKey=g.nazwa+'|'+sk.n;
       const curGt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
-      sh+='<tr class="'+cc+'"><td style="font-size:11px">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+'</td>';
+      sh+='<tr class="'+cc+'"><td style="font-size:11px">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+' <button style="background:var(--pri);color:#fff;border:none;border-radius:3px;font-size:9px;padding:0 4px;cursor:pointer" onclick="addSekExtra('+gi+','+si+')" title="Dodaj surowiec do sektora">+</button></td>';
       sh+='<td><input min="0" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=+this.value;sa();rDk();rSur()"></td>';
       sh+='<td>'+r2(totKg,1)+'</td><td>'+r2(totKg*sk.sz,0)+'</td>';
       sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
       Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
       sh+='</select></td>';
       sh+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:8px" onclick="moveSek('+gi+','+si+')" title="Przenieś">⇄</button> <button class="btn bs bd" style="padding:1px 4px" onclick="delSek('+gi+','+si+')">✕</button></td></tr>';
+      // Extra ingredients for this sector
+      if(sk.sk_extra&&sk.sk_extra.length){
+        sk.sk_extra.forEach((ex,ei)=>{
+          const exS=gS(ex.s);const exName=exS?exS.nazwa:'?';
+          sh+='<tr class="'+cc+'" style="background:rgba(46,125,50,.08)"><td></td><td style="font-size:10px;color:var(--pri);padding-left:20px">↳ '+exName+'</td>';
+          sh+='<td></td><td><input type="number" step="0.1" value="'+ex.kg+'" style="width:48px;font-size:10px" onchange="gr['+gi+'].se['+si+'].sk_extra['+ei+'].kg=+this.value;sa();rDk();rSur()"></td>';
+          sh+='<td>'+r2(ex.kg*sk.sz,0)+'</td><td></td>';
+          sh+='<td><button class="btn bs bd" style="padding:0 3px;font-size:8px" onclick="gr['+gi+'].se['+si+'].sk_extra.splice('+ei+',1);sa();rDk();rSur()">✕</button></td></tr>';
+        });
+      }
     });
   });
   sh+='</tbody></table>';
@@ -502,16 +519,31 @@ function delSek(gi,si){
   if(gr[gi].se.length>1){gr[gi].se.splice(si,1);sa();rDk();rSur()}
   else if(confirm('To ostatni sektor w grupie „'+gr[gi].nazwa+'". Usunąć całą grupę?')){gr.splice(gi,1);sa(true);rDk();rSur();toast('Usunięto grupę')}
 }
+function addSekExtra(gi,si){
+  const sek=gr[gi].se[si];
+  opM('Dodaj surowiec do sektora „'+sek.n+'"',
+    '<div class="fg" style="margin-bottom:8px"><label>Surowiec z bazy</label><select id="ase-s">'+sur.map(s=>'<option value="'+s.id+'">'+s.nazwa+'</option>').join('')+'</select></div>'+
+    '<div class="fg"><label>kg / szt. / dobę</label><input type="number" id="ase-kg" step="0.1" value="0.5"></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okSekExtra('+gi+','+si+')">Dodaj</button>');
+}
+function okSekExtra(gi,si){
+  const sid=$('#ase-s').value;const kg=+$('#ase-kg').value||0;
+  if(!sid||kg<=0){toast('Wybierz surowiec i podaj kg');return}
+  if(!gr[gi].se[si].sk_extra)gr[gi].se[si].sk_extra=[];
+  gr[gi].se[si].sk_extra.push({s:sid,kg});
+  sa();clM();rDk();rSur();toast('Dodano');
+}
 function addSek(){opM('Dodaj sektor','<div class="fg" style="margin-bottom:8px"><label>Grupa</label><select id="as-g">'+gr.map((g,i)=>'<option value="'+i+'">'+g.nazwa+'</option>').join('')+'</select></div><div class="fg" style="margin-bottom:8px"><label>Nazwa sektora</label><input type="text" id="as-sn"></div><div class="fg"><label>Sztuk</label><input type="number" id="as-ss" value="10"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr[+$(\'#as-g\').value].se.push({n:$(\'#as-sn\').value.trim()||\'Nowy\',sz:+$(\'#as-ss\').value||0});sa();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
 
 // Per-group PDF — preview with editable values
 let _pv=null; // preview state
 function pDkGr(gi){
   const g=gr[gi];
-  // Deep copy for preview, sorted by surowce order
   const surOrder=sur.map(s=>s.id);
   const sorted=g.sk.filter(x=>x.kg>0).map(x=>({s:x.s,kg:x.kg})).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
-  _pv={gi,nazwa:g.nazwa,z:g.z,sk:sorted,se:g.se.map(x=>({n:x.n,sz:x.sz})),uwagi:''};
+  _pv={gi,nazwa:g.nazwa,z:g.z,sk:sorted,
+    se:g.se.map(x=>({n:x.n,sz:x.sz,sk_extra:x.sk_extra?x.sk_extra.map(e=>({s:e.s,kg:e.kg})):[]})),
+    uwagi:'',niedojady:0,niedSrc:''};
   renderPV();
 }
 function renderPV(){
@@ -543,7 +575,10 @@ function renderPV(){
   h+='<table class="dt" style="margin-top:4px;margin-bottom:10px"><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
   let sumSz=0;
   p.se.forEach((s,i)=>{sumSz+=s.sz;
-    h+='<tr><td style="text-align:left">'+s.n+'</td><td><input type="number" min="0" value="'+s.sz+'" style="width:50px" onchange="_pv.se['+i+'].sz=+this.value;renderPV()"></td><td>'+r2(totKgOrig*s.sz,0)+'</td></tr>'});
+    h+='<tr><td style="text-align:left">'+s.n+'</td><td><input type="number" min="0" value="'+s.sz+'" style="width:50px" onchange="_pv.se['+i+'].sz=+this.value;renderPV()"></td><td>'+r2(totKgOrig*s.sz,0)+'</td></tr>';
+    if(s.sk_extra&&s.sk_extra.length){s.sk_extra.forEach((ex,ei)=>{const exS=gS(ex.s);
+      h+='<tr style="background:#E3F2FD"><td style="text-align:left;padding-left:20px;font-size:11px;color:#1565C0;font-weight:600">⊕ DODAĆ NA SEKTOR: '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</td><td></td><td style="color:#1565C0;font-weight:700">'+r2(ex.kg*s.sz,0)+'</td></tr>'})}
+  });
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+sumSz+'</b></td><td><b>'+r2(totKgOrig*sumSz,0)+'</b></td></tr></tfoot></table>';
   h+='<div class="fg"><label>Uwagi / notatki do wydruku</label><textarea id="pv-uw" rows="2" style="margin-top:4px;font-size:13px" onchange="_pv.uwagi=this.value">'+p.uwagi+'</textarea></div>';
   h+='</div>';
@@ -566,7 +601,10 @@ function doPrintPV(){
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM</b></td><td><b>'+r2(totKg*coeff,1)+'</b></td><td><b>'+r2(totalSwiezy,1)+'</b></td><td></td></tr></tfoot></table>';
   if(niedojady>0){h+='<p style="margin-top:6px"><b>Niedojady:</b> '+niedojady+' kg'+(p.niedSrc?' ('+p.niedSrc+')':'')+' | <b>Dawka świeża:</b> '+r2(totalSwiezy,1)+' kg + niedojady '+niedojady+' kg = razem '+totalWoz+' kg</p>'}
   h+='<h3>Podział na sektory</h3><table><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
-  p.se.forEach(s=>{h+='<tr><td style="text-align:left">'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>'});
+  p.se.forEach(s=>{h+='<tr><td style="text-align:left">'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>';
+    if(s.sk_extra&&s.sk_extra.length){s.sk_extra.forEach(ex=>{const exS=gS(ex.s);
+      h+='<tr style="background:#E3F2FD"><td style="text-align:left;padding-left:15px;color:#1565C0"><b>⊕ DODAĆ NA SEKTOR: '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</b></td><td></td><td style="color:#1565C0"><b>'+r2(ex.kg*s.sz,0)+'</b></td></tr>'})}
+  });
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
   if(p.uwagi)h+='<p style="margin-top:10px;font-style:italic"><b>Uwagi:</b> '+p.uwagi+'</p>';
   clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h);
@@ -717,11 +755,13 @@ function rKoszty(){
   let h3='<table class="dt"><thead><tr><th style="text-align:left">Grupa</th><th>Sztuk</th><th>kg TMR/szt</th><th>zł/szt/dzień</th><th>zł/grupa/dzień</th><th>zł/grupa/m-c</th><th>Udział</th></tr></thead><tbody>';
   let grandGrDz=0;
   gr.forEach(g=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1);let costSzt=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)costSzt+=sk.kg*(s.cena_t/1000)});
-    grandGrDz+=costSzt*tsz});
+    let extraCost=0;g.se.forEach(sek=>{if(sek.sk_extra)sek.sk_extra.forEach(ex=>{const s=gS(ex.s);if(s)extraCost+=ex.kg*sek.sz*(g.z||1)*(s.cena_t/1000)})});
+    grandGrDz+=costSzt*tsz+extraCost});
   gr.forEach(g=>{
     const tsz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1);const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
     let costSzt=0;g.sk.forEach(sk=>{const s=gS(sk.s);if(s)costSzt+=sk.kg*(s.cena_t/1000)});
-    const grDz=costSzt*tsz;const grMz=grDz*30;const udzial=grandGrDz>0?r2(grDz/grandGrDz*100,1):0;
+    let extraCost=0;g.se.forEach(sek=>{if(sek.sk_extra)sek.sk_extra.forEach(ex=>{const s=gS(ex.s);if(s)extraCost+=ex.kg*sek.sz*(g.z||1)*(s.cena_t/1000)})});
+    const grDz=costSzt*tsz+extraCost;const grMz=grDz*30;const udzial=grandGrDz>0?r2(grDz/grandGrDz*100,1):0;
     h3+='<tr><td>'+g.nazwa+'</td><td>'+tsz+'</td><td>'+r2(totKg,1)+'</td><td>'+r2(costSzt,2)+'</td><td>'+r2(grDz,2)+'</td><td>'+r2(grMz,0)+'</td><td>'+udzial+'%</td></tr>';
   });
   h3+='</tbody><tfoot><tr><td>RAZEM STADO</td><td></td><td></td><td></td><td>'+r2(grandGrDz,2)+'</td><td>'+r2(grandGrDz*30,0)+'</td><td>100%</td></tr></tfoot></table>';
@@ -776,12 +816,20 @@ function buildDaySnapshot(){
     g.se.forEach(sek=>{
       const mapKey=g.nazwa+'|'+sek.n;
       const gt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
+      // Group-level ingredients
       g.sk.forEach(sk=>{
         if(!sk.kg||sk.kg<=0)return;
         const kgDay=sk.kg*sek.sz*feedingsPerDay;
         if(!snap.surowce[sk.s])snap.surowce[sk.s]={};
         snap.surowce[sk.s][gt]=(snap.surowce[sk.s][gt]||0)+kgDay;
       });
+      // Sector-level extra ingredients
+      if(sek.sk_extra){sek.sk_extra.forEach(ex=>{
+        if(!ex.kg||ex.kg<=0)return;
+        const kgDay=ex.kg*sek.sz*feedingsPerDay;
+        if(!snap.surowce[ex.s])snap.surowce[ex.s]={};
+        snap.surowce[ex.s][gt]=(snap.surowce[ex.s][gt]||0)+kgDay;
+      })}
     });
   });
   // Cielaki (3 sektory → gt='c2')
