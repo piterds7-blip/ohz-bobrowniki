@@ -81,7 +81,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}.toast.show{opacity:1}
 #pa{display:none}
 @media print{body>*{display:none!important}#pa{display:block!important;position:absolute;left:0;top:0;width:100%;padding:12mm;font-size:11pt;color:#000}
-#pa table{border-collapse:collapse;width:100%}#pa table th,#pa table td{border:1px solid #555;padding:4px 6px;font-size:9pt}
+#pa table{border-collapse:collapse;width:100%}#pa table th,#pa table td{border:1px solid #555;padding:5px 7px;font-size:11pt;font-weight:600}
 #pa table th{background:#ddd!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#000}
 #pa table tfoot td{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #pa h2{font-size:14pt;margin-bottom:4px}#pa h3{font-size:12pt;margin:10px 0 4px}#pa .pm{font-size:9pt;color:#555;margin-bottom:8px}
@@ -98,7 +98,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <div id="app">
 <header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳</span><span id="hdr-extra"></span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
 <nav class="tab-bar" id="tbar"></nav>
-<section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
+<section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Rok</label><input type="number" id="ml-y" value="2026" min="2020" max="2035" onchange="rMl()"></div><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
 <section class="tp" id="tab-dawki"><div class="card"><div class="ch"><span>Dawki TMR — kg świeżej masy / szt. / dobę</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addDkS()">+ Surowiec</button><button class="btn bs bpdf" onclick="pT('dawki')">📄 PDF</button></div></div><div class="tw" id="dk-w"></div></div><div class="card"><div class="ch">Sektory — podział sztuk</div><div class="tw" id="dk-s"></div></div></section>
 <section class="tp" id="tab-dekadowki">
@@ -135,7 +135,17 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
   <div class="card"><div class="ch">Sekcja 3 — Koszt wg grup żywieniowych</div><div class="tw" id="kos-s3"></div></div>
   <div class="card"><div class="ch">Sekcja 4 — Koszt na sztukę wg kategorii pasz</div><div class="tw" id="kos-s4"></div></div>
 </section>
-<section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia 2026</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
+<section class="tp" id="tab-woz">
+  <div class="card"><div class="ch"><span>Wóz paszowy — receptury do wykonania</span></div>
+  <div id="woz-panel"></div></div>
+  <div class="card"><div class="ch"><span>Raport wozów (dziś)</span></div>
+  <div class="tw" id="woz-raport"></div></div>
+</section>
+<section class="tp" id="tab-wozraport">
+  <div class="fr"><div class="fg"><label>Data</label><input type="date" id="wr-date" onchange="rWozRap()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pWozRap()">📄 PDF</button></div></div>
+  <div class="card"><div class="ch">Raport wozów paszowych</div><div class="tw" id="wr-table"></div></div>
+</section>
+<section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia — <select id="nas-y" onchange="rNas()" style="font:700 13px var(--font);border:none;background:transparent;color:var(--pri)"><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option></select></span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
 <section class="tp" id="tab-kalendarz"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="kal-m" onchange="rKal()"></select></div><div class="fg"><label>Rok</label><input type="number" id="kal-y" value="2026" min="2024" max="2030" onchange="rKal()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('kalendarz')">📄 PDF</button></div></div><div id="kal-w"></div></section>
 </div>
 <div id="pa"></div>
@@ -161,11 +171,11 @@ function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' s
 function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()}
 
 // AUTH — 4 roles
-const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn'};
+const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn',paszowoz:'paszowoz'};
 let passes=LD('passes',null),cR=null;
-const RT={tworca:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce']};
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',koszty:'Koszty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
-const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier'};
+const RT={tworca:['mleko','surowce','dawki','dekadowki','cielaki','koszty','wozraport','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','wozraport','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',koszty:'Koszty',woz:'Wóz paszowy',wozraport:'Raport wozów',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
+const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
 function isRO(){return cR==='prezes'}
 function canPass(){return cR==='tworca'}
 function canEdit(){return cR==='tworca'||cR==='zootechnik'||cR==='magazynier'}
@@ -186,7 +196,16 @@ function showApp(){
   $('#hdr-extra').innerHTML=ex;
   bTabs();startFbSync();
 }
-function applyRO(){if(!isRO())return;setTimeout(()=>{$$('.tp.active input,.tp.active select,.tp.active textarea').forEach(el=>el.disabled=true);$$('.tp.active .btn,.tp.active .bpdf,.tp.active button:not(.tab-btn)').forEach(el=>{if(!el.closest('.tab-bar'))el.style.opacity='0.3';el.style.pointerEvents='none'})},60)}
+function applyRO(){if(!isRO())return;setTimeout(()=>{
+  const tab=document.querySelector('.tab-btn.active');if(!tab)return;const t=tab.dataset.t;
+  // Harmonogram i Obecność: pełny dostęp dla prezesa
+  if(t==='harmonogram'||t==='obecnosc')return;
+  // Mleko: dropdowny odblokowane, pola danych zablokowane
+  if(t==='mleko'){$$('.tp.active td input').forEach(el=>el.disabled=true);return}
+  // Reszta: wszystko read-only
+  $$('.tp.active input,.tp.active select,.tp.active textarea').forEach(el=>el.disabled=true);
+  $$('.tp.active .btn,.tp.active .bpdf,.tp.active button:not(.tab-btn)').forEach(el=>{if(!el.closest('.tab-bar')&&!el.closest('.fr')){el.style.opacity='0.3';el.style.pointerEvents='none'}});
+},60)}
 // Password manager
 function showPassMgr(){
   const pw=passes||DEF_PASSES;
@@ -198,7 +217,7 @@ function showPassMgr(){
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="savePasswords()">Zapisz</button>');
 }
 function savePasswords(){
-  passes={tworca:$('#pw-tw').value.trim()||'tworca',zootechnik:$('#pw-zo').value.trim()||'admin',prezes:$('#pw-pr').value.trim()||'prezes',magazynier:$('#pw-mg').value.trim()||'magazyn'};
+  passes={tworca:$('#pw-tw').value.trim()||'tworca',zootechnik:$('#pw-zo').value.trim()||'admin',prezes:$('#pw-pr').value.trim()||'prezes',magazynier:$('#pw-mg').value.trim()||'magazyn',paszowoz:$('#pw-wz').value.trim()||'paszowoz'};
   SV('passes',passes);
   // Also save to Firebase
   if(fbDb)fbDb.collection('ohz_data').doc('config').set({passes}).catch(e=>console.warn(e));
@@ -218,7 +237,7 @@ function importBackup(){
     try{const d=JSON.parse(ev.target.result);applyState(d);pushToFirebase(true);toast('Kopia przywrócona')}catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,woz:rWoz,wozraport:rWozRap,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
 function pT(t){const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' 2026'),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia 2026',kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
 const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
 prn(ti[t](),$('#'+wr[t]).innerHTML)}
@@ -302,7 +321,7 @@ function setSyncBadge(state){
   else{b.textContent='⏳ Łączenie...';b.style.background='rgba(255,193,7,.3)'}
 }
 
-function collectState(){return{sur,gr,ml,hrD,obD,nas,kal,hrE,obE,ciData,hist,lastDed,gtMap,_ts:Date.now()}}
+function collectState(){return{sur,gr,ml,hrD,obD,nas,kal,hrE,obE,ciData,hist,lastDed,gtMap,wozOrder,wozLog,_ts:Date.now()}}
 function applyState(d){
   if(!d)return;
   // Ignore incoming state if we made a local change less than 3 seconds ago
@@ -310,9 +329,9 @@ function applyState(d){
   fbApplyingRemote=true;
   if(d.sur)sur=d.sur;if(d.gr)gr=d.gr;if(d.ml)ml=d.ml;if(d.hrD)hrD=d.hrD;if(d.obD)obD=d.obD;
   if(d.nas)nas=d.nas;if(d.kal)kal=d.kal;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE;
-  if(d.ciData)ciData=d.ciData;if(d.hist)hist=d.hist;if(d.lastDed)lastDed=d.lastDed;if(d.gtMap)gtMap=d.gtMap;
+  if(d.ciData)ciData=d.ciData;if(d.hist)hist=d.hist;if(d.lastDed)lastDed=d.lastDed;if(d.gtMap)gtMap=d.gtMap;if(d.wozOrder)wozOrder=d.wozOrder;if(d.wozLog)wozLog=d.wozLog;
   SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
-  SV('ciData3',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
+  SV('ciData3',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);SV('wozOrder',wozOrder);SV('wozLog',wozLog);
   fbApplyingRemote=false;
   const activeBtn=document.querySelector('.tab-btn.active');
   if(activeBtn)oT(activeBtn.dataset.t);
@@ -347,12 +366,12 @@ function pushToFirebase(immediate){
     setSyncBadge('saving');
     fbDb.collection('ohz_data').doc('state').set(st).then(()=>setSyncBadge('ok')).catch(e=>{console.warn(e);setSyncBadge('offline')});
   };
-  if(immediate)doPush();else fbSaveTimer=setTimeout(doPush,800);
+  if(immediate)doPush();else fbSaveTimer=setTimeout(doPush,2000);
 }
 
 function sa(immediate){
   SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
-  SV('ciData3',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);
+  SV('ciData3',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);SV('wozOrder',wozOrder);SV('wozLog',wozLog);
   if(!fbApplyingRemote){fbLocalChangeAt=Date.now();pushToFirebase(immediate||false)}
 }
 function gS(id){return sur.find(s=>s.id===id)}
@@ -371,30 +390,30 @@ function dailyUse(sid){
   const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
   const sek=ciData.sektory||[];
   if(sid===ciLinks.proszek){sek.forEach(s=>{total+=(s.n||0)*(s.l||0)*(s.g||130)/1000*(s.o||0)})}
-  if(sid===ciLinks.grains){sek.forEach(s=>{total+=(s.cg||0)})}
-  if(sid===ciLinks.cielak){sek.forEach(s=>{total+=(s.ck||0)})}
+  if(sid===ciLinks.grains){sek.forEach(s=>{total+=(s.cg||0)*s.n})}
+  if(sid===ciLinks.cielak){sek.forEach(s=>{total+=(s.ck||0)*s.n})}
   return total;
 }
 
 // MLEKO
 function rMl(){
-  const m=+$('#ml-m').value,tp=$('#ml-v').value,k=tp+'_2026_'+m,ds=dim(2026,m);
+  const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,tp=$('#ml-v').value,k=tp+'_'+yr+'_'+m,ds=dim(yr,m);
   if(!ml[k]){ml[k]=[];for(let d=1;d<=ds;d++){if(tp==='o')ml[k].push({d,sp:0,pr:0,od:0,ci:30,rz:30,sn:0});else ml[k].push({d,kr:0,pr:0,od:0,dj:0})}}
   const da=ml[k],w=$('#ml-w');
   if(tp==='o'){
     let h='<table class="dt"><thead><tr><th style="width:45px">Dzień</th><th>Stan pop.</th><th>Produkcja</th><th>Odstawa</th><th>Cielęta</th><th>Rozchód</th><th>Stan nast.</th></tr></thead><tbody>';
-    da.forEach((r,i)=>{h+='<tr'+(isWe(2026,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.sp+'" onchange="uMl('+i+',\'sp\',this)"></td><td><input value="'+r.pr+'" onchange="uMl('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMl('+i+',\'od\',this)"></td><td><input value="'+r.ci+'" onchange="uMl('+i+',\'ci\',this)"></td><td>'+r2(r.rz,0)+'</td><td>'+r2(r.sn,0)+'</td></tr>'});
+    da.forEach((r,i)=>{h+='<tr'+(isWe(yr,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.sp+'" onchange="uMl('+i+',\'sp\',this)"></td><td><input value="'+r.pr+'" onchange="uMl('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMl('+i+',\'od\',this)"></td><td><input value="'+r.ci+'" onchange="uMl('+i+',\'ci\',this)"></td><td>'+r2(r.rz,0)+'</td><td>'+r2(r.sn,0)+'</td></tr>'});
     const tP=da.reduce((s,r)=>s+r.pr,0),tO=da.reduce((s,r)=>s+r.od,0),tC=da.reduce((s,r)=>s+r.ci,0),tR=da.reduce((s,r)=>s+r.rz,0);
     h+='</tbody><tfoot><tr><td>RAZEM</td><td></td><td>'+tP+'</td><td>'+tO+'</td><td>'+tC+'</td><td>'+tR+'</td><td></td></tr></tfoot></table>';w.innerHTML=h;
   } else {
     let h='<table class="dt"><thead><tr><th style="width:45px">Dzień</th><th>Krowy</th><th>Produkcja</th><th>Odstawa</th><th>Śr./szt.</th><th>Dojne</th><th>Śr./dojną</th></tr></thead><tbody>';
     da.forEach((r,i)=>{const a1=r.kr>0?r2(r.pr/r.kr,1):'—',a2=r.dj>0?r2(r.pr/r.dj,1):'—';
-      h+='<tr'+(isWe(2026,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.kr+'" onchange="uMlP('+i+',\'kr\',this)"></td><td><input value="'+r.pr+'" onchange="uMlP('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMlP('+i+',\'od\',this)"></td><td>'+a1+'</td><td><input value="'+r.dj+'" onchange="uMlP('+i+',\'dj\',this)"></td><td>'+a2+'</td></tr>'});
+      h+='<tr'+(isWe(yr,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.kr+'" onchange="uMlP('+i+',\'kr\',this)"></td><td><input value="'+r.pr+'" onchange="uMlP('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMlP('+i+',\'od\',this)"></td><td>'+a1+'</td><td><input value="'+r.dj+'" onchange="uMlP('+i+',\'dj\',this)"></td><td>'+a2+'</td></tr>'});
     h+='</tbody></table>';w.innerHTML=h;
   }
 }
-function uMl(i,f,el){const m=+$('#ml-m').value,k='o_2026_'+m;ml[k][i][f]=+el.value||0;const r=ml[k][i];r.rz=(r.od||0)+(r.ci||0);r.sn=r.sp+r.pr-r.rz;sa();rMl()}
-function uMlP(i,f,el){const m=+$('#ml-m').value,k='p_2026_'+m;ml[k][i][f]=+el.value||0;sa();rMl()}
+function uMl(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='o_'+yr+'_'+m;ml[k][i][f]=+el.value||0;const r=ml[k][i];r.rz=(r.od||0)+(r.ci||0);r.sn=r.sp+r.pr-r.rz;sa();rMl()}
+function uMlP(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='p_'+yr+'_'+m;ml[k][i][f]=+el.value||0;sa();rMl()}
 
 // SUROWCE (tony, PLN/t, + zużycie dzienne + wystarczy do)
 function rSur(){
@@ -470,7 +489,7 @@ function rDk(){
       const mapKey=g.nazwa+'|'+sk.n;
       const curGt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
       sh+='<tr class="'+cc+'"><td style="font-size:11px">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+' <button style="background:var(--pri);color:#fff;border:none;border-radius:3px;font-size:9px;padding:0 4px;cursor:pointer" onclick="addSekExtra('+gi+','+si+')" title="Dodaj surowiec do sektora">+</button></td>';
-      sh+='<td><input min="0" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=+this.value;sa();rDk();rSur()"></td>';
+      sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=+this.value;sa();rDk();rSur()"></td>';
       sh+='<td>'+r2(totKg,1)+'</td><td>'+r2(totKg*sk.sz,0)+'</td>';
       sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
       Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
@@ -614,7 +633,7 @@ function doPrintPV(){
 function ciSektory(){return ciData.sektory||(ciData.sektory=[{nazwa:'Stare budki',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:30},{nazwa:'Nowe budki',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:0},{nazwa:'Na automacie',n:5,g:130,l:2,o:2,cg:0,ck:0,mp:0}])}
 function ciTotals(){
   const sek=ciSektory();let tW=0,tP=0,tMp=0,tCg=0,tCk=0;
-  sek.forEach(s=>{const pK=s.n*s.l*(s.g||130)/1000*s.o;tP+=pK;tW+=s.n*s.l*s.o;tMp+=(s.mp||0);tCg+=(s.cg||0);tCk+=(s.ck||0)});
+  sek.forEach(s=>{const pK=s.n*s.l*(s.g||130)/1000*s.o;tP+=pK;tW+=s.n*s.l*s.o;tMp+=(s.mp||0);tCg+=(s.cg||0)*s.n;tCk+=(s.ck||0)*s.n});
   return{tW:r2(tW,1),tP:r2(tP,2),tMp,tCg,tCk,totalN:sek.reduce((a,s)=>a+s.n,0)};
 }
 function calcCi(){
@@ -635,9 +654,11 @@ function loadCiUI(){
     h+='<div class="fg" style="min-width:60px;max-width:70px"><label>L/szt/karm</label><input type="number" value="'+s.l+'" step="0.5" onchange="ciSektory()['+i+'].l=+this.value;calcCi()"></div>';
     h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Odpojów</label><input type="number" value="'+s.o+'" min="1" max="4" onchange="ciSektory()['+i+'].o=+this.value;calcCi()"></div>';
     if(hasMp)h+='<div class="fg" style="min-width:60px;max-width:80px"><label>Mleko pełne L/d</label><input type="number" value="'+(s.mp||0)+'" step="1" onchange="ciSektory()['+i+'].mp=+this.value;calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:80px"><label>Calf Grains kg/d</label><input type="number" value="'+(s.cg||0)+'" step="0.1" onchange="ciSektory()['+i+'].cg=+this.value;calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Cielak kg/d</label><input type="number" value="'+(s.ck||0)+'" step="0.1" onchange="ciSektory()['+i+'].ck=+this.value;calcCi()"></div>';
-    h+='</div></div>';
+    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Calf Grains kg/szt</label><input type="number" value="'+(s.cg||0)+'" step="0.1" onchange="ciSektory()['+i+'].cg=+this.value;calcCi()"></div>';
+    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Cielak kg/szt</label><input type="number" value="'+(s.ck||0)+'" step="0.1" onchange="ciSektory()['+i+'].ck=+this.value;calcCi()"></div>';
+    // Show totals per sector
+    const cgTot=r2((s.cg||0)*s.n,1),ckTot=r2((s.ck||0)*s.n,1);
+    h+='</div><div style="font-size:11px;color:var(--txt2);padding:2px 0">Razem: Calf Grains <b>'+cgTot+'</b> kg/d · Cielak <b>'+ckTot+'</b> kg/d</div></div>';
   });
   h+='<p style="padding:6px 12px;font-size:11px;color:var(--txt2)">Mleko pełne (stare budki) → rozchód w zakładce Mleko. Po ukończeniu sektora cielaki przechodzą na „Zbiorówka" w grupie Jałówki Rosn.</p>';
   $('#ci-panels').innerHTML=h;
@@ -650,7 +671,7 @@ function rSch(pf){
   const data=pf==='hr'?hrD:obD,ent=pf==='hr'?hrE:obE;
   const wk=data[gp]||[];const ds=dim(y,m);const ek=pf+'_'+y+'_'+m+'_'+gp;if(!ent[ek])ent[ek]={};
   let h='<table class="dt" style="min-width:'+(80+wk.length*85)+'px"><thead><tr><th style="width:55px">Dzień</th>';
-  wk.forEach(w=>h+='<th>'+w.imie+'</th>');h+='</tr></thead><tbody>';
+  wk.forEach((w,wi)=>h+='<th>'+w.imie+(canEdit()?' <button style="border:none;background:rgba(255,255,255,.3);color:#fff;font-size:8px;padding:0 3px;border-radius:3px;cursor:pointer" onclick="delPr(\''+pf+'\',\''+gp+'\','+wi+')" title="Usuń">✕</button>':'')+'</th>');h+='</tr></thead><tbody>';
   let tot=wk.map(()=>0);
   for(let d=1;d<=ds;d++){const we=isWe(y,m,d),dw=dow(y,m,d);
     h+='<tr'+(we?' class="we"':'')+'><td>'+d+' '+DP[dw]+'</td>';
@@ -661,13 +682,16 @@ function rSch(pf){
 function uSch(el){(el.dataset.pf==='hr'?hrE:obE)[el.dataset.ek][el.dataset.dk]=el.value;sa();rSch(el.dataset.pf)}
 function addPr(pf){const gp=$('#'+pf+'-g').value;opM('Dodaj pracownika','<div class="fg"><label>Imię i nazwisko</label><input type="text" id="ap-n"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okPr(\''+pf+'\',\''+gp+'\')">Dodaj</button>')}
 function okPr(pf,gp){const n=$('#ap-n').value.trim();if(!n){toast('Podaj imię');return}(pf==='hr'?hrD:obD)[gp]=((pf==='hr'?hrD:obD)[gp]||[]);(pf==='hr'?hrD:obD)[gp].push({imie:n});sa();clM();rSch(pf);toast('Dodano')}
+function delPr(pf,gp,wi){const data=pf==='hr'?hrD:obD;const name=data[gp][wi].imie;if(!confirm('Usunąć pracownika „'+name+'"?'))return;data[gp].splice(wi,1);sa();rSch(pf);toast('Usunięto')}
 function pSch(pf){const m=+$('#'+pf+'-m').value,g=$('#'+pf+'-g').value;prn((pf==='hr'?'Harmonogram pracy':'Lista obecności')+' — '+MO[m]+' '+$('#'+pf+'-y').value+' — '+g,$('#'+pf+'-w').innerHTML)}
 
 // NASIENIE (edycja + usuwanie)
 function rNas(){
+  const yr=$('#nas-y')?$('#nas-y').value:'2026';
+  const filtered=nas.filter(n=>(n.d||'').startsWith(yr));
   let h='<table class="dt" style="min-width:700px"><thead><tr><th>Firma</th><th>Data</th><th>Buhaj</th><th>Numer</th><th>Porcje</th><th>Cena</th><th>Wartość</th><th></th></tr></thead><tbody>';
   let tP=0,tW=0;
-  nas.forEach((n,i)=>{tP+=n.p;tW+=n.w;
+  filtered.forEach((n,fi)=>{const i=nas.indexOf(n);tP+=n.p;tW+=n.w;
     h+='<tr><td>'+n.f+'</td><td style="font-family:var(--mono)">'+n.d+'</td><td>'+n.b+'</td><td style="font-size:10px">'+n.nr+'</td><td>'+n.p+'</td><td>'+r2(n.c,2)+'</td><td>'+r2(n.w,2)+'</td>';
     h+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:9px" onclick="eNas('+i+')">✎</button> <button class="btn bs bd" style="padding:1px 4px;font-size:9px" onclick="if(confirm(\'Usunąć?\')){nas.splice('+i+',1);sa();rNas();toast(\'Usunięto\')}">✕</button></td></tr>'});
   h+='</tbody><tfoot><tr><td colspan="4">RAZEM</td><td>'+tP+'</td><td></td><td>'+r2(tW,2)+'</td><td></td></tr></tfoot></table>';$('#nas-w').innerHTML=h;}
@@ -788,16 +812,81 @@ function rKoszty(){
 }
 function pKoszty(){prn('Analiza kosztów żywienia stada — OHZ Bobrowniki',$('#kos-s1').innerHTML+'<br><br>'+$('#kos-s2').innerHTML+'<br><br>'+$('#kos-s3').innerHTML+'<br><br>'+$('#kos-s4').innerHTML)}
 
+// ===== WÓZ PASZOWY =====
+const DEF_WOZ_ORDER=['g2','g1','g3','g4','g7','g6','g5','g2','g1','g3','g4']; // default sequence
+let wozOrder=LD('wozOrder',DEF_WOZ_ORDER);
+let wozLog=LD('wozLog',{});
+
+function rWoz(){
+  const today=isoToday();if(!wozLog[today])wozLog[today]=[];
+  const done=wozLog[today];
+  const currentIdx=done.length;
+  let h='';
+  if(currentIdx>=wozOrder.length){
+    h='<div style="padding:30px;text-align:center;color:var(--pri)"><div style="font-size:48px;margin-bottom:10px">✅</div><b style="font-size:18px">Wszystkie wozy na dziś wykonane!</b><p style="margin-top:8px;color:var(--txt2)">Wykonano '+done.length+' wozów</p></div>';
+  } else {
+    const gid=wozOrder[currentIdx];const g=gr.find(x=>x.id===gid);
+    if(!g){h='<p style="padding:20px;color:var(--red)">Grupa '+gid+' nie znaleziona</p>';$('#woz-panel').innerHTML=h;return}
+    const tsz=g.se.reduce((a,s)=>a+s.sz,0);const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
+    const surOrder=sur.map(s=>s.id);
+    const sorted=g.sk.filter(x=>x.kg>0).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
+    h+='<div style="padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h3 style="color:var(--pri)">Wóz '+(currentIdx+1)+'/'+wozOrder.length+' — '+g.nazwa+'</h3><span style="font-size:12px;color:var(--txt2)">'+tsz+' szt</span></div>';
+    h+='<table class="dt"><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
+    let run=0;
+    sorted.forEach(sk=>{const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz,1);run=r2(run+sk.kg*tsz,1);
+      h+='<tr><td>'+s.nazwa+'</td><td>'+sk.kg+'</td><td>'+nw+'</td><td>'+run+'</td></tr>'});
+    h+='</tbody><tfoot><tr><td><b>RAZEM</b></td><td><b>'+r2(totKg,1)+'</b></td><td><b>'+r2(totKg*tsz,1)+'</b></td><td></td></tr></tfoot></table>';
+    // Sektory
+    h+='<div style="margin-top:8px"><b style="font-size:12px">Sektory:</b><table class="dt" style="margin-top:4px"><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg</th></tr></thead><tbody>';
+    g.se.forEach(s=>{h+='<tr><td>'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>';
+      if(s.sk_extra&&s.sk_extra.length){s.sk_extra.forEach(ex=>{const exS=gS(ex.s);h+='<tr style="background:#E3F2FD"><td style="padding-left:15px;color:#1565C0">⊕ '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</td><td></td><td style="color:#1565C0">'+r2(ex.kg*s.sz,0)+'</td></tr>'})}
+    });h+='</tbody></table></div>';
+    // Niedojady
+    h+='<div style="margin-top:10px;background:var(--amber-bg);padding:8px;border-radius:6px"><div style="display:flex;gap:8px;flex-wrap:wrap"><div class="fg" style="max-width:120px"><label>Niedojady (kg)</label><input type="number" id="woz-nied" min="0" step="10" value="0"></div><div class="fg" style="flex:2"><label>Źródło</label><input type="text" id="woz-nied-src" placeholder="np. z GR 1 i 3"></div></div></div>';
+    h+='<div style="margin-top:12px;text-align:center"><button class="btn bp" style="padding:12px 30px;font-size:16px" onclick="wozGotowe()">✅ GOTOWE — wóz zrobiony</button></div></div>';
+  }
+  $('#woz-panel').innerHTML=h;
+  // Today's log
+  let lr='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Godzina</th><th>Niedojady</th></tr></thead><tbody>';
+  done.forEach((d,i)=>{lr+='<tr><td>'+(i+1)+'</td><td>'+d.nazwa+'</td><td>'+d.czas+'</td><td>'+(d.niedojady>0?d.niedojady+' kg'+(d.niedSrc?' ('+d.niedSrc+')':''):'—')+'</td></tr>'});
+  if(!done.length)lr+='<tr><td colspan="4" style="text-align:center;color:var(--txt2)">Brak wozów dziś</td></tr>';
+  lr+='</tbody></table>';
+  $('#woz-raport').innerHTML=lr;
+}
+function wozGotowe(){
+  const today=isoToday();if(!wozLog[today])wozLog[today]=[];
+  const idx=wozLog[today].length;if(idx>=wozOrder.length)return;
+  const gid=wozOrder[idx];const g=gr.find(x=>x.id===gid);
+  const now=new Date();const czas=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const nied=+($('#woz-nied')?$('#woz-nied').value:0)||0;
+  const niedSrc=$('#woz-nied-src')?$('#woz-nied-src').value:'';
+  wozLog[today].push({gid,nazwa:g?g.nazwa:'?',czas,niedojady:nied,niedSrc,timestamp:now.toISOString()});
+  SV('wozLog',wozLog);sa();rWoz();toast('Wóz '+(idx+1)+' zrobiony o '+czas);
+}
+// Raport wozów (for zootechnik)
+function rWozRap(){
+  const d=$('#wr-date')?$('#wr-date').value:isoToday();
+  if(!$('#wr-date').value)$('#wr-date').value=isoToday();
+  const log=wozLog[d]||[];
+  let h='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Godzina</th><th>Niedojady</th><th>Źródło</th></tr></thead><tbody>';
+  log.forEach((l,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+l.nazwa+'</td><td style="font-weight:700">'+l.czas+'</td><td>'+(l.niedojady>0?l.niedojady+' kg':'—')+'</td><td>'+(l.niedSrc||'—')+'</td></tr>'});
+  if(!log.length)h+='<tr><td colspan="5" style="text-align:center;color:var(--txt2)">Brak wozów na '+d+'</td></tr>';
+  h+='</tbody></table>';
+  $('#wr-table').innerHTML=h;
+}
+function pWozRap(){const d=$('#wr-date')?$('#wr-date').value:isoToday();prn('Raport wozów paszowych — '+d,$('#wr-table').innerHTML)}
+
 function rKal(){
   const m=+$('#kal-m').value,y=+$('#kal-y').value,k=y+'_'+m;if(!kal[k])kal[k]={};const ent=kal[k],ds=dim(y,m),fd=dow(y,m,1);
   let h='<div class="cal-grid">';DP.forEach((d,i)=>h+='<div class="cal-hdr'+(i>=5?' wknd':'')+'">'+d+'</div>');
   for(let e=0;e<fd;e++)h+='<div class="cal-cell empty"></div>';
-  for(let d=1;d<=ds;d++){const we=isWe(y,m,d),tx=ent[d]||'';
-    h+='<div class="cal-cell'+(we?' wknd':'')+'" onclick="eKal('+y+','+m+','+d+')"><div class="dn">'+d+'</div><div class="dt2">'+tx.replace(/</g,'&lt;')+'</div></div>'}
+  for(let d=1;d<=ds;d++){const we=isWe(y,m,d),tx=ent[d]||'',done=ent['done_'+d];
+    h+='<div class="cal-cell'+(we?' wknd':'')+'" style="position:relative" onclick="eKal('+y+','+m+','+d+')"><div style="display:flex;justify-content:space-between"><div class="dn">'+d+'</div><button onclick="event.stopPropagation();togDone('+y+','+m+','+d+')" style="border:none;background:'+(done?'var(--red)':'rgba(0,0,0,.1)')+';color:'+(done?'#fff':'#999')+';width:18px;height:18px;border-radius:3px;font-size:10px;cursor:pointer;line-height:1">✕</button></div><div class="dt2">'+tx.replace(/</g,'&lt;')+'</div>'+(done?'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;color:rgba(198,40,40,.2);font-weight:900;pointer-events:none">✕</div>':'')+'</div>'}
   const rem=(fd+ds)%7;if(rem>0)for(let e=0;e<7-rem;e++)h+='<div class="cal-cell empty"></div>';
   h+='</div>';$('#kal-w').innerHTML=h;}
 function eKal(y,m,d){const k=y+'_'+m;if(!kal[k])kal[k]={};const c=kal[k][d]||'';
   opM(d+' '+MO[m]+' '+y,'<div class="fg"><label>Notatka</label><textarea id="kt" rows="5" style="margin-top:4px;font-size:15px;font-weight:700">'+c+'</textarea></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bs bd" onclick="delete kal[\''+k+'\']['+d+'];sa();clM();rKal()">Wyczyść</button><button class="btn bp" onclick="kal[\''+k+'\']['+d+']=$(\'#kt\').value.trim();sa();clM();rKal();toast(\'Zapisano\')">Zapisz</button>')}
+function togDone(y,m,d){const k=y+'_'+m;if(!kal[k])kal[k]={};const dk='done_'+d;kal[k][dk]=!kal[k][dk];sa();rKal()}
 
 // ===== HISTORIA / ODLICZANIE / DEKADOWKI =====
 
@@ -836,7 +925,7 @@ function buildDaySnapshot(){
   const ciLinks=LD('ciLinks',{proszek:'s13',grains:'s14',cielak:'s15'});
   const sek=ciData.sektory||[];
   let ciProszek=0,ciCg=0,ciCk=0,ciMp=0;
-  sek.forEach(s=>{ciProszek+=(s.n||0)*(s.l||0)*(s.g||130)/1000*(s.o||0);ciCg+=(s.cg||0);ciCk+=(s.ck||0);ciMp+=(s.mp||0)});
+  sek.forEach(s=>{ciProszek+=(s.n||0)*(s.l||0)*(s.g||130)/1000*(s.o||0);ciCg+=(s.cg||0)*s.n;ciCk+=(s.ck||0)*s.n;ciMp+=(s.mp||0)});
   if(ciProszek>0){if(!snap.surowce[ciLinks.proszek])snap.surowce[ciLinks.proszek]={};snap.surowce[ciLinks.proszek].c2=(snap.surowce[ciLinks.proszek].c2||0)+ciProszek}
   if(ciCg>0){if(!snap.surowce[ciLinks.grains])snap.surowce[ciLinks.grains]={};snap.surowce[ciLinks.grains].c2=(snap.surowce[ciLinks.grains].c2||0)+ciCg}
   if(ciCk>0){if(!snap.surowce[ciLinks.cielak])snap.surowce[ciLinks.cielak]={};snap.surowce[ciLinks.cielak].c2=(snap.surowce[ciLinks.cielak].c2||0)+ciCk}
