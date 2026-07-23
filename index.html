@@ -181,7 +181,7 @@ function canPass(){return cR==='tworca'}
 function canEdit(){return cR==='tworca'||cR==='zootechnik'||cR==='magazynier'}
 function doLogin(){
   const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}
-  const pw=passes||DEF_PASSES;let role=null;
+  const pw=Object.assign({},DEF_PASSES,passes||{});let role=null;
   for(const[r,v]of Object.entries(pw))if(v===p){role=r;break}
   if(!role){$('#le').textContent='Nieprawidłowe hasło';return}
   cR=role;SV('sess',role);showApp();
@@ -208,7 +208,7 @@ function applyRO(){if(!isRO())return;setTimeout(()=>{
 },60)}
 // Password manager
 function showPassMgr(){
-  const pw=passes||DEF_PASSES;
+  const pw=Object.assign({},DEF_PASSES,passes||{});
   opM('Zarządzanie hasłami',
     '<div class="fg" style="margin-bottom:8px"><label>Twórca</label><input type="text" id="pw-tw" value="'+(pw.tworca||'')+'"></div>'+
     '<div class="fg" style="margin-bottom:8px"><label>Zootechnik</label><input type="text" id="pw-zo" value="'+(pw.zootechnik||'')+'"></div>'+
@@ -1034,7 +1034,7 @@ function pDek(){
 }
 
 (function(){
-  const s=LD('sess',null);if(s&&(passes||DEF_PASSES)[s]){cR=s;showApp()}
+  const s=LD('sess',null);if(s&&Object.assign({},DEF_PASSES,passes||{})[s]){cR=s;showApp()}
   const cm=new Date().getMonth();
   ['ml-m','hr-m','ob-m','kal-m'].forEach(id=>{const e=$('#'+id);if(e)fMS(e,cm)});
   $('#ml-v').addEventListener('change',rMl);$('#ml-m').addEventListener('change',rMl);
