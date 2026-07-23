@@ -138,8 +138,8 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <section class="tp" id="tab-woz">
   <div class="card"><div class="ch"><span>Wóz paszowy — receptury do wykonania</span></div>
   <div id="woz-panel"></div></div>
-  <div class="card"><div class="ch"><span>Raport wozów (dziś)</span></div>
-  <div class="tw" id="woz-raport"></div></div>
+  <div class="card"><div class="ch"><span>Postęp dzisiaj</span></div>
+  <div id="woz-raport"></div></div>
 </section>
 <section class="tp" id="tab-wozraport">
   <div class="fr"><div class="fg"><label>Data</label><input type="date" id="wr-date" onchange="rWozRap()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pWozRap()">📄 PDF</button></div></div>
@@ -846,10 +846,10 @@ function rWoz(){
     h+='<div style="margin-top:12px;text-align:center"><button class="btn bp" style="padding:12px 30px;font-size:16px" onclick="wozGotowe()">✅ GOTOWE — wóz zrobiony</button></div></div>';
   }
   $('#woz-panel').innerHTML=h;
-  // Today's log
-  let lr='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Godzina</th><th>Niedojady</th></tr></thead><tbody>';
-  done.forEach((d,i)=>{lr+='<tr><td>'+(i+1)+'</td><td>'+d.nazwa+'</td><td>'+d.czas+'</td><td>'+(d.niedojady>0?d.niedojady+' kg'+(d.niedSrc?' ('+d.niedSrc+')':''):'—')+'</td></tr>'});
-  if(!done.length)lr+='<tr><td colspan="4" style="text-align:center;color:var(--txt2)">Brak wozów dziś</td></tr>';
+  // Today's log - simplified for paszowoz, no timestamp info (control tool for zootechnik only)
+  let lr='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Status</th></tr></thead><tbody>';
+  done.forEach((d,i)=>{lr+='<tr><td>'+(i+1)+'</td><td>'+d.nazwa+'</td><td style="color:var(--pri)">✓ Wykonano</td></tr>'});
+  if(!done.length)lr+='<tr><td colspan="3" style="text-align:center;color:var(--txt2)">Brak wozów dziś</td></tr>';
   lr+='</tbody></table>';
   $('#woz-raport').innerHTML=lr;
 }
@@ -861,12 +861,12 @@ function wozGotowe(){
   const nied=+($('#woz-nied')?$('#woz-nied').value:0)||0;
   const niedSrc=$('#woz-nied-src')?$('#woz-nied-src').value:'';
   wozLog[today].push({gid,nazwa:g?g.nazwa:'?',czas,niedojady:nied,niedSrc,timestamp:now.toISOString()});
-  SV('wozLog',wozLog);sa();rWoz();toast('Wóz '+(idx+1)+' zrobiony o '+czas);
+  SV('wozLog',wozLog);sa();rWoz();toast('Wóz '+(idx+1)+' zapisany');
 }
 // Raport wozów (for zootechnik)
 function rWozRap(){
+  if($('#wr-date')&&!$('#wr-date').value)$('#wr-date').value=isoToday();
   const d=$('#wr-date')?$('#wr-date').value:isoToday();
-  if(!$('#wr-date').value)$('#wr-date').value=isoToday();
   const log=wozLog[d]||[];
   let h='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Godzina</th><th>Niedojady</th><th>Źródło</th></tr></thead><tbody>';
   log.forEach((l,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+l.nazwa+'</td><td style="font-weight:700">'+l.czas+'</td><td>'+(l.niedojady>0?l.niedojady+' kg':'—')+'</td><td>'+(l.niedSrc||'—')+'</td></tr>'});
