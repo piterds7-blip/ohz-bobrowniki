@@ -96,7 +96,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <body>
 <div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
 <div id="app">
-<header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳</span><span id="hdr-extra"></span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
+<header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳</span><button class="blo" onclick="forceRefresh()" title="Odśwież dane" style="font-size:16px;padding:2px 6px">⟳</button><span id="hdr-extra"></span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
 <nav class="tab-bar" id="tbar"></nav>
 <section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Rok</label><input type="number" id="ml-y" value="2026" min="2020" max="2035" onchange="rMl()"></div><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
@@ -225,8 +225,8 @@ function savePasswords(){
 }
 // Backup export/import
 function exportBackup(){
-  const data=JSON.stringify(collectState(),null,2);
-  const blob=new Blob([data],{type:'application/json'});
+  const data={};Object.entries(MODULES).forEach(([mod,h])=>{data[mod]=h.get()});
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='ohz_backup_'+isoDate(new Date())+'.json';a.click();toast('Kopia pobrana');
 }
@@ -234,7 +234,17 @@ function importBackup(){
   const inp=document.createElement('input');inp.type='file';inp.accept='.json';
   inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{
     if(!confirm('Wgrać kopię zapasową? To nadpisze WSZYSTKIE obecne dane!'))return;
-    try{const d=JSON.parse(ev.target.result);applyState(d);pushToFirebase(true);toast('Kopia przywrócona')}catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
+    try{const d=JSON.parse(ev.target.result);
+      // Handle both old format (flat) and new format (per module)
+      if(d.sur&&!d.surowce){
+        // Old flat format
+        Object.entries(MODULES).forEach(([mod,h])=>{h.set(d)});
+      } else {
+        Object.entries(d).forEach(([mod,mdata])=>{if(MODULES[mod])MODULES[mod].set(mdata)});
+      }
+      Object.keys(MODULES).forEach(mod=>pushModule(mod,true));
+      toast('Kopia przywrócona');const ab=document.querySelector('.tab-btn.active');if(ab)oT(ab.dataset.t);
+    }catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
 function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,woz:rWoz,wozraport:rWozRap,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
@@ -305,68 +315,122 @@ sur.forEach(s=>{if(!s.kat)s.kat=KAT_DEFAULTS[s.id]||'obj'});
 // Migration: add realSz to groups that don't have it
 gr.forEach(g=>{if(g.realSz==null)g.realSz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1)});
 
-// ===== FIREBASE SYNC =====
+// ===== FIREBASE SYNC v2 — per-module documents =====
 const firebaseConfig={apiKey:"AIzaSyC3vYPG90_aMEaKWJuhmzD1tj5lXT8Zh5o",authDomain:"ohz-bobrowniki-po-app.firebaseapp.com",projectId:"ohz-bobrowniki-po-app",storageBucket:"ohz-bobrowniki-po-app.firebasestorage.app",messagingSenderId:"90224575465",appId:"1:90224575465:web:07614843e409aafd600178"};
-let fbDb=null,fbReady=false,fbApplyingRemote=false,fbSaveTimer=null,fbLastPushed='',fbLocalChangeAt=0;
-try{
-  firebase.initializeApp(firebaseConfig);
-  fbDb=firebase.firestore();
-}catch(e){console.warn('Firebase init failed',e)}
+let fbDb=null,fbInitialLoaded=false,fbApplyingRemote=false;
+const fbTimers={},fbLastW={},fbPending=new Set();
+const MODULES={
+  surowce:{get:()=>({sur,gtMap}),set:d=>{if(d.sur)sur=d.sur;if(d.gtMap)gtMap=d.gtMap;SV('sur2',sur);SV('gtMap',gtMap)},sv:()=>{SV('sur2',sur);SV('gtMap',gtMap)}},
+  grupy:{get:()=>({gr,wozOrder}),set:d=>{if(d.gr)gr=d.gr;if(d.wozOrder)wozOrder=d.wozOrder;SV('gr2',gr);SV('wozOrder',wozOrder)},sv:()=>{SV('gr2',gr);SV('wozOrder',wozOrder)}},
+  mleko:{get:()=>({ml}),set:d=>{if(d.ml)ml=d.ml;SV('ml',ml)},sv:()=>SV('ml',ml)},
+  kadry:{get:()=>({hrD,obD,hrE,obE}),set:d=>{if(d.hrD)hrD=d.hrD;if(d.obD)obD=d.obD;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE;SV('hrD',hrD);SV('obD',obD);SV('hrE',hrE);SV('obE',obE)},sv:()=>{SV('hrD',hrD);SV('obD',obD);SV('hrE',hrE);SV('obE',obE)}},
+  nasienie:{get:()=>({nas}),set:d=>{if(d.nas)nas=d.nas;SV('nas2',nas)},sv:()=>SV('nas2',nas)},
+  kalendarz:{get:()=>({kal}),set:d=>{if(d.kal)kal=d.kal;SV('kal',kal)},sv:()=>SV('kal',kal)},
+  cielaki:{get:()=>({ciData}),set:d=>{if(d.ciData)ciData=d.ciData;SV('ciData3',ciData)},sv:()=>SV('ciData3',ciData)},
+  logi:{get:()=>({hist,lastDed,wozLog}),set:d=>{
+    // Merge logs instead of overwrite
+    if(d.hist){Object.keys(d.hist).forEach(k=>{if(!hist[k])hist[k]=d.hist[k]})}
+    if(d.wozLog){Object.keys(d.wozLog).forEach(k=>{
+      if(!wozLog[k])wozLog[k]=d.wozLog[k];
+      else{const existing=new Set(wozLog[k].map(e=>e.timestamp));d.wozLog[k].forEach(e=>{if(!existing.has(e.timestamp))wozLog[k].push(e)})}
+    })}
+    if(d.lastDed&&(!lastDed||d.lastDed>lastDed))lastDed=d.lastDed;
+    SV('hist',hist);SV('lastDed',lastDed);SV('wozLog',wozLog);
+  },sv:()=>{SV('hist',hist);SV('lastDed',lastDed);SV('wozLog',wozLog)}}
+};
+try{firebase.initializeApp(firebaseConfig);fbDb=firebase.firestore()}catch(e){console.warn('Firebase init failed',e)}
 
 function setSyncBadge(state){
   const b=$('#syncb');if(!b)return;
-  if(state==='ok'){b.textContent='☁️ Zsynchronizowano';b.style.background='rgba(255,255,255,.2)'}
-  else if(state==='saving'){b.textContent='💾 Zapisywanie...';b.style.background='rgba(255,193,7,.3)'}
-  else if(state==='offline'){b.textContent='📴 Offline (lokalnie)';b.style.background='rgba(198,40,40,.35)'}
-  else{b.textContent='⏳ Łączenie...';b.style.background='rgba(255,193,7,.3)'}
+  if(state==='ok'){b.textContent='☁️';b.style.background='rgba(255,255,255,.2)'}
+  else if(state==='saving'){b.textContent='💾';b.style.background='rgba(255,193,7,.3)'}
+  else if(state==='offline'){b.textContent='📴';b.style.background='rgba(198,40,40,.35)'}
+  else{b.textContent='⏳';b.style.background='rgba(255,193,7,.3)'}
 }
 
-function collectState(){return{sur,gr,ml,hrD,obD,nas,kal,hrE,obE,ciData,hist,lastDed,gtMap,wozOrder,wozLog,_ts:Date.now()}}
-function applyState(d){
-  if(!d)return;
-  // Ignore incoming state if we made a local change less than 3 seconds ago
-  if(Date.now()-fbLocalChangeAt<3000)return;
-  fbApplyingRemote=true;
-  if(d.sur)sur=d.sur;if(d.gr)gr=d.gr;if(d.ml)ml=d.ml;if(d.hrD)hrD=d.hrD;if(d.obD)obD=d.obD;
-  if(d.nas)nas=d.nas;if(d.kal)kal=d.kal;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE;
-  if(d.ciData)ciData=d.ciData;if(d.hist)hist=d.hist;if(d.lastDed)lastDed=d.lastDed;if(d.gtMap)gtMap=d.gtMap;if(d.wozOrder)wozOrder=d.wozOrder;if(d.wozLog)wozLog=d.wozLog;
-  SV('sur2',sur);SV('gr2',gr);SV('ml',ml);SV('hrD',hrD);SV('obD',obD);SV('nas2',nas);SV('kal',kal);SV('hrE',hrE);SV('obE',obE);
-  SV('ciData3',ciData);SV('hist',hist);SV('lastDed',lastDed);SV('gtMap',gtMap);SV('wozOrder',wozOrder);SV('wozLog',wozLog);
-  fbApplyingRemote=false;
-  const activeBtn=document.querySelector('.tab-btn.active');
-  if(activeBtn)oT(activeBtn.dataset.t);
+function pushModule(mod,immediate){
+  if(!fbDb)return;
+  if(!fbInitialLoaded){fbPending.add(mod);return}
+  clearTimeout(fbTimers[mod]);
+  const doPush=()=>{
+    const wid=uid();fbLastW[mod]=wid;
+    const data=Object.assign({},MODULES[mod].get(),{_w:wid,_ts:Date.now()});
+    setSyncBadge('saving');
+    fbDb.collection('ohz_data').doc(mod).set(data).then(()=>setSyncBadge('ok')).catch(e=>{console.warn('Push '+mod+' failed',e);setSyncBadge('offline')});
+  };
+  if(immediate)doPush();else fbTimers[mod]=setTimeout(doPush,2000);
+}
+
+function flushPending(){fbPending.forEach(mod=>pushModule(mod,true));fbPending.clear()}
+
+function sa(immediate){
+  // Save all to localStorage
+  Object.values(MODULES).forEach(m=>m.sv());
+  // Determine which modules changed and push them
+  if(!fbApplyingRemote){
+    // Push all modules (simple but safe; could be optimized to track dirty flags)
+    Object.keys(MODULES).forEach(mod=>pushModule(mod,immediate||false));
+  }
 }
 
 function startFbSync(){
   if(!fbDb){setSyncBadge('offline');catchUpDeductions();return}
-  // Load passwords from config
+  // Load passwords
   fbDb.collection('ohz_data').doc('config').get().then(doc=>{if(doc.exists&&doc.data().passes){passes=doc.data().passes;SV('passes',passes)}}).catch(()=>{});
-  fbDb.collection('ohz_data').doc('state').onSnapshot(doc=>{
+  // Check for old single-doc migration
+  fbDb.collection('ohz_data').doc('state').get().then(doc=>{
     if(doc.exists){
+      console.log('Migrating from single-doc to multi-doc...');
       const d=doc.data();
-      const incomingTs=JSON.stringify(d._ts);
-      if(incomingTs!==fbLastPushed){
-        applyState(d);
-      }
-      fbReady=true;setSyncBadge('ok');
-      if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
-    } else {
-      fbReady=true;pushToFirebase(true);
-      if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
-    }
-  },err=>{console.warn('Firestore sync error',err);setSyncBadge('offline');catchUpDeductions()});
+      // Split into modules
+      const migMap={surowce:{sur:d.sur,gtMap:d.gtMap},grupy:{gr:d.gr,wozOrder:d.wozOrder},mleko:{ml:d.ml},kadry:{hrD:d.hrD,obD:d.obD,hrE:d.hrE,obE:d.obE},nasienie:{nas:d.nas},kalendarz:{kal:d.kal},cielaki:{ciData:d.ciData},logi:{hist:d.hist,lastDed:d.lastDed,wozLog:d.wozLog}};
+      const batch=fbDb.batch();
+      Object.entries(migMap).forEach(([mod,data])=>{if(data){const ref=fbDb.collection('ohz_data').doc(mod);batch.set(ref,Object.assign({},data,{_w:'migration',_ts:Date.now()}))}});
+      batch.delete(fbDb.collection('ohz_data').doc('state'));
+      batch.commit().then(()=>{console.log('Migration done');startModuleListeners()}).catch(e=>{console.warn('Migration failed',e);startModuleListeners()});
+    } else {startModuleListeners()}
+  }).catch(()=>startModuleListeners());
 }
 
-function pushToFirebase(immediate){
-  if(!fbDb)return;
-  clearTimeout(fbSaveTimer);
-  const doPush=()=>{
-    const st=collectState();
-    fbLastPushed=JSON.stringify(st._ts);
-    setSyncBadge('saving');
-    fbDb.collection('ohz_data').doc('state').set(st).then(()=>setSyncBadge('ok')).catch(e=>{console.warn(e);setSyncBadge('offline')});
+function startModuleListeners(){
+  let loadedCount=0;const totalMods=Object.keys(MODULES).length;
+  const onAllLoaded=()=>{
+    if(loadedCount>=totalMods&&!fbInitialLoaded){
+      fbInitialLoaded=true;setSyncBadge('ok');flushPending();
+      if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
+    }
   };
-  if(immediate)doPush();else fbSaveTimer=setTimeout(doPush,2000);
+  // Timeout fallback for slow networks
+  setTimeout(()=>{if(!fbInitialLoaded){fbInitialLoaded=true;setSyncBadge('offline');flushPending();if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}}},8000);
+
+  Object.entries(MODULES).forEach(([mod,handler])=>{
+    fbDb.collection('ohz_data').doc(mod).onSnapshot(doc=>{
+      if(doc.exists){
+        const d=doc.data();
+        // Skip own writes (echo detection by write marker)
+        if(d._w&&d._w===fbLastW[mod]){loadedCount++;onAllLoaded();return}
+        fbApplyingRemote=true;
+        handler.set(d);
+        fbApplyingRemote=false;
+        // Refresh UI
+        const activeBtn=document.querySelector('.tab-btn.active');
+        if(activeBtn)oT(activeBtn.dataset.t);
+      } else if(fbInitialLoaded){
+        // Doc doesn't exist yet — push our local data
+        pushModule(mod,true);
+      }
+      loadedCount++;onAllLoaded();
+    },err=>{console.warn('Listener '+mod+' error',err);loadedCount++;onAllLoaded()});
+  });
+}
+
+// Manual refresh button
+function forceRefresh(){
+  if(!fbDb){toast('Offline — brak połączenia');return}
+  setSyncBadge('saving');
+  Promise.all(Object.entries(MODULES).map(([mod,handler])=>
+    fbDb.collection('ohz_data').doc(mod).get().then(doc=>{if(doc.exists){fbApplyingRemote=true;handler.set(doc.data());fbApplyingRemote=false}})
+  )).then(()=>{setSyncBadge('ok');const ab=document.querySelector('.tab-btn.active');if(ab)oT(ab.dataset.t);toast('Dane odświeżone')}).catch(()=>setSyncBadge('offline'));
 }
 
 function sa(immediate){
