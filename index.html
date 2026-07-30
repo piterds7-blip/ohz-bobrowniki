@@ -318,6 +318,7 @@ gr.forEach(g=>{if(g.realSz==null)g.realSz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1)}
 // ===== FIREBASE SYNC v2 — per-module documents =====
 const firebaseConfig={apiKey:"AIzaSyC3vYPG90_aMEaKWJuhmzD1tj5lXT8Zh5o",authDomain:"ohz-bobrowniki-po-app.firebaseapp.com",projectId:"ohz-bobrowniki-po-app",storageBucket:"ohz-bobrowniki-po-app.firebasestorage.app",messagingSenderId:"90224575465",appId:"1:90224575465:web:07614843e409aafd600178"};
 let fbDb=null,fbInitialLoaded=false,fbApplyingRemote=false;
+let fbDirty=LD('fbDirty',{}); // modules with unsaved local edits (survives reload)
 const fbTimers={},fbLastW={},fbPending=new Set();
 const MODULES={
   surowce:{get:()=>({sur,gtMap}),set:d=>{if(d.sur)sur=d.sur;if(d.gtMap)gtMap=d.gtMap;SV('sur2',sur);SV('gtMap',gtMap)},sv:()=>{SV('sur2',sur);SV('gtMap',gtMap)}},
@@ -350,16 +351,26 @@ function setSyncBadge(state){
 
 function pushModule(mod,immediate){
   if(!fbDb)return;
+  // Mark dirty immediately (persists even if page closes before push completes)
+  fbDirty[mod]=true;SV('fbDirty',fbDirty);
   if(!fbInitialLoaded){fbPending.add(mod);return}
   clearTimeout(fbTimers[mod]);
   const doPush=()=>{
     const wid=uid();fbLastW[mod]=wid;
     const data=Object.assign({},MODULES[mod].get(),{_w:wid,_ts:Date.now()});
     setSyncBadge('saving');
-    fbDb.collection('ohz_data').doc(mod).set(data).then(()=>setSyncBadge('ok')).catch(e=>{console.warn('Push '+mod+' failed',e);setSyncBadge('offline')});
+    fbDb.collection('ohz_data').doc(mod).set(data).then(()=>{
+      delete fbDirty[mod];SV('fbDirty',fbDirty);setSyncBadge('ok');
+    }).catch(e=>{console.warn('Push '+mod+' failed',e);setSyncBadge('offline')});
   };
   if(immediate)doPush();else fbTimers[mod]=setTimeout(doPush,2000);
 }
+// Flush any pending debounced writes immediately when the tab is hidden/closed
+function flushAllTimers(){
+  Object.keys(fbTimers).forEach(mod=>{if(fbTimers[mod]){clearTimeout(fbTimers[mod]);pushModule(mod,true)}});
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushAllTimers()});
+window.addEventListener('pagehide',flushAllTimers);
 
 function flushPending(){
   fbPending.forEach(mod=>pushModule(mod,true));fbPending.clear();
@@ -416,6 +427,8 @@ function startModuleListeners(){
   const onAllLoaded=()=>{
     if(loadedCount>=totalMods&&!fbInitialLoaded){
       fbInitialLoaded=true;setSyncBadge('ok');flushPending();
+      // Re-push any modules still marked dirty from a previous session (edit made but never synced)
+      Object.keys(fbDirty).forEach(mod=>{if(fbDirty[mod]&&MODULES[mod])pushModule(mod,true)});
       if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
     }
   };
@@ -426,7 +439,9 @@ function startModuleListeners(){
       if(doc.exists){
         const d=doc.data();
         if(d._w&&d._w===fbLastW[mod]){loadedCount++;onAllLoaded();return}
-        // Guard: only apply if data has real content (not empty/undefined)
+        // If this module has unsaved local edits (dirty from this or a previous session),
+        // don't let a stale remote snapshot overwrite them — our pending push will win.
+        if(fbDirty[mod]){loadedCount++;onAllLoaded();return}
         const hasContent=Object.keys(d).some(k=>k!=='_w'&&k!=='_ts'&&d[k]!=null);
         if(hasContent){
           fbApplyingRemote=true;
@@ -436,7 +451,6 @@ function startModuleListeners(){
           if(activeBtn)oT(activeBtn.dataset.t);
         }
       }
-      // If doc doesn't exist and we're past initial load, push local data
       if(!doc.exists&&fbInitialLoaded){pushModule(mod,true)}
       loadedCount++;onAllLoaded();
     },err=>{console.warn('Listener '+mod+' error',err);loadedCount++;onAllLoaded()});
