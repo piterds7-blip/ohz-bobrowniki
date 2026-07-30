@@ -361,14 +361,19 @@ function pushModule(mod,immediate){
   if(immediate)doPush();else fbTimers[mod]=setTimeout(doPush,2000);
 }
 
-function flushPending(){fbPending.forEach(mod=>pushModule(mod,true));fbPending.clear()}
+function flushPending(){
+  fbPending.forEach(mod=>pushModule(mod,true));fbPending.clear();
+  // If any module doc doesn't exist remotely, create from local data
+  Object.keys(MODULES).forEach(mod=>{
+    fbDb.collection('ohz_data').doc(mod).get().then(doc=>{
+      if(!doc.exists)pushModule(mod,true);
+    }).catch(()=>{});
+  });
+}
 
 function sa(immediate){
-  // Save all to localStorage
   Object.values(MODULES).forEach(m=>m.sv());
-  // Determine which modules changed and push them
   if(!fbApplyingRemote){
-    // Push all modules (simple but safe; could be optimized to track dirty flags)
     Object.keys(MODULES).forEach(mod=>pushModule(mod,immediate||false));
   }
 }
@@ -377,18 +382,32 @@ function startFbSync(){
   if(!fbDb){setSyncBadge('offline');catchUpDeductions();return}
   // Load passwords
   fbDb.collection('ohz_data').doc('config').get().then(doc=>{if(doc.exists&&doc.data().passes){passes=doc.data().passes;SV('passes',passes)}}).catch(()=>{});
-  // Check for old single-doc migration
-  fbDb.collection('ohz_data').doc('state').get().then(doc=>{
-    if(doc.exists){
-      console.log('Migrating from single-doc to multi-doc...');
-      const d=doc.data();
-      // Split into modules
-      const migMap={surowce:{sur:d.sur,gtMap:d.gtMap},grupy:{gr:d.gr,wozOrder:d.wozOrder},mleko:{ml:d.ml},kadry:{hrD:d.hrD,obD:d.obD,hrE:d.hrE,obE:d.obE},nasienie:{nas:d.nas},kalendarz:{kal:d.kal},cielaki:{ciData:d.ciData},logi:{hist:d.hist,lastDed:d.lastDed,wozLog:d.wozLog}};
-      const batch=fbDb.batch();
-      Object.entries(migMap).forEach(([mod,data])=>{if(data){const ref=fbDb.collection('ohz_data').doc(mod);batch.set(ref,Object.assign({},data,{_w:'migration',_ts:Date.now()}))}});
-      batch.delete(fbDb.collection('ohz_data').doc('state'));
-      batch.commit().then(()=>{console.log('Migration done');startModuleListeners()}).catch(e=>{console.warn('Migration failed',e);startModuleListeners()});
-    } else {startModuleListeners()}
+  // Check if new module docs exist; if not, try migrating from old 'state' doc
+  fbDb.collection('ohz_data').doc('grupy').get().then(doc=>{
+    if(!doc.exists){
+      // New docs don't exist — try migration from old format
+      fbDb.collection('ohz_data').doc('state').get().then(old=>{
+        if(old.exists){
+          console.log('Migrating from single-doc to multi-doc...');
+          const d=old.data();
+          const migMap={surowce:{sur:d.sur,gtMap:d.gtMap},grupy:{gr:d.gr,wozOrder:d.wozOrder},mleko:{ml:d.ml},kadry:{hrD:d.hrD,obD:d.obD,hrE:d.hrE,obE:d.obE},nasienie:{nas:d.nas},kalendarz:{kal:d.kal},cielaki:{ciData:d.ciData},logi:{hist:d.hist,lastDed:d.lastDed,wozLog:d.wozLog}};
+          const batch=fbDb.batch();
+          Object.entries(migMap).forEach(([mod,data])=>{
+            if(data&&Object.values(data).some(v=>v)){
+              batch.set(fbDb.collection('ohz_data').doc(mod),Object.assign({},data,{_w:'migration',_ts:Date.now()}));
+            }
+          });
+          // Do NOT delete old 'state' doc — keep as backup
+          batch.commit().then(()=>{console.log('Migration done');startModuleListeners()}).catch(e=>{console.warn('Migration failed',e);startModuleListeners()});
+        } else {
+          // No old doc either — fresh start, listeners will push local data
+          startModuleListeners();
+        }
+      }).catch(()=>startModuleListeners());
+    } else {
+      // New docs already exist — normal startup
+      startModuleListeners();
+    }
   }).catch(()=>startModuleListeners());
 }
 
@@ -400,25 +419,25 @@ function startModuleListeners(){
       if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
     }
   };
-  // Timeout fallback for slow networks
   setTimeout(()=>{if(!fbInitialLoaded){fbInitialLoaded=true;setSyncBadge('offline');flushPending();if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}}},8000);
 
   Object.entries(MODULES).forEach(([mod,handler])=>{
     fbDb.collection('ohz_data').doc(mod).onSnapshot(doc=>{
       if(doc.exists){
         const d=doc.data();
-        // Skip own writes (echo detection by write marker)
         if(d._w&&d._w===fbLastW[mod]){loadedCount++;onAllLoaded();return}
-        fbApplyingRemote=true;
-        handler.set(d);
-        fbApplyingRemote=false;
-        // Refresh UI
-        const activeBtn=document.querySelector('.tab-btn.active');
-        if(activeBtn)oT(activeBtn.dataset.t);
-      } else if(fbInitialLoaded){
-        // Doc doesn't exist yet — push our local data
-        pushModule(mod,true);
+        // Guard: only apply if data has real content (not empty/undefined)
+        const hasContent=Object.keys(d).some(k=>k!=='_w'&&k!=='_ts'&&d[k]!=null);
+        if(hasContent){
+          fbApplyingRemote=true;
+          handler.set(d);
+          fbApplyingRemote=false;
+          const activeBtn=document.querySelector('.tab-btn.active');
+          if(activeBtn)oT(activeBtn.dataset.t);
+        }
       }
+      // If doc doesn't exist and we're past initial load, push local data
+      if(!doc.exists&&fbInitialLoaded){pushModule(mod,true)}
       loadedCount++;onAllLoaded();
     },err=>{console.warn('Listener '+mod+' error',err);loadedCount++;onAllLoaded()});
   });
