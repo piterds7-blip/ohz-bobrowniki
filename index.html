@@ -79,16 +79,17 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 .mobd{padding:14px}.mof{padding:10px 14px;border-top:1px solid var(--brd);display:flex;justify-content:flex-end;gap:6px}
 .mox{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt2)}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}.toast.show{opacity:1}
+.rap-sub{}
 #pa{display:none}
-@media print{body>*{display:none!important}#pa{display:block!important;position:absolute;left:0;top:0;width:100%;padding:12mm;font-size:11pt;color:#000}
-#pa table{border-collapse:collapse;width:100%}#pa table th,#pa table td{border:1px solid #555;padding:5px 7px;font-size:11pt;font-weight:600}
+@media print{body>*{display:none!important}#pa{display:block!important;position:absolute;left:0;top:0;width:100%;padding:10mm;font-size:10pt;color:#000}
+#pa table{border-collapse:collapse;width:100%}#pa table th,#pa table td{border:1px solid #555;padding:4px 6px;font-size:10pt;font-weight:600}
 #pa table th{background:#ddd!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#000}
 #pa table tfoot td{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #pa h2{font-size:14pt;margin-bottom:4px}#pa h3{font-size:12pt;margin:10px 0 4px}#pa .pm{font-size:9pt;color:#555;margin-bottom:8px}
 #pa .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;border:1px solid #333}
 #pa .cal-hdr{background:#ddd;padding:3px;text-align:center;font-weight:700;font-size:8pt;border:1px solid #999;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #pa .cal-cell{border:1px solid #999;min-height:50px;padding:2px}#pa .cal-cell .dt2{font-size:9pt;font-weight:700}
-@page{size:A4;margin:10mm}}
+@page{size:A4;margin:8mm}}
 @media(max-width:480px){.fr{flex-direction:column;gap:6px}.fg{min-width:0}.sbar{grid-template-columns:repeat(2,1fr)}}
 .sur-warn{color:var(--red);font-weight:700}.sur-ok{color:var(--pri)}
 </style>
@@ -141,9 +142,36 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
   <div class="card"><div class="ch"><span>Postęp dzisiaj</span></div>
   <div id="woz-raport"></div></div>
 </section>
-<section class="tp" id="tab-wozraport">
-  <div class="fr"><div class="fg"><label>Data</label><input type="date" id="wr-date" onchange="rWozRap()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pWozRap()">📄 PDF</button></div></div>
-  <div class="card"><div class="ch">Raport wozów paszowych</div><div class="tw" id="wr-table"></div></div>
+<section class="tp" id="tab-raporty">
+  <div style="display:flex;background:var(--card);border:1px solid var(--brd);border-radius:var(--radius);margin-bottom:8px;overflow-x:auto">
+    <button class="tab-btn active" onclick="switchRap(this,'rap-woz')">Wóz</button>
+    <button class="tab-btn" onclick="switchRap(this,'rap-nied')">Niedojady</button>
+    <button class="tab-btn" onclick="switchRap(this,'rap-zuzycie')">Zużycie surowców</button>
+    <button class="tab-btn" onclick="switchRap(this,'rap-dawki')">Dawki (historia)</button>
+  </div>
+  <div id="rap-woz" class="rap-sub">
+    <div class="fr"><div class="fg"><label>Data</label><input type="date" id="wr-date" onchange="rWozRap()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pWozRap()">📄 PDF</button></div></div>
+    <div class="card"><div class="ch">Dziennik wozów paszowych</div><div class="tw" id="wr-table"></div></div>
+  </div>
+  <div id="rap-nied" class="rap-sub" style="display:none">
+    <div class="fr"><div class="fg"><label>Od</label><input type="date" id="rn-od" onchange="rNied()"></div><div class="fg"><label>Do</label><input type="date" id="rn-do" onchange="rNied()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="prn('Niedojady — '+$('#rn-od').value+' → '+$('#rn-do').value,$('#rn-table').innerHTML)">📄</button></div></div>
+    <div class="card"><div class="ch">Raport niedojadów</div><div class="tw" id="rn-table"></div></div>
+  </div>
+  <div id="rap-zuzycie" class="rap-sub" style="display:none">
+    <div class="fr" style="flex-wrap:wrap;gap:4px">
+      <div style="display:flex;gap:3px;flex-wrap:wrap"><button class="btn bs bo" onclick="setZuzPeriod('month')">Bież. miesiąc</button><button class="btn bs bo" onclick="setZuzPeriod('prev')">Poprz. miesiąc</button><button class="btn bs bo" onclick="setZuzPeriod('7d')">7 dni</button><button class="btn bs bo" onclick="setZuzPeriod('30d')">30 dni</button><button class="btn bs bo" onclick="setZuzPeriod('year')">Bież. rok</button></div>
+      <div class="fg"><label>Od</label><input type="date" id="rz-od" onchange="rZuzycie()"></div>
+      <div class="fg"><label>Do</label><input type="date" id="rz-do" onchange="rZuzycie()"></div>
+      <div class="fg"><label>Granulacja</label><select id="rz-gran" onchange="rZuzycie()"><option value="sum">Suma za okres</option><option value="day">Dziennie</option><option value="week">Tygodniowo</option><option value="month">Miesięcznie</option></select></div>
+      <div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="prn('Zużycie surowców — '+$('#rz-od').value+' → '+$('#rz-do').value,$('#rz-main').innerHTML)">📄</button></div>
+    </div>
+    <div id="rz-info" style="padding:4px 12px;font-size:11px;color:var(--txt2)"></div>
+    <div class="card"><div class="ch">Zużycie surowców</div><div class="tw" id="rz-main"></div></div>
+    <div class="card"><div class="ch">Rozbicie na grupy żywieniowe</div><div class="tw" id="rz-groups"></div></div>
+  </div>
+  <div id="rap-dawki" class="rap-sub" style="display:none">
+    <div class="card"><div class="ch"><span>Historia zmian receptur</span><button class="btn bs bo" onclick="snapDawki()">📸 Zapisz snapshot teraz</button></div><div id="rd-list"></div></div>
+  </div>
 </section>
 <section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia — <select id="nas-y" onchange="rNas()" style="font:700 13px var(--font);border:none;background:transparent;color:var(--pri)"><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option></select></span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
 <section class="tp" id="tab-kalendarz"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="kal-m" onchange="rKal()"></select></div><div class="fg"><label>Rok</label><input type="number" id="kal-y" value="2026" min="2024" max="2030" onchange="rKal()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('kalendarz')">📄 PDF</button></div></div><div id="kal-w"></div></section>
@@ -166,15 +194,18 @@ let _tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('s
 function opM(t,b,f){$('#mt').textContent=t;$('#mb').innerHTML=b;$('#mf').innerHTML=f||'';$('#modal').classList.add('open')}
 function clM(){$('#modal').classList.remove('open')}
 document.addEventListener('click',e=>{if(e.target.id==='modal')clM()});
-function prn(t,h){$('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h;setTimeout(()=>window.print(),200)}
+function prn(t,h,orient){
+  const pageStyle=orient==='landscape'?'<style>@page{size:A4 landscape}</style>':orient==='compact'?'<style>@page{size:A4}#pa table th,#pa table td{font-size:8pt;padding:2px 3px;font-weight:500}</style>':'';
+  $('#pa').innerHTML=pageStyle+'<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h;setTimeout(()=>window.print(),200)
+}
 function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
 function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()}
 
 // AUTH — 4 roles
 const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn',paszowoz:'paszowoz'};
 let passes=LD('passes',null),cR=null;
-const RT={tworca:['mleko','surowce','dawki','dekadowki','cielaki','koszty','woz','wozraport','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','woz','wozraport','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',koszty:'Koszty',woz:'Wóz paszowy',wozraport:'Raport wozów',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
+const RT={tworca:['mleko','surowce','dawki','dekadowki','cielaki','koszty','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',koszty:'Koszty',woz:'Wóz paszowy',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
 const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
 function isRO(){return cR==='prezes'}
 function canPass(){return cR==='tworca'}
@@ -247,10 +278,11 @@ function importBackup(){
     }catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,woz:rWoz,wozraport:rWozRap,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
-function pT(t){const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' 2026'),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia 2026',kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
+function pT(t){const yr=$('#ml-y')?$('#ml-y').value:'2026';const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' '+yr),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia '+($('#nas-y')?$('#nas-y').value:'2026'),kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
+  const orient={kalendarz:'landscape',harmonogram:'compact',obecnosc:'compact',mleko:'compact'};
 const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
-prn(ti[t](),$('#'+wr[t]).innerHTML)}
+prn(ti[t](),$('#'+wr[t]).innerHTML,orient[t])}
 
 // DATA
 const DS=[
@@ -328,11 +360,11 @@ const MODULES={
   nasienie:{get:()=>({nas}),set:d=>{if(d.nas)nas=d.nas},sv:()=>SV('nas2',nas)},
   kalendarz:{get:()=>({kal}),set:d=>{if(d.kal)kal=d.kal},sv:()=>SV('kal',kal)},
   cielaki:{get:()=>({ciData}),set:d=>{if(d.ciData)ciData=d.ciData},sv:()=>SV('ciData3',ciData)},
-  logi:{get:()=>({hist,lastDed,wozLog}),set:d=>{
+  logi:{get:()=>({hist,lastDed,wozLog,dawkiHist}),set:d=>{
     if(d.hist){Object.keys(d.hist).forEach(k=>{if(!hist[k])hist[k]=d.hist[k]})}
     if(d.wozLog){Object.keys(d.wozLog).forEach(k=>{if(!wozLog[k])wozLog[k]=d.wozLog[k];else{const ex=new Set(wozLog[k].map(e=>e.timestamp));d.wozLog[k].forEach(e=>{if(!ex.has(e.timestamp))wozLog[k].push(e)})}})}
-    if(d.lastDed&&(!lastDed||d.lastDed>lastDed))lastDed=d.lastDed;
-  },sv:()=>{SV('hist',hist);SV('lastDed',lastDed);SV('wozLog',wozLog)}}
+    if(d.lastDed&&(!lastDed||d.lastDed>lastDed))lastDed=d.lastDed;if(d.dawkiHist)dawkiHist=d.dawkiHist;
+  },sv:()=>{SV('hist',hist);SV('lastDed',lastDed);SV('wozLog',wozLog);SV('dawkiHist',dawkiHist)}}
 };
 function setSyncBadge(s){const b=$('#syncb');if(!b)return;b.textContent=s==='ok'?'☁️':s==='saving'?'💾':s==='offline'?'📴':'⏳';b.style.background=s==='ok'?'rgba(255,255,255,.2)':s==='offline'?'rgba(198,40,40,.35)':'rgba(255,193,7,.3)'}
 function pushModule(mod,immediate){
@@ -529,7 +561,7 @@ function rDk(){
   sh+='<div class="fr"><button class="btn bs bo" onclick="addSek()">+ Sektor</button><button class="btn bs bp" onclick="addGrp()">+ Nowa grupa</button></div>';
   $('#dk-s').innerHTML=sh;sa();
 }
-function uDk(gi,sid,el){const g=gr[gi],v=+el.value||0;let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur()}
+function uDk(gi,sid,el){const g=gr[gi],v=+el.value||0;let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur();scheduleAutoSnap()}
 function addDkS(){
   opM('Dodaj surowiec do dawek',
     '<div class="fg" style="margin-bottom:10px"><label>Istniejący surowiec</label><select id="ad-s"><option value="">— wybierz z bazy —</option>'+sur.map(s=>'<option value="'+s.id+'">'+s.nazwa+'</option>').join('')+'</select></div>'+
@@ -849,7 +881,9 @@ function rWoz(){
     const surOrder=sur.map(s=>s.id);
     const sorted=g.sk.filter(x=>x.kg>0).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
     h+='<div style="padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h3 style="color:var(--pri)">Wóz '+(currentIdx+1)+'/'+wozOrder.length+' — '+g.nazwa+'</h3><span style="font-size:12px;color:var(--txt2)">'+tsz+' szt</span></div>';
-    h+='<div style="margin-bottom:8px;background:var(--amber-bg);padding:8px;border-radius:6px;display:flex;align-items:center;gap:8px"><label style="font-size:12px;font-weight:700;color:var(--amber);white-space:nowrap">🔄 Niedojady (kg):</label><input type="number" id="woz-nied" min="0" step="10" value="0" style="max-width:100px;font-size:18px;font-weight:700;text-align:center;border:2px solid var(--amber);border-radius:8px" oninput="recalcWoz()"></div>';
+    h+='<div style="margin-bottom:8px;background:var(--amber-bg);padding:8px;border-radius:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><label style="font-size:12px;font-weight:700;color:var(--amber);white-space:nowrap">🔄 Niedojady (kg):</label><input type="number" id="woz-nied" min="0" step="10" value="0" style="max-width:100px;font-size:18px;font-weight:700;text-align:center;border:2px solid var(--amber);border-radius:8px" oninput="recalcWoz()"><label style="font-size:11px;color:var(--txt2);white-space:nowrap">→ trafiły do:</label><select id="woz-nied-dir" style="font-size:12px;padding:4px;max-width:150px"><option value="">— nie podano —</option>';
+    gr.forEach(gg=>{if(gg.id!==gid)h+='<option value="'+gg.nazwa+'"'+(gg.nazwa.includes('Rosn')?' selected':'')+'>'+gg.nazwa+'</option>'});
+    h+='</select></div>';
     h+='<div id="woz-table-wrap">';
     h+=buildWozTbl(sorted,tsz,totKg,0);
     h+='</div>';
@@ -896,7 +930,8 @@ function wozGotowe(){
   const gid=wozOrder[idx];const g=gr.find(x=>x.id===gid);
   const now=new Date();const czas=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   const nied=+($('#woz-nied')?$('#woz-nied').value:0)||0;
-  wozLog[today].push({gid,nazwa:g?g.nazwa:'?',czas,niedojady:nied,timestamp:now.toISOString()});
+  const niedDir=$('#woz-nied-dir')?$('#woz-nied-dir').value:'';
+  wozLog[today].push({gid,nazwa:g?g.nazwa:'?',czas,niedojady:nied,niedDir,timestamp:now.toISOString()});
   SV('wozLog',wozLog);sa();rWoz();toast('Wóz '+(idx+1)+' zapisany');
 }
 // Raport wozów (for zootechnik)
@@ -904,13 +939,144 @@ function rWozRap(){
   if($('#wr-date')&&!$('#wr-date').value)$('#wr-date').value=isoToday();
   const d=$('#wr-date')?$('#wr-date').value:isoToday();
   const log=wozLog[d]||[];
-  let h='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Godzina</th><th>Niedojady</th></tr></thead><tbody>';
-  log.forEach((l,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+l.nazwa+'</td><td style="font-weight:700">'+l.czas+'</td><td>'+(l.niedojady>0?'<span style="color:var(--amber);font-weight:700">'+l.niedojady+' kg</span>':'—')+'</td></tr>'});
-  if(!log.length)h+='<tr><td colspan="4" style="text-align:center;color:var(--txt2)">Brak wozów na '+d+'</td></tr>';
+  let h='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Godzina</th><th>Niedojady</th><th>Trafiły do</th></tr></thead><tbody>';
+  log.forEach((l,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+l.nazwa+'</td><td style="font-weight:700">'+l.czas+'</td><td>'+(l.niedojady>0?'<span style="color:var(--amber);font-weight:700">'+l.niedojady+' kg</span>':'—')+'</td><td>'+(l.niedDir||'—')+'</td></tr>'});
+  if(!log.length)h+='<tr><td colspan="5" style="text-align:center;color:var(--txt2)">Brak wozów na '+d+'</td></tr>';
   h+='</tbody></table>';
   $('#wr-table').innerHTML=h;
 }
 function pWozRap(){const d=$('#wr-date')?$('#wr-date').value:isoToday();prn('Raport wozów paszowych — '+d,$('#wr-table').innerHTML)}
+
+// Sub-tab switching
+function switchRap(btn,id){btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$$('.rap-sub').forEach(s=>s.style.display='none');$('#'+id).style.display='block';
+  if(id==='rap-woz')rWozRap();if(id==='rap-nied')rNied();if(id==='rap-zuzycie')rZuzycie();if(id==='rap-dawki')rDawkiHist()}
+function rRaporty(){rWozRap()}
+
+// === NIEDOJADY REPORT ===
+function rNied(){
+  if(!$('#rn-od').value){const d=new Date();$('#rn-od').value=isoDate(new Date(d.getFullYear(),d.getMonth(),1));$('#rn-do').value=isoToday()}
+  const od=$('#rn-od').value,ddo=$('#rn-do').value;
+  let rows=[];
+  Object.entries(wozLog).forEach(([date,logs])=>{if(date<od||date>ddo)return;
+    logs.forEach(l=>{if(l.niedojady>0)rows.push({date,nazwa:l.nazwa,kg:l.niedojady,dir:l.niedDir||'—',czas:l.czas})})});
+  rows.sort((a,b)=>a.date>b.date?-1:1);
+  let h='<table class="dt"><thead><tr><th>Data</th><th>Grupa</th><th>Niedojady (kg)</th><th>Trafiły do</th><th>Godz.</th></tr></thead><tbody>';
+  let sumKg=0;const byGr={};
+  rows.forEach(r=>{sumKg+=r.kg;byGr[r.nazwa]=(byGr[r.nazwa]||0)+r.kg;
+    h+='<tr><td>'+r.date+'</td><td>'+r.nazwa+'</td><td style="font-weight:700;color:var(--amber)">'+r.kg+'</td><td>'+r.dir+'</td><td>'+r.czas+'</td></tr>'});
+  if(!rows.length)h+='<tr><td colspan="5" style="text-align:center;color:var(--txt2)">Brak niedojadów w tym okresie</td></tr>';
+  h+='</tbody><tfoot><tr><td colspan="2"><b>RAZEM</b></td><td><b>'+r2(sumKg,0)+' kg</b></td><td colspan="2"></td></tr></tfoot></table>';
+  if(Object.keys(byGr).length){h+='<div style="margin-top:8px;font-size:12px"><b>Średnio per grupa:</b> ';
+    Object.entries(byGr).forEach(([g,kg])=>{const days=new Set(rows.filter(r=>r.nazwa===g).map(r=>r.date)).size;h+=g+': '+r2(kg/days,0)+' kg/dzień · '});h+='</div>'}
+  $('#rn-table').innerHTML=h;
+}
+
+// === ZUŻYCIE SUROWCÓW ===
+function setZuzPeriod(p){
+  const now=new Date();const y=now.getFullYear(),m=now.getMonth();
+  let od,ddo;
+  if(p==='month'){od=new Date(y,m,1);ddo=new Date(y,m+1,0)}
+  else if(p==='prev'){od=new Date(y,m-1,1);ddo=new Date(y,m,0)}
+  else if(p==='7d'){ddo=new Date();od=new Date();od.setDate(od.getDate()-6)}
+  else if(p==='30d'){ddo=new Date();od=new Date();od.setDate(od.getDate()-29)}
+  else if(p==='year'){od=new Date(y,0,1);ddo=new Date(y,11,31)}
+  $('#rz-od').value=isoDate(od);$('#rz-do').value=isoDate(ddo);rZuzycie();
+}
+function rZuzycie(){
+  if(!$('#rz-od').value)setZuzPeriod('month');
+  if(!$('#rz-od').value)return;
+  const od=$('#rz-od').value,ddo=$('#rz-do').value,gran=$('#rz-gran').value;
+  // Collect all days in range that have hist data
+  const allDays=Object.keys(hist).filter(d=>d>=od&&d<=ddo).sort();
+  const totalDaysInRange=Math.max(1,Math.round((new Date(ddo)-new Date(od))/86400000)+1);
+  $('#rz-info').innerHTML='Okres: '+od+' → '+ddo+' · dane z <b>'+allDays.length+'</b> z '+totalDaysInRange+' dni'+(allDays.length<totalDaysInRange?' <span style="color:var(--red)">(brakujące dni zaniżają raport)</span>':'');
+
+  // Aggregate by surowiec
+  const aggr={};const byGroup={};const byPeriod={};
+  allDays.forEach(date=>{
+    const snap=hist[date];if(!snap||!snap.surowce)return;
+    const periodKey=gran==='day'?date:gran==='week'?getWeekKey(date):gran==='month'?date.substring(0,7):'total';
+    Object.entries(snap.surowce).forEach(([sid,byGt])=>{
+      const totalKg=Object.values(byGt).reduce((a,b)=>a+b,0);
+      if(!aggr[sid])aggr[sid]={kg:0,cost:0};aggr[sid].kg+=totalKg;
+      const price=(snap.prices&&snap.prices[sid])?snap.prices[sid]/1000:(gS(sid)?gS(sid).cena_t/1000:0);
+      aggr[sid].cost+=totalKg*price;
+      // By group
+      Object.entries(byGt).forEach(([gt,kg])=>{const gKey=GT[gt]||gt;if(!byGroup[sid])byGroup[sid]={};byGroup[sid][gKey]=(byGroup[sid][gKey]||0)+kg});
+      // By period
+      if(!byPeriod[periodKey])byPeriod[periodKey]={};if(!byPeriod[periodKey][sid])byPeriod[periodKey][sid]=0;byPeriod[periodKey][sid]+=totalKg;
+    });
+  });
+
+  const daysWithData=Math.max(1,allDays.length);
+  const totalKgAll=Object.values(aggr).reduce((a,s)=>a+s.kg,0);
+  const totalCostAll=Object.values(aggr).reduce((a,s)=>a+s.cost,0);
+  const surIds=Object.keys(aggr).sort((a,b)=>aggr[b].cost-aggr[a].cost);
+
+  // Main table
+  let h='<table class="dt"><thead><tr><th style="text-align:left">Surowiec</th><th>Zużycie (kg)</th><th>Śr./dzień (kg)</th><th>Udział mas. %</th><th>Cena zł/kg</th><th>Koszt (zł)</th><th>Udział koszt. %</th></tr></thead><tbody>';
+  surIds.forEach(sid=>{const s=gS(sid);const a=aggr[sid];const name=s?s.nazwa:sid;const cenaKg=a.kg>0?r2(a.cost/a.kg,2):0;
+    h+='<tr><td>'+name+'</td><td>'+r2(a.kg,0)+'</td><td>'+r2(a.kg/daysWithData,0)+'</td><td>'+r2(a.kg/totalKgAll*100,1)+'%</td><td>'+cenaKg+'</td><td>'+r2(a.cost,2)+'</td><td>'+r2(a.cost/totalCostAll*100,1)+'%</td></tr>'});
+  h+='</tbody><tfoot><tr><td><b>RAZEM</b></td><td><b>'+r2(totalKgAll,0)+'</b></td><td><b>'+r2(totalKgAll/daysWithData,0)+'</b></td><td>100%</td><td></td><td><b>'+r2(totalCostAll,2)+'</b></td><td>100%</td></tr></tfoot></table>';
+
+  // Granulated view
+  if(gran!=='sum'){
+    const periods=Object.keys(byPeriod).sort();
+    h+='<h3 style="margin:10px 0 4px;color:var(--pri)">Rozbicie '+(gran==='day'?'dzienne':gran==='week'?'tygodniowe':'miesięczne')+'</h3>';
+    h+='<table class="dt"><thead><tr><th>Okres</th>';surIds.forEach(sid=>{const s=gS(sid);h+='<th>'+(s?s.nazwa.substring(0,12):sid)+'</th>'});h+='<th>RAZEM</th></tr></thead><tbody>';
+    periods.forEach(p=>{h+='<tr><td>'+p+'</td>';let pTot=0;surIds.forEach(sid=>{const v=byPeriod[p][sid]||0;pTot+=v;h+='<td>'+(v>0?r2(v,0):'—')+'</td>'});h+='<td style="font-weight:700">'+r2(pTot,0)+'</td></tr>'});
+    h+='</tbody></table>';
+  }
+  h+='<p style="font-size:10px;color:var(--txt2);margin-top:6px">Ceny: z dziennych snapshotów (zamrożone w dniu zużycia), brak = cena bieżąca.</p>';
+  $('#rz-main').innerHTML=h;
+
+  // Groups breakdown
+  const gtKeys=Object.values(GT);
+  let gh='<table class="dt"><thead><tr><th style="text-align:left">Surowiec</th>';gtKeys.forEach(g=>gh+='<th>'+g+'</th>');gh+='</tr></thead><tbody>';
+  surIds.forEach(sid=>{const s=gS(sid);gh+='<tr><td>'+(s?s.nazwa:sid)+'</td>';gtKeys.forEach(g=>{const v=(byGroup[sid]||{})[g]||0;gh+='<td>'+(v>0?r2(v,0):'—')+'</td>'});gh+='</tr>'});
+  gh+='</tbody></table>';$('#rz-groups').innerHTML=gh;
+}
+function getWeekKey(dateStr){const d=new Date(dateStr);const jan1=new Date(d.getFullYear(),0,1);const wn=Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);return d.getFullYear()+'-W'+String(wn).padStart(2,'0')}
+
+// === DAWKI HISTORIA (snapshoty) ===
+let dawkiHist=LD('dawkiHist',[]);
+function snapDawki(){
+  const snap={ts:Date.now(),date:isoToday(),gr:JSON.parse(JSON.stringify(gr))};
+  dawkiHist.unshift(snap);if(dawkiHist.length>50)dawkiHist.length=50;
+  SV('dawkiHist',dawkiHist);rDawkiHist();toast('Snapshot zapisany');
+}
+function rDawkiHist(){
+  if(!dawkiHist.length){$('#rd-list').innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2)">Brak zapisanych snapshotów. Kliknij „Zapisz snapshot" żeby utworzyć pierwszy.</div>';return}
+  let h='';
+  dawkiHist.forEach((snap,si)=>{
+    const prev=dawkiHist[si+1];
+    h+='<div style="border-bottom:1px solid var(--brd);padding:8px 12px;cursor:pointer" onclick="this.querySelector(\'.rd-det\').style.display=this.querySelector(\'.rd-det\').style.display===\'none\'?\'block\':\'none\'">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center"><b>'+new Date(snap.ts).toLocaleString('pl')+'</b><button class="btn bs bd" onclick="event.stopPropagation();dawkiHist.splice('+si+',1);SV(\'dawkiHist\',dawkiHist);rDawkiHist()">✕</button></div>';
+    h+='<div class="rd-det" style="display:none;margin-top:6px">';
+    snap.gr.forEach(g=>{
+      h+='<div style="font-weight:700;color:var(--pri);margin-top:4px">'+g.nazwa+'</div>';
+      h+='<table class="dt" style="margin-bottom:6px"><thead><tr><th style="text-align:left">Surowiec</th><th>kg/szt</th></tr></thead><tbody>';
+      g.sk.forEach(sk=>{
+        const s=gS(sk.s);const name=s?s.nazwa:sk.s;
+        let changed=false,oldVal=null;
+        if(prev){const pg=prev.gr.find(x=>x.id===g.id);if(pg){const psk=pg.sk.find(x=>x.s===sk.s);if(psk&&psk.kg!==sk.kg){changed=true;oldVal=psk.kg}else if(!psk){changed=true;oldVal='nowy'}}}
+        h+='<tr><td>'+name+'</td><td'+(changed?' style="color:var(--red);font-weight:700"':'')+'>'+sk.kg+(changed&&oldVal!=null?' <span style="font-size:9px">(było: '+oldVal+')</span>':'')+'</td></tr>'});
+      h+='</tbody></table>';
+    });
+    h+='</div></div>';
+  });
+  $('#rd-list').innerHTML=h;
+}
+
+// Auto-snapshot on dawki change (debounced 1h, min 5min between snapshots)
+let _snapTimer=null;
+function scheduleAutoSnap(){
+  clearTimeout(_snapTimer);
+  _snapTimer=setTimeout(()=>{
+    const lastTs=dawkiHist.length?dawkiHist[0].ts:0;
+    if(Date.now()-lastTs>300000){snapDawki()}// min 5 min gap
+  },3600000);// 1 hour debounce
+}
 
 function rKal(){
   const m=+$('#kal-m').value,y=+$('#kal-y').value,k=y+'_'+m;if(!kal[k])kal[k]={};const ent=kal[k],ds=dim(y,m),fd=dow(y,m,1);
