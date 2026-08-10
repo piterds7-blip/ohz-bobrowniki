@@ -89,7 +89,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 #pa .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;border:1px solid #333}
 #pa .cal-hdr{background:#ddd;padding:3px;text-align:center;font-weight:700;font-size:8pt;border:1px solid #999;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 #pa .cal-cell{border:1px solid #999;min-height:50px;padding:2px}#pa .cal-cell .dt2{font-size:9pt;font-weight:700}
-@page{size:A4;margin:8mm}}
+}
 @media(max-width:480px){.fr{flex-direction:column;gap:6px}.fg{min-width:0}.sbar{grid-template-columns:repeat(2,1fr)}}
 .sur-warn{color:var(--red);font-weight:700}.sur-ok{color:var(--pri)}
 </style>
@@ -195,8 +195,20 @@ function opM(t,b,f){$('#mt').textContent=t;$('#mb').innerHTML=b;$('#mf').innerHT
 function clM(){$('#modal').classList.remove('open')}
 document.addEventListener('click',e=>{if(e.target.id==='modal')clM()});
 function prn(t,h,orient){
-  const pageStyle=orient==='landscape'?'<style>@page{size:A4 landscape;margin:5mm}#pa{padding:5mm}#pa .cal-grid{display:grid!important;grid-template-columns:repeat(7,1fr)!important;gap:0!important;width:100%}#pa .cal-cell{min-height:80px!important;padding:4px!important;font-size:10pt!important;border:1px solid #333!important}#pa .cal-cell .dn{font-size:13pt!important;font-weight:700!important}#pa .cal-cell .dt2{font-size:10pt!important;font-weight:700!important;white-space:pre-wrap}#pa .cal-hdr{font-size:10pt!important;padding:5px!important;font-weight:700!important}</style>':(orient==='compact'||orient==='compactL')?'<style>@page{size:A4 '+(orient==='compactL'?'landscape':'portrait')+';margin:3mm}#pa{padding:3mm!important}#pa h2{font-size:10pt!important;margin:0 0 1px!important}#pa .pm{font-size:6pt!important;margin:0 0 2px!important}#pa table{border-collapse:collapse!important;width:100%!important}#pa table th,#pa table td{font-size:6.5pt!important;padding:0.5px 2px!important;font-weight:400!important;line-height:1.1!important;border:0.5px solid #888!important}#pa table th{font-weight:600!important;background:#ddd!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-size:5.5pt!important;text-transform:uppercase}</style>':'';
-  $('#pa').innerHTML=pageStyle+'<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h;setTimeout(()=>window.print(),200)
+  // Remove old dynamic print style if exists
+  const oldSt=document.getElementById('dyn-print-css');if(oldSt)oldSt.remove();
+  // Create style in <head> where @page rules actually work
+  const st=document.createElement('style');st.id='dyn-print-css';
+  if(orient==='landscape'){
+    st.textContent='@page{size:A4 landscape;margin:5mm}#pa{padding:5mm!important}#pa .cal-grid{display:grid!important;grid-template-columns:repeat(7,1fr)!important;gap:0!important;width:100%}#pa .cal-cell{min-height:80px!important;padding:4px!important;font-size:10pt!important;border:1px solid #333!important}#pa .cal-cell .dn{font-size:13pt!important;font-weight:700!important}#pa .cal-cell .dt2{font-size:10pt!important;font-weight:700!important;white-space:pre-wrap}#pa .cal-hdr{font-size:10pt!important;padding:5px!important;font-weight:700!important}';
+  } else if(orient==='compact'||orient==='compactL'){
+    st.textContent='@page{size:A4 '+(orient==='compactL'?'landscape':'portrait')+';margin:3mm}#pa{padding:3mm!important}#pa h2{font-size:10pt!important;margin:0 0 1px!important}#pa .pm{font-size:6pt!important;margin:0 0 2px!important}#pa table{border-collapse:collapse!important;width:100%!important;page-break-inside:avoid!important}#pa table th,#pa table td{font-size:6.5pt!important;padding:0.5px 2px!important;font-weight:400!important;line-height:1.1!important;border:0.5px solid #888!important}#pa table th{font-weight:600!important;background:#ddd!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-size:5.5pt!important;text-transform:uppercase}';
+  } else {
+    st.textContent='@page{size:A4;margin:8mm}';
+  }
+  document.head.appendChild(st);
+  $('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h;
+  setTimeout(()=>window.print(),200);
 }
 function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
 function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()}
@@ -280,7 +292,7 @@ function importBackup(){
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
 function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
 function pT(t){const yr=$('#ml-y')?$('#ml-y').value:'2026';const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' '+yr),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia '+($('#nas-y')?$('#nas-y').value:'2026'),kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
-  const orient={kalendarz:'landscape',harmonogram:'compactL',obecnosc:'compactL',mleko:'compactL'};
+  const orient={kalendarz:'landscape',harmonogram:'compactL',obecnosc:'compactL',mleko:'compact'};
 const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
 prn(ti[t](),$('#'+wr[t]).innerHTML,orient[t])}
 
