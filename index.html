@@ -195,7 +195,7 @@ function opM(t,b,f){$('#mt').textContent=t;$('#mb').innerHTML=b;$('#mf').innerHT
 function clM(){$('#modal').classList.remove('open')}
 document.addEventListener('click',e=>{if(e.target.id==='modal')clM()});
 function prn(t,h,orient){
-  const pageStyle=orient==='landscape'?'<style>@page{size:A4 landscape}</style>':orient==='compact'?'<style>@page{size:A4}#pa table th,#pa table td{font-size:8pt;padding:2px 3px;font-weight:500}</style>':'';
+  const pageStyle=orient==='landscape'?'<style>@page{size:A4 landscape;margin:5mm}#pa{padding:5mm}#pa .cal-grid{display:grid!important;grid-template-columns:repeat(7,1fr)!important;gap:0!important;width:100%}#pa .cal-cell{min-height:80px!important;padding:4px!important;font-size:10pt!important;border:1px solid #333!important}#pa .cal-cell .dn{font-size:13pt!important;font-weight:700!important}#pa .cal-cell .dt2{font-size:10pt!important;font-weight:700!important;white-space:pre-wrap}#pa .cal-hdr{font-size:10pt!important;padding:5px!important;font-weight:700!important}</style>':orient==='compact'?'<style>@page{size:A4 landscape;margin:5mm}#pa{padding:5mm}#pa table th,#pa table td{font-size:7pt!important;padding:1px 3px!important;font-weight:500!important}#pa table th{font-size:6pt!important;white-space:nowrap}#pa h2{font-size:11pt!important;margin-bottom:2px!important}#pa .pm{font-size:7pt!important;margin-bottom:3px!important}</style>':'';
   $('#pa').innerHTML=pageStyle+'<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h;setTimeout(()=>window.print(),200)
 }
 function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
@@ -404,9 +404,9 @@ function startListeners(){
   const done=()=>{if(loaded>=total&&!fbInitialLoaded){
     fbInitialLoaded=true;setSyncBadge('ok');
     Object.keys(MODULES).forEach(mod=>{fbDb.collection('ohz_data').doc(mod).get().then(doc=>{if(!doc.exists)pushModule(mod,true)}).catch(()=>{})});
-    if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}
+    if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions();checkDailySnap()}
   }};
-  setTimeout(()=>{if(!fbInitialLoaded){fbInitialLoaded=true;setSyncBadge('offline');if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions()}}},8000);
+  setTimeout(()=>{if(!fbInitialLoaded){fbInitialLoaded=true;setSyncBadge('offline');if(!window._catchUpDone){window._catchUpDone=true;catchUpDeductions();checkDailySnap()}}},8000);
   Object.entries(MODULES).forEach(([mod,handler])=>{
     fbDb.collection('ohz_data').doc(mod).onSnapshot(doc=>{
       if(doc.exists){
@@ -1068,14 +1068,43 @@ function rDawkiHist(){
   $('#rd-list').innerHTML=h;
 }
 
-// Auto-snapshot on dawki change (debounced 1h, min 5min between snapshots)
+// Auto-snapshot: daily, catch up missed days
 let _snapTimer=null;
+function checkDailySnap(){
+  const today=isoToday();
+  const lastDate=dawkiHist.length?dawkiHist[0].date:null;
+  if(!lastDate||lastDate<today){
+    // Create snapshots for each missed day (use current recipe — best we have)
+    if(lastDate){
+      const start=new Date(lastDate);start.setDate(start.getDate()+1);
+      const end=new Date(today);
+      let d=new Date(start);let safety=0;
+      while(d<=end&&safety<30){
+        const ds=isoDate(d);
+        if(!dawkiHist.find(h=>h.date===ds)){
+          dawkiHist.unshift({ts:d.getTime(),date:ds,gr:JSON.parse(JSON.stringify(gr))});
+        }
+        d.setDate(d.getDate()+1);safety++;
+      }
+    } else {
+      // First ever snapshot
+      dawkiHist.unshift({ts:Date.now(),date:today,gr:JSON.parse(JSON.stringify(gr))});
+    }
+    if(dawkiHist.length>100)dawkiHist.length=100;
+    SV('dawkiHist',dawkiHist);
+  }
+}
+function snapDawki(){
+  dawkiHist.unshift({ts:Date.now(),date:isoToday(),gr:JSON.parse(JSON.stringify(gr))});
+  if(dawkiHist.length>100)dawkiHist.length=100;
+  SV('dawkiHist',dawkiHist);rDawkiHist();toast('Snapshot zapisany');
+}
 function scheduleAutoSnap(){
   clearTimeout(_snapTimer);
   _snapTimer=setTimeout(()=>{
     const lastTs=dawkiHist.length?dawkiHist[0].ts:0;
-    if(Date.now()-lastTs>300000){snapDawki()}// min 5 min gap
-  },3600000);// 1 hour debounce
+    if(Date.now()-lastTs>300000)snapDawki();
+  },3600000);
 }
 
 function rKal(){
