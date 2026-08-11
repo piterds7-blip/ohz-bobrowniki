@@ -206,7 +206,7 @@ function prn(t,h,orient,raw){
   }
   document.head.appendChild(st);
   if(raw){$('#pa').innerHTML=h}
-  else if(orient==='compact'||orient==='compactL'){$('#pa').innerHTML=h}
+  else if(orient==='compact'||orient==='compactL'){$('#pa').innerHTML='<h2 style="font-size:10pt;margin:0 0 2px">'+t+'</h2>'+h}
   else{$('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h}
   setTimeout(()=>window.print(),200);
 }
@@ -770,7 +770,17 @@ function uSch(el){(el.dataset.pf==='hr'?hrE:obE)[el.dataset.ek][el.dataset.dk]=e
 function addPr(pf){const gp=$('#'+pf+'-g').value;opM('Dodaj pracownika','<div class="fg"><label>Imię i nazwisko</label><input type="text" id="ap-n"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okPr(\''+pf+'\',\''+gp+'\')">Dodaj</button>')}
 function okPr(pf,gp){const n=$('#ap-n').value.trim();if(!n){toast('Podaj imię');return}(pf==='hr'?hrD:obD)[gp]=((pf==='hr'?hrD:obD)[gp]||[]);(pf==='hr'?hrD:obD)[gp].push({imie:n});sa();clM();rSch(pf);toast('Dodano')}
 function delPr(pf,gp,wi){const data=pf==='hr'?hrD:obD;const name=data[gp][wi].imie;if(!confirm('Usunąć pracownika „'+name+'"?'))return;data[gp].splice(wi,1);sa();rSch(pf);toast('Usunięto')}
-function pSch(pf){const m=+$('#'+pf+'-m').value,g=$('#'+pf+'-g').value;prn((pf==='hr'?'Harmonogram pracy':'Lista obecności')+' — '+MO[m]+' '+$('#'+pf+'-y').value+' — '+g,$('#'+pf+'-w').innerHTML,'compactL')}
+function pSch(pf){
+  const m=+$('#'+pf+'-m').value,g=$('#'+pf+'-g').value;
+  const title=(pf==='hr'?'Harmonogram pracy':'Lista obecności')+' — '+MO[m]+' '+$('#'+pf+'-y').value+' — '+g;
+  // Clone table and replace all form elements with plain text
+  const wrap=$('#'+pf+'-w');if(!wrap)return;
+  const clone=wrap.cloneNode(true);
+  clone.querySelectorAll('select').forEach(sel=>{const txt=document.createTextNode(sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].text:'');sel.replaceWith(txt)});
+  clone.querySelectorAll('input').forEach(inp=>{const txt=document.createTextNode(inp.value||'');inp.replaceWith(txt)});
+  clone.querySelectorAll('button').forEach(btn=>btn.remove());
+  prn(title,clone.innerHTML,'compactL');
+}
 
 // NASIENIE (edycja + usuwanie)
 function rNas(){
