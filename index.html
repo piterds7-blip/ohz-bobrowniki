@@ -194,20 +194,19 @@ let _tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('s
 function opM(t,b,f){$('#mt').textContent=t;$('#mb').innerHTML=b;$('#mf').innerHTML=f||'';$('#modal').classList.add('open')}
 function clM(){$('#modal').classList.remove('open')}
 document.addEventListener('click',e=>{if(e.target.id==='modal')clM()});
-function prn(t,h,orient){
-  // Remove old dynamic print style if exists
+function prn(t,h,orient,raw){
   const oldSt=document.getElementById('dyn-print-css');if(oldSt)oldSt.remove();
-  // Create style in <head> where @page rules actually work
   const st=document.createElement('style');st.id='dyn-print-css';
   if(orient==='landscape'){
     st.textContent='@page{size:A4 landscape;margin:5mm}#pa{padding:5mm!important}#pa .cal-grid{display:grid!important;grid-template-columns:repeat(7,1fr)!important;gap:0!important;width:100%}#pa .cal-cell{min-height:80px!important;padding:4px!important;font-size:10pt!important;border:1px solid #333!important}#pa .cal-cell .dn{font-size:13pt!important;font-weight:700!important}#pa .cal-cell .dt2{font-size:10pt!important;font-weight:700!important;white-space:pre-wrap}#pa .cal-hdr{font-size:10pt!important;padding:5px!important;font-weight:700!important}';
   } else if(orient==='compact'||orient==='compactL'){
-    st.textContent='@page{size:A4 '+(orient==='compactL'?'landscape':'portrait')+';margin:0!important}#pa{padding:5mm!important}#pa h2{font-size:9pt!important;margin:0 0 1px!important}#pa .pm{font-size:5pt!important;margin:0 0 1px!important}#pa table{border-collapse:collapse!important;width:100%!important;page-break-inside:avoid!important}#pa table th,#pa table td{font-size:6pt!important;padding:0px 2px!important;font-weight:400!important;line-height:1.05!important;border:0.5px solid #999!important;height:auto!important}#pa table th{font-weight:600!important;background:#ddd!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;font-size:5.5pt!important}';
+    st.textContent='@page{size:A4 '+(orient==='compactL'?'landscape':'portrait')+';margin:0}#pa{padding:2mm!important}';
   } else {
     st.textContent='@page{size:A4;margin:8mm}';
   }
   document.head.appendChild(st);
-  $('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h;
+  if(raw){$('#pa').innerHTML=h}
+  else{$('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h}
   setTimeout(()=>window.print(),200);
 }
 function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
@@ -293,8 +292,33 @@ function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)
 function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
 function pT(t){const yr=$('#ml-y')?$('#ml-y').value:'2026';const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' '+yr),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia '+($('#nas-y')?$('#nas-y').value:'2026'),kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
   const orient={kalendarz:'landscape',harmonogram:'compactL',obecnosc:'compactL',mleko:'compact'};
-const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
-prn(ti[t](),$('#'+wr[t]).innerHTML,orient[t])}
+  // Special compact print for harmonogram/obecnosc/mleko: generate clean HTML
+  if(t==='harmonogram'||t==='obecnosc'||t==='mleko'){
+    const el=$('#'+(t==='harmonogram'?'hr-w':t==='obecnosc'?'ob-w':'ml-w'));
+    if(!el)return;
+    // Extract table data from DOM and rebuild as clean minimal HTML
+    const tbl=el.querySelector('table');if(!tbl)return;
+    const rs='<style>*{margin:0;padding:0}table{border-collapse:collapse;width:100%;font-family:Arial,sans-serif}th,td{border:1px solid #aaa;padding:1px 3px;font-size:7pt;line-height:1.15;text-align:center}th{background:#ccc;font-size:6pt;font-weight:700}.we{color:red}h3{font-size:9pt;margin-bottom:2px}</style>';
+    let h=rs+'<h3>'+(ti[t]?ti[t]():'')+'</h3><table>';
+    tbl.querySelectorAll('tr').forEach(tr=>{
+      h+='<tr>';
+      tr.querySelectorAll('th,td').forEach(cell=>{
+        const tag=cell.tagName.toLowerCase();
+        const cls=cell.closest('tr').classList.contains('we')||cell.style.color==='red'||cell.querySelector('.we')?'class="we"':'';
+        // Get display value: from select, input, or text
+        const sel=cell.querySelector('select');const inp=cell.querySelector('input');
+        let val=sel?sel.options[sel.selectedIndex].text:inp?inp.value:cell.textContent.trim();
+        // Skip buttons
+        val=val.replace(/[✕▲▼✎⇄+×]/g,'').trim();
+        h+='<'+tag+' '+cls+' style="text-align:'+(tag==='th'?'center':cell.style.textAlign||'center')+'">'+val+'</'+tag+'>';
+      });
+      h+='</tr>';
+    });
+    h+='</table>';
+    prn(null,h,orient[t],true);return;
+  }
+  const wr={mleko:'ml-w',surowce:'sur-w',dawki:'dk-w',cielaki:'ci-s',nasienie:'nas-w',kalendarz:'kal-w'};
+  prn(ti[t](),$('#'+wr[t]).innerHTML,orient[t])}
 
 // DATA
 const DS=[
