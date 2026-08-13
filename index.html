@@ -181,6 +181,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <div class="toast" id="toast"></div>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+function pf(v){return parseFloat(String(v).replace(',','.'))||0} // parse float, accepts comma decimal (Polish keyboards)
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const r2=(v,d=1)=>{const f=10**d;return Math.round(v*f)/f};
 const MO=['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
@@ -201,6 +202,8 @@ function prn(t,h,orient,raw){
     st.textContent='@page{size:A4 landscape;margin:5mm}#pa{padding:5mm!important}#pa .cal-grid{display:grid!important;grid-template-columns:repeat(7,1fr)!important;gap:0!important;width:100%}#pa .cal-cell{min-height:80px!important;padding:4px!important;font-size:10pt!important;border:1px solid #333!important}#pa .cal-cell .dn{font-size:13pt!important;font-weight:700!important}#pa .cal-cell .dt2{font-size:10pt!important;font-weight:700!important;white-space:pre-wrap}#pa .cal-hdr{font-size:10pt!important;padding:5px!important;font-weight:700!important}';
   } else if(orient==='compact'||orient==='compactL'){
     st.textContent='@page{size:A4 '+(orient==='compactL'?'landscape':'portrait')+';margin:0}#pa{padding:2mm!important}';
+  } else if(orient==='dawki'){
+    st.textContent='@page{size:A4;margin:8mm}#pa table th,#pa table td{font-size:13pt!important;font-weight:700!important;padding:5px 8px!important}#pa h2{font-size:15pt!important}#pa h3{font-size:14pt!important;font-weight:700!important}';
   } else {
     st.textContent='@page{size:A4;margin:8mm}';
   }
@@ -421,6 +424,11 @@ function sa(immediate){
   Object.values(MODULES).forEach(m=>m.sv());
   if(!fbApplyingRemote){const now=Date.now();Object.keys(MODULES).forEach(mod=>{fbEditTs[mod]=now;pushModule(mod,immediate||false)})}
 }
+// Module-scoped save: only pushes ONE module, avoiding overwriting others with stale local data
+function saM(mod,immediate){
+  if(MODULES[mod])MODULES[mod].sv();
+  if(!fbApplyingRemote){fbEditTs[mod]=Date.now();pushModule(mod,immediate||false)}
+}
 function startFbSync(){
   if(!fbDb){setSyncBadge('offline');catchUpDeductions();return}
   fbDb.collection('ohz_data').doc('config').get().then(doc=>{if(doc.exists&&doc.data().passes){passes=doc.data().passes;SV('passes',passes)}}).catch(()=>{});
@@ -499,8 +507,8 @@ function rMl(){
     h+='</tbody></table>';w.innerHTML=h;
   }
 }
-function uMl(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='o_'+yr+'_'+m;ml[k][i][f]=+el.value||0;const r=ml[k][i];r.rz=(r.od||0)+(r.ci||0);r.sn=r.sp+r.pr-r.rz;sa();rMl()}
-function uMlP(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='p_'+yr+'_'+m;ml[k][i][f]=+el.value||0;sa();rMl()}
+function uMl(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='o_'+yr+'_'+m;ml[k][i][f]=pf(el.value);const r=ml[k][i];r.rz=(r.od||0)+(r.ci||0);r.sn=r.sp+r.pr-r.rz;sa();rMl()}
+function uMlP(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='p_'+yr+'_'+m;ml[k][i][f]=pf(el.value);sa();rMl()}
 
 // SUROWCE (tony, PLN/t, + zużycie dzienne + wystarczy do)
 function rSur(){
@@ -513,8 +521,8 @@ function rSur(){
     h+='<td><select style="width:100px;font-size:10px;padding:2px" onchange="sur['+i+'].kat=this.value;sa()">';
     ['obj','tres','dod'].forEach(k=>{h+='<option value="'+k+'"'+((s.kat||'obj')===k?' selected':'')+'>'+katLabels[k]+'</option>'});
     h+='</select></td>';
-    h+='<td><input step="1" value="'+r2(s.cena_t,0)+'" onchange="sur['+i+'].cena_t=+this.value;sa()"></td>';
-    h+='<td><input step="0.01" value="'+r2(s.stan_t,2)+'" onchange="sur['+i+'].stan_t=+this.value;sa();rSur()"></td>';
+    h+='<td><input step="1" value="'+r2(s.cena_t,0)+'" onchange="sur['+i+'].cena_t=pf(this.value);sa()"></td>';
+    h+='<td><input step="0.01" value="'+r2(s.stan_t,2)+'" onchange="sur['+i+'].stan_t=pf(this.value);sa();rSur()"></td>';
     h+='<td>'+r2(du,1)+'</td><td style="text-align:left;font-family:var(--font);font-size:11px">'+wyst+'</td>';
     h+='<td><button class="btn bs bd" onclick="if(confirm(\'Usunąć?\')){sur.splice('+i+',1);sa();rSur()}">✕</button></td></tr>';
   });
@@ -536,7 +544,7 @@ function delSurFromDk(sid){
 }
 function eSurN(i){opM('Edytuj nazwę','<div class="fg"><label>Nazwa</label><input type="text" id="esn" value="'+sur[i].nazwa+'"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="sur['+i+'].nazwa=$(\'#esn\').value.trim();sa();clM();rSur();rDk();toast(\'Zapisano\')">Zapisz</button>')}
 function addSur(){opM('Dodaj surowiec','<div class="fg" style="margin-bottom:8px"><label>Nazwa</label><input type="text" id="as-n"></div><div style="display:flex;gap:8px;margin-bottom:8px"><div class="fg"><label>Kategoria</label><select id="as-kat"><option value="obj">Objętościowa</option><option value="tres">Treściwa</option><option value="dod">Dodatek</option></select></div><div class="fg"><label>SM %</label><input type="number" id="as-sm" value="88"></div></div><div style="display:flex;gap:8px"><div class="fg"><label>Cena PLN/t</label><input type="number" id="as-c" value="0"></div><div class="fg"><label>Stan (t)</label><input type="number" id="as-s" step="0.01" value="0"></div></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okAS()">Dodaj</button>')}
-function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');return}sur.push({id:uid(),nazwa:n,proc_sm:+$('#as-sm').value||88,cena_t:+$('#as-c').value||0,stan_t:+$('#as-s').value||0,kat:$('#as-kat').value||'obj'});sa();clM();rSur();toast('Dodano')}
+function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');return}sur.push({id:uid(),nazwa:n,proc_sm:pf($('#as-sm').value)||88,cena_t:pf($('#as-c').value),stan_t:pf($('#as-s').value),kat:$('#as-kat').value||'obj'});sa();clM();rSur();toast('Dodano')}
 
 // DAWKI — FeedExpert (kg Prod only)
 function rDk(){
@@ -546,7 +554,7 @@ function rDk(){
   const allS=sur.filter(s=>used.has(s.id)).map(s=>s.id);
   let h='<table class="fe"><thead><tr><th rowspan="2" style="text-align:left;min-width:200px">Nazwa</th>';
   gr.forEach((g,gi)=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);const realSz=g.realSz||(tsz*(g.z||1));const virtualDaily=tsz*(g.z||1);const pct=realSz>0?r2(virtualDaily/realSz*100,1):100;
-    h+='<th class="gh">'+g.nazwa+'<br><input type="number" value="'+realSz+'" style="width:40px;font-size:9px;text-align:center;padding:1px;border-radius:3px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff" onchange="gr['+gi+'].realSz=+this.value;sa();rDk()" title="Realna liczba sztuk"> szt.real<br><span style="font-weight:400;font-size:8px">'+tsz+' szt · <button style="border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;font-size:8px;padding:0 3px;border-radius:3px;cursor:pointer" onclick="toggleZ('+gi+')">'+(g.z||1)+'×/d</button> · '+pct+'%</span> <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pDkGr('+gi+')">📄</button></th>'});
+    h+='<th class="gh">'+g.nazwa+'<br><input type="number" value="'+realSz+'" style="width:40px;font-size:9px;text-align:center;padding:1px;border-radius:3px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff" onchange="gr['+gi+'].realSz=pf(this.value);sa();rDk()" title="Realna liczba sztuk"> szt.real<br><span style="font-weight:400;font-size:8px">'+tsz+' szt · <button style="border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;font-size:8px;padding:0 3px;border-radius:3px;cursor:pointer" onclick="toggleZ('+gi+')">'+(g.z||1)+'×/d</button> · '+pct+'%</span> <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pDkGr('+gi+')">📄</button></th>'});
   h+='</tr></thead><tbody>';
   allS.forEach((sid,rowIdx)=>{
     const s=gS(sid);if(!s)return;
@@ -576,7 +584,7 @@ function rDk(){
       const mapKey=g.nazwa+'|'+sk.n;
       const curGt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
       sh+='<tr class="'+cc+'"><td style="font-size:11px">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+' <button style="background:var(--pri);color:#fff;border:none;border-radius:3px;font-size:9px;padding:0 4px;cursor:pointer" onclick="addSekExtra('+gi+','+si+')" title="Dodaj surowiec do sektora">+</button></td>';
-      sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=+this.value;sa();rDk();rSur()"></td>';
+      sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=pf(this.value);sa();rDk();rSur()"></td>';
       sh+='<td>'+r2(totKg,1)+'</td><td>'+r2(totKg*sk.sz,0)+'</td>';
       sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
       Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
@@ -587,7 +595,7 @@ function rDk(){
         sk.sk_extra.forEach((ex,ei)=>{
           const exS=gS(ex.s);const exName=exS?exS.nazwa:'?';
           sh+='<tr class="'+cc+'" style="background:rgba(46,125,50,.08)"><td></td><td style="font-size:10px;color:var(--pri);padding-left:20px">↳ '+exName+'</td>';
-          sh+='<td></td><td><input type="number" step="0.1" value="'+ex.kg+'" style="width:48px;font-size:10px" onchange="gr['+gi+'].se['+si+'].sk_extra['+ei+'].kg=+this.value;sa();rDk();rSur()"></td>';
+          sh+='<td></td><td><input type="number" step="0.1" value="'+ex.kg+'" style="width:48px;font-size:10px" onchange="gr['+gi+'].se['+si+'].sk_extra['+ei+'].kg=pf(this.value);sa();rDk();rSur()"></td>';
           sh+='<td>'+r2(ex.kg*sk.sz,0)+'</td><td></td>';
           sh+='<td><button class="btn bs bd" style="padding:0 3px;font-size:8px" onclick="gr['+gi+'].se['+si+'].sk_extra.splice('+ei+',1);sa();rDk();rSur()">✕</button></td></tr>';
         });
@@ -598,7 +606,7 @@ function rDk(){
   sh+='<div class="fr"><button class="btn bs bo" onclick="addSek()">+ Sektor</button><button class="btn bs bp" onclick="addGrp()">+ Nowa grupa</button></div>';
   $('#dk-s').innerHTML=sh;sa();
 }
-function uDk(gi,sid,el){const g=gr[gi],v=+el.value||0;let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur();scheduleAutoSnap()}
+function uDk(gi,sid,el){const g=gr[gi],v=pf(el.value);let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur();scheduleAutoSnap()}
 function addDkS(){
   opM('Dodaj surowiec do dawek',
     '<div class="fg" style="margin-bottom:10px"><label>Istniejący surowiec</label><select id="ad-s"><option value="">— wybierz z bazy —</option>'+sur.map(s=>'<option value="'+s.id+'">'+s.nazwa+'</option>').join('')+'</select></div>'+
@@ -633,7 +641,7 @@ function addSekExtra(gi,si){
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="okSekExtra('+gi+','+si+')">Dodaj</button>');
 }
 function okSekExtra(gi,si){
-  const sid=$('#ase-s').value;const kg=+$('#ase-kg').value||0;
+  const sid=$('#ase-s').value;const kg=pf($('#ase-kg').value);
   if(!sid||kg<=0){toast('Wybierz surowiec i podaj kg');return}
   if(!gr[gi].se[si].sk_extra)gr[gi].se[si].sk_extra=[];
   gr[gi].se[si].sk_extra.push({s:sid,kg});
@@ -668,11 +676,11 @@ function renderPV(){
   // Niedojady as first row if present
   if(niedojady>0){run=niedojady;h+='<tr style="background:var(--amber-bg)"><td style="text-align:left;font-weight:700;color:var(--amber)">Niedojady</td><td>—</td><td style="font-weight:700">'+niedojady+'</td><td style="font-weight:700">'+niedojady+'</td></tr>'}
   p.sk.forEach((sk,i)=>{const s=gS(sk.s);if(!s)return;const nwRaw=sk.kg*tsz;const nw=r2(nwRaw*coeff,1);run=r2(run+nwRaw*coeff,1);
-    h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td><input type="number" step="0.1" value="'+sk.kg+'" style="width:55px" onchange="_pv.sk['+i+'].kg=+this.value;renderPV()"></td><td>'+nw+'</td><td>'+run+'</td></tr>'});
+    h+='<tr><td style="text-align:left">'+s.nazwa+'</td><td><input type="number" step="0.1" value="'+sk.kg+'" style="width:55px" onchange="_pv.sk['+i+'].kg=pf(this.value);renderPV()"></td><td>'+nw+'</td><td>'+run+'</td></tr>'});
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>RAZEM (świeża dawka)</b></td><td><b>'+r2(totKgOrig*coeff,1)+'</b></td><td><b>'+r2(totalSwiezy,1)+'</b></td><td></td></tr></tfoot></table>';
   // Niedojady
   h+='<div style="background:var(--amber-bg);border:1px solid #e0c060;border-radius:6px;padding:8px 10px;margin-bottom:10px">';
-  h+='<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap"><div class="fg" style="max-width:120px"><label>Niedojady (kg)</label><input type="number" id="pv-nied" min="0" step="10" value="'+niedojady+'" onchange="_pv.niedojady=+this.value;renderPV()"></div>';
+  h+='<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap"><div class="fg" style="max-width:120px"><label>Niedojady (kg)</label><input type="number" id="pv-nied" min="0" step="10" value="'+niedojady+'" onchange="_pv.niedojady=pf(this.value);renderPV()"></div>';
   h+='<div class="fg" style="flex:2"><label>Źródło niedojadów</label><input type="text" id="pv-nied-src" value="'+(p.niedSrc||'')+'" onchange="_pv.niedSrc=this.value" placeholder="np. z GR 1 i 3 — wczorajsze"></div></div>';
   if(niedojady>0){h+='<div style="margin-top:6px;font-size:12px;color:var(--amber)"><b>Dawka pełna:</b> '+totalWozOrig+' kg | <b>Niedojady:</b> '+niedojady+' kg | <b>Świeża dawka:</b> '+r2(totalSwiezy,1)+' kg | <b>Redukcja:</b> '+r2((1-coeff)*100,0)+'%</div>'}
   h+='</div>';
@@ -681,7 +689,7 @@ function renderPV(){
   h+='<table class="dt" style="margin-top:4px;margin-bottom:10px"><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg na sektor</th></tr></thead><tbody>';
   let sumSz=0;
   p.se.forEach((s,i)=>{sumSz+=s.sz;
-    h+='<tr><td style="text-align:left">'+s.n+'</td><td><input type="number" min="0" value="'+s.sz+'" style="width:50px" onchange="_pv.se['+i+'].sz=+this.value;renderPV()"></td><td>'+r2(totKgOrig*s.sz,0)+'</td></tr>';
+    h+='<tr><td style="text-align:left">'+s.n+'</td><td><input type="number" min="0" value="'+s.sz+'" style="width:50px" onchange="_pv.se['+i+'].sz=pf(this.value);renderPV()"></td><td>'+r2(totKgOrig*s.sz,0)+'</td></tr>';
     if(s.sk_extra&&s.sk_extra.length){s.sk_extra.forEach((ex,ei)=>{const exS=gS(ex.s);
       h+='<tr style="background:#E3F2FD"><td style="text-align:left;padding-left:20px;font-size:11px;color:#1565C0;font-weight:600">⊕ DODAĆ NA SEKTOR: '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</td><td></td><td style="color:#1565C0;font-weight:700">'+r2(ex.kg*s.sz,0)+'</td></tr>'})}
   });
@@ -713,7 +721,7 @@ function doPrintPV(){
   });
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
   if(p.uwagi)h+='<p style="margin-top:10px;font-style:italic"><b>Uwagi:</b> '+p.uwagi+'</p>';
-  clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h);
+  clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h,'dawki');
 }
 
 // CIELAKI — 3 sektory (stare budki, nowe budki, automat)
@@ -736,13 +744,13 @@ function loadCiUI(){
     const hasMp=i===0; // mleko pełne tylko stare budki
     h+='<div style="border-bottom:2px solid var(--brd);padding:8px 12px"><b style="color:var(--pri);font-size:13px">'+s.nazwa+'</b>';
     h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Szt.</label><input type="number" value="'+s.n+'" min="0" onchange="ciSektory()['+i+'].n=+this.value;calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>g/litr</label><input type="number" value="'+(s.g||130)+'" onchange="ciSektory()['+i+'].g=+this.value;calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>L/szt/karm</label><input type="number" value="'+s.l+'" step="0.5" onchange="ciSektory()['+i+'].l=+this.value;calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Odpojów</label><input type="number" value="'+s.o+'" min="1" max="4" onchange="ciSektory()['+i+'].o=+this.value;calcCi()"></div>';
-    if(hasMp)h+='<div class="fg" style="min-width:60px;max-width:80px"><label>Mleko pełne L/d</label><input type="number" value="'+(s.mp||0)+'" step="1" onchange="ciSektory()['+i+'].mp=+this.value;calcCi()"></div>';
-    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Calf Grains kg/szt</label><input type="number" value="'+(s.cg||0)+'" step="0.1" onchange="ciSektory()['+i+'].cg=+this.value;calcCi()"></div>';
-    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Cielak kg/szt</label><input type="number" value="'+(s.ck||0)+'" step="0.1" onchange="ciSektory()['+i+'].ck=+this.value;calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Szt.</label><input type="number" value="'+s.n+'" min="0" onchange="ciSektory()['+i+'].n=pf(this.value);calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>g/litr</label><input type="number" value="'+(s.g||130)+'" onchange="ciSektory()['+i+'].g=pf(this.value);calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>L/szt/karm</label><input type="number" value="'+s.l+'" step="0.5" onchange="ciSektory()['+i+'].l=pf(this.value);calcCi()"></div>';
+    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Odpojów</label><input type="number" value="'+s.o+'" min="1" max="4" onchange="ciSektory()['+i+'].o=pf(this.value);calcCi()"></div>';
+    if(hasMp)h+='<div class="fg" style="min-width:60px;max-width:80px"><label>Mleko pełne L/d</label><input type="number" value="'+(s.mp||0)+'" step="1" onchange="ciSektory()['+i+'].mp=pf(this.value);calcCi()"></div>';
+    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Calf Grains kg/szt</label><input type="number" value="'+(s.cg||0)+'" step="0.1" onchange="ciSektory()['+i+'].cg=pf(this.value);calcCi()"></div>';
+    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Cielak kg/szt</label><input type="number" value="'+(s.ck||0)+'" step="0.1" onchange="ciSektory()['+i+'].ck=pf(this.value);calcCi()"></div>';
     // Show totals per sector
     const cgTot=r2((s.cg||0)*s.n,1),ckTot=r2((s.ck||0)*s.n,1);
     h+='</div><div style="font-size:11px;color:var(--txt2);padding:2px 0">Razem: Calf Grains <b>'+cgTot+'</b> kg/d · Cielak <b>'+ckTot+'</b> kg/d</div></div>';
@@ -1236,7 +1244,11 @@ function runDailyDeduction(dateObj,force){
     if(s){s.stan_t=Math.max(0,s.stan_t-totalKg/1000)}
   });
   lastDed=key;
-  sa();
+  // Only push the modules actually touched (surowce stan_t + logi hist/lastDed) —
+  // NOT a global sa(), which would overwrite dawki/mleko/kadry etc. on other devices
+  // with this device's possibly-stale local copies (race condition on multi-device sync).
+  MODULES.surowce.sv();saM('surowce',true);
+  MODULES.logi.sv();saM('logi',true);
 }
 
 // On app open, catch up any missed days between lastDed+1 and today (inclusive of today only once)
