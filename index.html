@@ -102,26 +102,11 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Rok</label><input type="number" id="ml-y" value="2026" min="2020" max="2035" onchange="rMl()"></div><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
 <section class="tp" id="tab-dawki"><div class="card"><div class="ch"><span>Dawki TMR — kg świeżej masy / szt. / dobę</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addDkS()">+ Surowiec</button><button class="btn bs bpdf" onclick="pT('dawki')">📄 PDF</button></div></div><div class="tw" id="dk-w"></div></div><div class="card"><div class="ch">Sektory — podział sztuk</div><div class="tw" id="dk-s"></div></div></section>
-<section class="tp" id="tab-dekadowki">
-  <div class="fr">
-    <div class="fg" style="flex:0"><label>Dekada</label>
-      <div style="display:flex;gap:4px">
-        <button class="btn bs bo" onclick="setDek(1)">I</button>
-        <button class="btn bs bo" onclick="setDek(2)">II</button>
-        <button class="btn bs bo" onclick="setDek(3)">III</button>
-      </div>
-    </div>
-    <div class="fg"><label>Od</label><input type="date" id="dk-od" onchange="rDek()"></div>
-    <div class="fg"><label>Do</label><input type="date" id="dk-do" onchange="rDek()"></div>
-    <div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pDek()">📄 PDF</button></div>
-  </div>
-  <div class="card">
-    <div class="ch"><span>Dekadówka — zużycie pasz na grupy technologiczne</span></div>
-    <div class="tw" id="dek-w"></div>
-  </div>
-  <div class="card">
-    <div class="ch"><span>Zapisy historyczne (surowe dane odliczeń)</span><button class="btn bs bo" onclick="if(confirm('Odliczyć zużycie dla dzisiaj (dodatkowe, ręczne)?'))runDailyDeduction(new Date(),true)">Wymuś odliczenie dziś</button></div>
-    <div class="tw" id="dek-hist"></div>
+<section class="tp" id="tab-planowanie">
+  <div class="card"><div class="ch"><span>Planowanie kolejności wozów paszowych</span></div>
+  <p style="padding:0 12px 6px;font-size:12px;color:var(--txt2)">Ustaw kolejność wozów przez przeciąganie lub strzałki. Pracownik w zakładce „Wóz paszowy" będzie realizował wozy w tej kolejności.</p>
+  <div id="plan-list"></div>
+  <div style="padding:12px"><button class="btn bo" onclick="planAutoGen()">🔄 Generuj automatycznie z dawek</button></div>
   </div>
 </section>
 <section class="tp" id="tab-cielaki">
@@ -152,6 +137,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
     <button class="tab-btn" onclick="switchRap(this,'rap-nied')">Niedojady</button>
     <button class="tab-btn" onclick="switchRap(this,'rap-zuzycie')">Zużycie surowców</button>
     <button class="tab-btn" onclick="switchRap(this,'rap-dawki')">Dawki (historia)</button>
+    <button class="tab-btn" onclick="switchRap(this,'rap-dek')">Dekadówki</button>
   </div>
   <div id="rap-woz" class="rap-sub">
     <div class="fr"><div class="fg"><label>Data</label><input type="date" id="wr-date" onchange="rWozRap()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pWozRap()">📄 PDF</button></div></div>
@@ -175,6 +161,16 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
   </div>
   <div id="rap-dawki" class="rap-sub" style="display:none">
     <div class="card"><div class="ch"><span>Historia zmian receptur</span><button class="btn bs bo" onclick="snapDawki()">📸 Zapisz snapshot teraz</button></div><div id="rd-list"></div></div>
+  </div>
+  <div id="rap-dek" class="rap-sub" style="display:none">
+    <div class="fr">
+      <div class="fg" style="flex:0"><label>Dekada</label><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="setDek(1)">I</button><button class="btn bs bo" onclick="setDek(2)">II</button><button class="btn bs bo" onclick="setDek(3)">III</button></div></div>
+      <div class="fg"><label>Od</label><input type="date" id="dk-od" onchange="rDek()"></div>
+      <div class="fg"><label>Do</label><input type="date" id="dk-do" onchange="rDek()"></div>
+      <div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pDek()">📄 PDF</button></div>
+    </div>
+    <div class="card"><div class="ch">Dekadówka — zużycie pasz na grupy technologiczne</div><div class="tw" id="dek-w"></div></div>
+    <div class="card"><div class="ch"><span>Zapisy historyczne</span><button class="btn bs bo" onclick="if(confirm('Odliczyć zużycie dla dzisiaj?'))runDailyDeduction(new Date(),true)">Wymuś odliczenie</button></div><div class="tw" id="dek-hist"></div></div>
   </div>
 </section>
 <section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia — <select id="nas-y" onchange="rNas()" style="font:700 13px var(--font);border:none;background:transparent;color:var(--pri)"><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option></select></span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
@@ -223,8 +219,8 @@ function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.g
 // AUTH — 4 roles
 const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn',paszowoz:'paszowoz'};
 let passes=LD('passes',null),cR=null;
-const RT={tworca:['mleko','surowce','dawki','dekadowki','cielaki','koszty','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','dekadowki','cielaki','koszty','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','dekadowki','cielaki','koszty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',dekadowki:'Dekadówki',cielaki:'Cielaki',koszty:'Koszty',woz:'Wóz paszowy',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
+const RT={tworca:['mleko','surowce','dawki','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','cielaki','koszty','raporty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',woz:'Wóz paszowy',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
 const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
 function isRO(){return cR==='prezes'}
 function canPass(){return cR==='tworca'}
@@ -297,7 +293,7 @@ function importBackup(){
     }catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,dekadowki:rDek};if(m[t])m[t]();applyRO()}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,planowanie:rPlan,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]();applyRO()}
 function pT(t){const yr=$('#ml-y')?$('#ml-y').value:'2026';const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' '+yr),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia '+($('#nas-y')?$('#nas-y').value:'2026'),kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
   const orient={kalendarz:'landscape',harmonogram:'compactL',obecnosc:'compactL',mleko:'compact'};
   // Special compact print for harmonogram/obecnosc/mleko: generate clean HTML
@@ -967,6 +963,40 @@ const DEF_WOZ_ORDER=['g2','g1','g3','g4','g7','g6','g5','g2','g1','g3','g4']; //
 let wozOrder=LD('wozOrder',DEF_WOZ_ORDER);
 let wozLog=LD('wozLog',{});
 
+// ===== PLANOWANIE WOZÓW =====
+function rPlan(){
+  let h='<table style="width:100%;border-collapse:collapse">';
+  h+='<thead><tr><th style="width:40px;padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri)">#</th><th style="padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri);text-align:left">Grupa</th><th style="width:60px;padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri)">Szt.</th><th style="width:80px;padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri)"></th></tr></thead><tbody>';
+  wozOrder.forEach((gid,i)=>{
+    const g=gr.find(x=>x.id===gid);const nazwa=g?g.nazwa:gid;
+    const tsz=g?g.se.reduce((a,s)=>a+s.sz,0):0;
+    h+='<tr style="background:'+(i%2===0?'#fff':'#f5f5f5')+'"><td style="padding:8px;text-align:center;font-size:18px;font-weight:800;color:var(--pri);border:1px solid #ddd">'+(i+1)+'</td>';
+    h+='<td style="padding:8px;font-size:14px;font-weight:600;border:1px solid #ddd">'+nazwa+'</td>';
+    h+='<td style="padding:8px;text-align:center;font-size:14px;border:1px solid #ddd">'+tsz+'</td>';
+    h+='<td style="padding:4px;text-align:center;border:1px solid #ddd">';
+    if(i>0)h+='<button onclick="planMove('+i+',-1)" style="border:none;background:var(--pri);color:#fff;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:14px;margin:1px">▲</button>';
+    if(i<wozOrder.length-1)h+='<button onclick="planMove('+i+',1)" style="border:none;background:var(--pri);color:#fff;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:14px;margin:1px">▼</button>';
+    h+=' <button onclick="planRemove('+i+')" style="border:none;background:var(--red);color:#fff;border-radius:4px;padding:2px 6px;cursor:pointer;font-size:12px;margin:1px">✕</button>';
+    h+='</td></tr>';
+  });
+  h+='</tbody></table>';
+  // Available groups to add
+  h+='<div style="padding:10px;border-top:2px solid var(--brd);margin-top:8px"><b style="color:var(--pri);font-size:13px">Dodaj wóz:</b><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">';
+  gr.forEach(g=>{h+='<button onclick="planAdd(\''+g.id+'\')" style="background:var(--card);border:1px solid var(--pri);color:var(--pri);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600">+ '+g.nazwa+'</button>'});
+  h+='</div></div>';
+  h+='<div style="padding:8px;font-size:11px;color:var(--txt2)">Łącznie: <b>'+wozOrder.length+'</b> wozów dziennie</div>';
+  $('#plan-list').innerHTML=h;
+}
+function planMove(i,dir){const j=i+dir;if(j<0||j>=wozOrder.length)return;[wozOrder[i],wozOrder[j]]=[wozOrder[j],wozOrder[i]];SV('wozOrder',wozOrder);saM('grupy',true);rPlan()}
+function planRemove(i){wozOrder.splice(i,1);SV('wozOrder',wozOrder);saM('grupy',true);rPlan();toast('Usunięto wóz #'+(i+1))}
+function planAdd(gid){wozOrder.push(gid);SV('wozOrder',wozOrder);saM('grupy',true);rPlan();toast('Dodano wóz #'+wozOrder.length)}
+function planAutoGen(){
+  if(!confirm('Wygenerować kolejność wozów automatycznie z dawek? (nadpisze obecną listę)'))return;
+  wozOrder=[];
+  gr.forEach(g=>{for(let z=0;z<(g.z||1);z++)wozOrder.push(g.id)});
+  SV('wozOrder',wozOrder);saM('grupy',true);rPlan();toast('Wygenerowano '+wozOrder.length+' wozów');
+}
+
 function rWoz(){
   const today=isoToday();if(!wozLog[today])wozLog[today]=[];
   const done=wozLog[today];
@@ -980,19 +1010,21 @@ function rWoz(){
     const tsz=g.se.reduce((a,s)=>a+s.sz,0);const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
     const surOrder=sur.map(s=>s.id);
     const sorted=g.sk.filter(x=>x.kg>0).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
-    h+='<div style="padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h3 style="color:var(--pri)">Wóz '+(currentIdx+1)+'/'+wozOrder.length+' — '+g.nazwa+'</h3><span style="font-size:12px;color:var(--txt2)">'+tsz+' szt</span></div>';
-    h+='<div style="margin-bottom:8px;background:var(--amber-bg);padding:8px;border-radius:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><label style="font-size:12px;font-weight:700;color:var(--amber);white-space:nowrap">🔄 Niedojady (kg):</label><input type="number" id="woz-nied" min="0" step="10" value="0" style="max-width:100px;font-size:18px;font-weight:700;text-align:center;border:2px solid var(--amber);border-radius:8px" oninput="recalcWoz()"><label style="font-size:11px;color:var(--txt2);white-space:nowrap">→ trafiły do:</label><select id="woz-nied-dir" style="font-size:12px;padding:4px;max-width:150px"><option value="">— nie podano —</option>';
-    gr.forEach(gg=>{if(gg.id!==gid)h+='<option value="'+gg.nazwa+'"'+(gg.nazwa.includes('Rosn')?' selected':'')+'>'+gg.nazwa+'</option>'});
-    h+='</select></div>';
+    h+='<div style="padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--pri);font-size:22px;margin:0">Wóz '+(currentIdx+1)+'/'+wozOrder.length+' — '+g.nazwa+'</h3><span style="font-size:16px;font-weight:700;color:var(--txt2)">'+tsz+' szt</span></div>';
+    h+='<div style="margin-bottom:8px;background:var(--amber-bg);padding:10px 14px;border-radius:8px;border:2px solid var(--amber);display:flex;align-items:center;gap:10px"><label style="font-size:14px;font-weight:700;color:var(--amber)">🔄 Niedojady:</label><input type="number" id="woz-nied" min="0" step="10" value="0" style="width:100px;font-size:22px;font-weight:800;text-align:center;border:2px solid var(--amber);border-radius:8px;padding:6px" oninput="recalcWoz()"><span style="font-size:14px;font-weight:700;color:var(--amber)">kg</span></div>';
+    h+='<input type="hidden" id="woz-nied-dir" value="Jałówki Rosn">';
     h+='<div id="woz-table-wrap">';
     h+=buildWozTbl(sorted,tsz,totKg,0);
     h+='</div>';
-    // Sektory
-    h+='<div style="margin-top:8px"><b style="font-size:12px">Sektory:</b><table class="dt" style="margin-top:4px"><thead><tr><th style="text-align:left">Sektor</th><th>Sztuk</th><th>kg</th></tr></thead><tbody>';
-    g.se.forEach(s=>{h+='<tr><td>'+s.n+'</td><td>'+s.sz+'</td><td>'+r2(totKg*s.sz,0)+'</td></tr>';
-      if(s.sk_extra&&s.sk_extra.length){s.sk_extra.forEach(ex=>{const exS=gS(ex.s);h+='<tr style="background:#E3F2FD"><td style="padding-left:15px;color:#1565C0">⊕ '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</td><td></td><td style="color:#1565C0">'+r2(ex.kg*s.sz,0)+'</td></tr>'})}
-    });h+='</tbody></table></div>';
-    h+='<div style="margin-top:12px;text-align:center"><button class="btn bp" style="padding:12px 30px;font-size:16px" onclick="wozGotowe()">✅ GOTOWE — wóz zrobiony</button></div></div>';
+    // Sektory - big bold
+    h+='<div style="margin-top:12px;background:#f5f5f5;border-radius:8px;padding:10px">';
+    h+='<div style="font-size:14px;font-weight:700;color:var(--pri);margin-bottom:6px">📍 Podział na sektory:</div>';
+    h+='<table style="width:100%;border-collapse:collapse">';
+    g.se.forEach(s=>{
+      h+='<tr><td style="padding:8px;font-size:15px;font-weight:600;border-bottom:1px solid #ddd">'+s.n+'</td><td style="padding:8px;font-size:15px;font-weight:600;text-align:center;border-bottom:1px solid #ddd">'+s.sz+' szt</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:var(--pri);border-bottom:1px solid #ddd">'+r2(totKg*s.sz,0)+' kg</td></tr>';
+      if(s.sk_extra&&s.sk_extra.length){s.sk_extra.forEach(ex=>{const exS=gS(ex.s);h+='<tr style="background:#E3F2FD"><td colspan="2" style="padding:6px 8px 6px 20px;font-size:13px;font-weight:600;color:#1565C0;border-bottom:1px solid #ddd">⊕ '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</td><td style="padding:6px 8px;font-size:18px;font-weight:800;text-align:right;color:#1565C0;border-bottom:1px solid #ddd">'+r2(ex.kg*s.sz,0)+' kg</td></tr>'})}
+    });h+='</table></div>';
+    h+='<div style="margin-top:14px;text-align:center"><button onclick="wozGotowe()" style="background:var(--pri);color:#fff;border:none;border-radius:12px;padding:16px 40px;font-size:20px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2)">✅ GOTOWE</button></div></div>';
   }
   $('#woz-panel').innerHTML=h;
   // Today's log - simplified for paszowoz, no timestamp info (control tool for zootechnik only)
@@ -1005,13 +1037,14 @@ function rWoz(){
 function buildWozTbl(sorted,tsz,totKg,niedKg){
   const freshKg=Math.max(0,totKg*tsz-niedKg);
   const coeff=(totKg*tsz)>0?freshKg/(totKg*tsz):1;
-  let h='<table class="dt"><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
+  let h='<table style="width:100%;border-collapse:collapse;margin-top:6px"><thead><tr><th style="text-align:left;padding:6px 8px;background:var(--pri);color:#fff;font-size:13px;border:1px solid var(--pri)">SKŁADNIK</th><th style="width:90px;padding:6px;background:var(--pri);color:#fff;font-size:13px;text-align:right;border:1px solid var(--pri)">KG</th><th style="width:100px;padding:6px;background:var(--pri);color:#fff;font-size:13px;text-align:right;border:1px solid var(--pri)">W WOZIE</th></tr></thead><tbody>';
   let run=0;
-  if(niedKg>0){run=niedKg;h+='<tr style="background:var(--amber-bg)"><td style="font-weight:700;color:var(--amber)">🔄 Niedojady</td><td>—</td><td style="font-weight:700;color:var(--amber)">'+niedKg+'</td><td style="font-weight:700;color:var(--amber)">'+niedKg+'</td></tr>'}
-  sorted.forEach(sk=>{const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz*coeff,1);run=r2(run+nw,1);
-    h+='<tr><td>'+s.nazwa+'</td><td>'+r2(sk.kg*coeff,2)+'</td><td>'+nw+'</td><td>'+run+'</td></tr>'});
+  if(niedKg>0){run=niedKg;h+='<tr style="background:#FFF3E0"><td style="padding:8px;font-size:16px;font-weight:700;color:#E65100;border:1px solid #ddd">🔄 NIEDOJADY</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:#E65100;border:1px solid #ddd">'+niedKg+'</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:#E65100;border:1px solid #ddd">'+niedKg+'</td></tr>'}
+  sorted.forEach((sk,idx)=>{const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz*coeff,1);run=r2(run+nw,1);
+    const bg=idx%2===0?'#fff':'#f8f8f8';
+    h+='<tr style="background:'+bg+'"><td style="padding:8px;font-size:15px;font-weight:600;border:1px solid #ddd">'+s.nazwa+'</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;border:1px solid #ddd">'+nw+'</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:var(--pri);border:1px solid #ddd">'+run+'</td></tr>'});
   const razem=r2(freshKg+niedKg,1);
-  h+='</tbody><tfoot><tr><td><b>RAZEM W WOZIE</b></td><td></td><td></td><td style="font-size:14px"><b>'+razem+' kg</b></td></tr></tfoot></table>';
+  h+='</tbody><tfoot><tr><td style="padding:10px 8px;font-size:16px;font-weight:800;background:var(--amber-bg);border:2px solid var(--amber)">RAZEM W WOZIE</td><td style="padding:10px;background:var(--amber-bg);border:2px solid var(--amber)"></td><td style="padding:10px;font-size:26px;font-weight:900;text-align:right;background:var(--amber-bg);color:var(--amber);border:2px solid var(--amber)">'+razem+'</td></tr></tfoot></table>';
   return h;
 }
 function recalcWoz(){
@@ -1049,7 +1082,7 @@ function pWozRap(){const d=$('#wr-date')?$('#wr-date').value:isoToday();prn('Rap
 
 // Sub-tab switching
 function switchRap(btn,id){btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$$('.rap-sub').forEach(s=>s.style.display='none');$('#'+id).style.display='block';
-  if(id==='rap-woz')rWozRap();if(id==='rap-nied')rNied();if(id==='rap-zuzycie')rZuzycie();if(id==='rap-dawki')rDawkiHist()}
+  if(id==='rap-woz')rWozRap();if(id==='rap-nied')rNied();if(id==='rap-zuzycie')rZuzycie();if(id==='rap-dawki')rDawkiHist();if(id==='rap-dek')rDek()}
 function rRaporty(){rWozRap()}
 
 // === NIEDOJADY REPORT ===
