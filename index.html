@@ -124,10 +124,14 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
     <div class="tw" id="dek-hist"></div>
   </div>
 </section>
-<section class="tp" id="tab-cielaki"><div class="card"><div class="ch"><span>Cielaki — 3 sektory</span><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div>
-<div id="ci-panels"></div>
-<div class="sbar" id="ci-s"></div>
-</div></section>
+<section class="tp" id="tab-cielaki">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:28px">🐄</span><h2 style="margin:0;color:var(--pri)">Cielaki — ścieżka wzrostu</h2></div>
+  <div style="display:flex;gap:6px"><button class="btn bp" onclick="ciNewCalf()" style="font-size:14px;padding:8px 16px">🍼 Nowy cielak</button><button class="btn bs bpdf" onclick="pT('cielaki')">📄 PDF</button></div>
+</div>
+<div id="ci-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px"></div>
+<div class="sbar" id="ci-s" style="margin-top:10px"></div>
+</section>
 <section class="tp" id="tab-harmonogram"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="hr-m" onchange="rSch('hr')"></select></div><div class="fg"><label>Rok</label><input type="number" id="hr-y" value="2026" min="2024" max="2030" onchange="rSch('hr')"></div><div class="fg"><label>Grupa</label><select id="hr-g" onchange="rSch('hr')"><option value="obsluga">Obsługa</option><option value="dojarze">Dojarze</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('hr')">📄</button></div></div><div class="card"><div class="ch"><span>Harmonogram pracy</span><button class="btn bs bo" onclick="addPr('hr')">+ Pracownik</button></div><div class="tw" id="hr-w"></div></div></section>
 <section class="tp" id="tab-obecnosc"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ob-m" onchange="rSch('ob')"></select></div><div class="fg"><label>Rok</label><input type="number" id="ob-y" value="2026" min="2024" max="2030" onchange="rSch('ob')"></div><div class="fg"><label>Grupa</label><select id="ob-g" onchange="rSch('ob')"><option value="dojarze">Dojarze</option><option value="obsluga">Obsługa</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('ob')">📄</button></div></div><div class="card"><div class="ch"><span>Lista obecności</span><button class="btn bs bo" onclick="addPr('ob')">+ Pracownik</button></div><div class="tw" id="ob-w"></div></div></section>
 <section class="tp" id="tab-koszty">
@@ -734,31 +738,60 @@ function ciTotals(){
 function calcCi(){
   const sek=ciSektory();sa();
   const t=ciTotals();
-  // Summary bar
   $('#ci-s').innerHTML='<div class="si"><div class="v">'+t.totalN+'</div><div class="l">Cielaków razem</div></div><div class="si"><div class="v">'+t.tP+'</div><div class="l">kg proszku/dobę</div></div><div class="si"><div class="v">'+t.tW+'</div><div class="l">L wody/dobę</div></div><div class="si"><div class="v">'+t.tMp+'</div><div class="l">L mleka pełn./dobę</div></div><div class="si"><div class="v">'+t.tCg+'</div><div class="l">Calf Grains/dobę</div></div><div class="si"><div class="v">'+t.tCk+'</div><div class="l">Cielak/dobę</div></div>';
 }
 function loadCiUI(){
   const sek=ciSektory();
+  const themes=[
+    {bg:'#FFF3E0',brd:'#FF9800',icon:'🍼',lbl:'Najmłodsze — mleko pełne + preparat',clr:'#E65100',next:'Nowe budki'},
+    {bg:'#FFF8E1',brd:'#FFC107',icon:'🐄',lbl:'Średnie — preparat + pasza',clr:'#F57F17',next:'Na automacie'},
+    {bg:'#E8F5E9',brd:'#4CAF50',icon:'🌾',lbl:'Najstarsze — automat odpajania',clr:'#2E7D32',next:null}
+  ];
   let h='';
   sek.forEach((s,i)=>{
-    const hasMp=i===0; // mleko pełne tylko stare budki
-    h+='<div style="border-bottom:2px solid var(--brd);padding:8px 12px"><b style="color:var(--pri);font-size:13px">'+s.nazwa+'</b>';
-    h+='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Szt.</label><input type="number" value="'+s.n+'" min="0" onchange="ciSektory()['+i+'].n=pf(this.value);calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>g/litr</label><input type="number" value="'+(s.g||130)+'" onchange="ciSektory()['+i+'].g=pf(this.value);calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>L/szt/karm</label><input type="number" value="'+s.l+'" step="0.5" onchange="ciSektory()['+i+'].l=pf(this.value);calcCi()"></div>';
-    h+='<div class="fg" style="min-width:60px;max-width:70px"><label>Odpojów</label><input type="number" value="'+s.o+'" min="1" max="4" onchange="ciSektory()['+i+'].o=pf(this.value);calcCi()"></div>';
-    if(hasMp)h+='<div class="fg" style="min-width:60px;max-width:80px"><label>Mleko pełne L/d</label><input type="number" value="'+(s.mp||0)+'" step="1" onchange="ciSektory()['+i+'].mp=pf(this.value);calcCi()"></div>';
-    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Calf Grains kg/szt</label><input type="number" value="'+(s.cg||0)+'" step="0.1" onchange="ciSektory()['+i+'].cg=pf(this.value);calcCi()"></div>';
-    h+='<div class="fg" style="min-width:70px;max-width:90px"><label>Cielak kg/szt</label><input type="number" value="'+(s.ck||0)+'" step="0.1" onchange="ciSektory()['+i+'].ck=pf(this.value);calcCi()"></div>';
-    // Show totals per sector
+    const th=themes[i]||themes[2];const hasMp=i===0;
     const cgTot=r2((s.cg||0)*s.n,1),ckTot=r2((s.ck||0)*s.n,1);
-    h+='</div><div style="font-size:11px;color:var(--txt2);padding:2px 0">Razem: Calf Grains <b>'+cgTot+'</b> kg/d · Cielak <b>'+ckTot+'</b> kg/d</div></div>';
+    h+='<div style="background:'+th.bg+';border:2px solid '+th.brd+';border-radius:12px;overflow:hidden">';
+    h+='<div style="background:'+th.brd+';color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center">';
+    h+='<div><span style="font-size:22px;margin-right:6px">'+th.icon+'</span><b style="font-size:14px">'+s.nazwa+'</b></div>';
+    h+='<div style="background:rgba(255,255,255,.3);padding:4px 14px;border-radius:20px;font-size:22px;font-weight:800">'+s.n+'</div></div>';
+    h+='<div style="padding:4px 14px 0;font-size:10px;color:'+th.clr+';font-style:italic">'+th.lbl+'</div>';
+    // Flow
+    h+='<div style="padding:6px 14px;display:flex;gap:4px;flex-wrap:wrap">';
+    h+='<button onclick="ciMove('+i+',1)" style="background:'+th.brd+';color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">＋</button>';
+    h+='<button onclick="ciMove('+i+',-1)" style="background:rgba(0,0,0,.12);color:'+th.clr+';border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-weight:600">－</button>';
+    if(th.next)h+='<button onclick="ciTransfer('+i+','+(i+1)+')" style="background:none;border:1px solid '+th.brd+';color:'+th.clr+';border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer;font-weight:600">→ '+th.next+'</button>';
+    else h+='<button onclick="ciGraduate()" style="background:none;border:1px solid #4CAF50;color:#2E7D32;border-radius:6px;padding:4px 8px;font-size:10px;cursor:pointer;font-weight:600">🎓 → Zbiorówka</button>';
+    h+='</div>';
+    // Inputs
+    h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:6px;padding:6px 14px">';
+    const inp=(lbl,val,step,cb)=>'<div><label style="font-size:8px;color:'+th.clr+';font-weight:700;text-transform:uppercase">'+lbl+'</label><input type="number" value="'+val+'" step="'+(step||1)+'" style="width:100%;font-size:15px;font-weight:700;text-align:center;border:1px solid '+th.brd+';border-radius:6px;padding:4px;background:#fff" onchange="'+cb+'"></div>';
+    h+=inp('Szt.',s.n,1,'ciSektory()['+i+'].n=pf(this.value);calcCi();loadCiUI()');
+    h+=inp('g/litr',s.g||130,1,'ciSektory()['+i+'].g=pf(this.value);calcCi()');
+    h+=inp('L/szt/karm',s.l,0.5,'ciSektory()['+i+'].l=pf(this.value);calcCi()');
+    h+=inp('Odpojów',s.o,1,'ciSektory()['+i+'].o=pf(this.value);calcCi()');
+    if(hasMp)h+=inp('Mleko pełne L/d',s.mp||0,1,'ciSektory()['+i+'].mp=pf(this.value);calcCi()');
+    h+=inp('Calf Grains kg/szt',s.cg||0,0.1,'ciSektory()['+i+'].cg=pf(this.value);calcCi()');
+    h+=inp('Cielak kg/szt',s.ck||0,0.1,'ciSektory()['+i+'].ck=pf(this.value);calcCi()');
+    h+='</div>';
+    // Badges
+    h+='<div style="padding:4px 14px 10px;display:flex;gap:6px;flex-wrap:wrap">';
+    h+='<span style="background:rgba(0,0,0,.06);padding:3px 8px;border-radius:10px;font-size:11px">CG: <b>'+cgTot+'</b> kg/d</span>';
+    h+='<span style="background:rgba(0,0,0,.06);padding:3px 8px;border-radius:10px;font-size:11px">Cielak: <b>'+ckTot+'</b> kg/d</span>';
+    if(hasMp)h+='<span style="background:rgba(0,0,0,.06);padding:3px 8px;border-radius:10px;font-size:11px">Mleko: <b>'+(s.mp||0)+'</b> L/d</span>';
+    h+='</div></div>';
   });
-  h+='<p style="padding:6px 12px;font-size:11px;color:var(--txt2)">Mleko pełne (stare budki) → rozchód w zakładce Mleko. Po ukończeniu sektora cielaki przechodzą na „Zbiorówka" w grupie Jałówki Rosn.</p>';
-  $('#ci-panels').innerHTML=h;
+  $('#ci-cards').innerHTML=h;
   calcCi();
 }
+function ciNewCalf(){ciSektory()[0].n++;sa();loadCiUI();toast('🍼 Nowy cielak → Stare budki')}
+function ciMove(i,d){const s=ciSektory();s[i].n=Math.max(0,s[i].n+d);sa();loadCiUI()}
+function ciTransfer(from,to){const s=ciSektory();if(s[from].n<=0){toast('Brak cielaków');return}
+  const n=pf(prompt('Ile przenieść z „'+s[from].nazwa+'" do „'+s[to].nazwa+'"?','1'));
+  if(!n||n<=0)return;const a=Math.min(n,s[from].n);s[from].n-=a;s[to].n+=a;sa();loadCiUI();toast(a+' szt. → '+s[to].nazwa)}
+function ciGraduate(){const s=ciSektory();if(s[2].n<=0){toast('Brak cielaków');return}
+  const n=pf(prompt('Ile kończy odpajanie → Zbiorówka?','1'));
+  if(!n||n<=0)return;const a=Math.min(n,s[2].n);s[2].n-=a;sa();loadCiUI();toast('🎓 '+a+' szt. → Zbiorówka')}
 
 // HARMONOGRAM & OBECNOŚĆ
 function rSch(pf){
