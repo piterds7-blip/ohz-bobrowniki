@@ -496,14 +496,18 @@ function rMl(){
   if(!ml[k]){ml[k]=[];for(let d=1;d<=ds;d++){if(tp==='o')ml[k].push({d,sp:0,pr:0,od:0,ci:30,rz:30,sn:0});else ml[k].push({d,kr:0,pr:0,od:0,dj:0})}}
   const da=ml[k],w=$('#ml-w');
   if(tp==='o'){
-    // Auto-fill Stan pop. from previous day's Stan nast.
-    for(let i=1;i<da.length;i++){if(da[i-1].sn!==undefined)da[i].sp=da[i-1].sn}
-    // Recalc all rows
-    da.forEach(r=>{r.rz=(r.od||0)+(r.ci||0);r.sn=(r.sp||0)+(r.pr||0)-r.rz});
+    // Sequential calculation: each day depends on previous day's result
+    for(let i=0;i<da.length;i++){
+      if(i>0)da[i].sp=da[i-1].sn; // Stan pop. = previous day's Stan nast.
+      da[i].rz=(da[i].od||0)+(da[i].ci||0);
+      da[i].sn=(da[i].sp||0)+(da[i].pr||0)-da[i].rz;
+    }
     let h='<table class="dt"><thead><tr><th style="width:45px">Dzień</th><th>Stan pop.</th><th>Produkcja</th><th>Odstawa</th><th>Cielęta</th><th>Rozchód</th><th>Stan nast.</th></tr></thead><tbody>';
     da.forEach((r,i)=>{
       h+='<tr'+(isWe(yr,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td>';
-      h+='<td style="font-weight:700;color:var(--pri)">'+r2(r.sp,0)+'</td>';
+      // Day 1: editable Stan pop (can be set manually or pulled from previous month)
+      if(i===0)h+='<td><input value="'+r2(r.sp,0)+'" onchange="uMl(0,\'sp\',this)" style="font-weight:700;color:var(--pri)"></td>';
+      else h+='<td style="font-weight:700;color:var(--pri)">'+r2(r.sp,0)+'</td>';
       h+='<td><input value="'+r.pr+'" onchange="uMl('+i+',\'pr\',this)"></td>';
       h+='<td><input value="'+r.od+'" onchange="uMl('+i+',\'od\',this)"></td>';
       h+='<td><input value="'+r.ci+'" onchange="uMl('+i+',\'ci\',this)"></td>';
