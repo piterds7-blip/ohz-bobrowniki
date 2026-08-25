@@ -496,18 +496,39 @@ function rMl(){
   if(!ml[k]){ml[k]=[];for(let d=1;d<=ds;d++){if(tp==='o')ml[k].push({d,sp:0,pr:0,od:0,ci:30,rz:30,sn:0});else ml[k].push({d,kr:0,pr:0,od:0,dj:0})}}
   const da=ml[k],w=$('#ml-w');
   if(tp==='o'){
+    // Auto-fill Stan pop. from previous day's Stan nast.
+    for(let i=1;i<da.length;i++){if(da[i-1].sn!==undefined)da[i].sp=da[i-1].sn}
+    // Recalc all rows
+    da.forEach(r=>{r.rz=(r.od||0)+(r.ci||0);r.sn=(r.sp||0)+(r.pr||0)-r.rz});
     let h='<table class="dt"><thead><tr><th style="width:45px">Dzień</th><th>Stan pop.</th><th>Produkcja</th><th>Odstawa</th><th>Cielęta</th><th>Rozchód</th><th>Stan nast.</th></tr></thead><tbody>';
-    da.forEach((r,i)=>{h+='<tr'+(isWe(yr,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.sp+'" onchange="uMl('+i+',\'sp\',this)"></td><td><input value="'+r.pr+'" onchange="uMl('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMl('+i+',\'od\',this)"></td><td><input value="'+r.ci+'" onchange="uMl('+i+',\'ci\',this)"></td><td>'+r2(r.rz,0)+'</td><td>'+r2(r.sn,0)+'</td></tr>'});
+    da.forEach((r,i)=>{
+      h+='<tr'+(isWe(yr,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td>';
+      h+='<td style="font-weight:700;color:var(--pri)">'+r2(r.sp,0)+'</td>';
+      h+='<td><input value="'+r.pr+'" onchange="uMl('+i+',\'pr\',this)"></td>';
+      h+='<td><input value="'+r.od+'" onchange="uMl('+i+',\'od\',this)"></td>';
+      h+='<td><input value="'+r.ci+'" onchange="uMl('+i+',\'ci\',this)"></td>';
+      h+='<td>'+r2(r.rz,0)+'</td><td style="font-weight:700">'+r2(r.sn,0)+'</td></tr>'});
     const tP=da.reduce((s,r)=>s+r.pr,0),tO=da.reduce((s,r)=>s+r.od,0),tC=da.reduce((s,r)=>s+r.ci,0),tR=da.reduce((s,r)=>s+r.rz,0);
     h+='</tbody><tfoot><tr><td>RAZEM</td><td></td><td>'+tP+'</td><td>'+tO+'</td><td>'+tC+'</td><td>'+tR+'</td><td></td></tr></tfoot></table>';w.innerHTML=h;
   } else {
     let h='<table class="dt"><thead><tr><th style="width:45px">Dzień</th><th>Krowy</th><th>Produkcja</th><th>Odstawa</th><th>Śr./szt.</th><th>Dojne</th><th>Śr./dojną</th></tr></thead><tbody>';
     da.forEach((r,i)=>{const a1=r.kr>0?r2(r.pr/r.kr,1):'—',a2=r.dj>0?r2(r.pr/r.dj,1):'—';
       h+='<tr'+(isWe(yr,m,r.d)?' class="we"':'')+'><td>'+r.d+'</td><td><input value="'+r.kr+'" onchange="uMlP('+i+',\'kr\',this)"></td><td><input value="'+r.pr+'" onchange="uMlP('+i+',\'pr\',this)"></td><td><input value="'+r.od+'" onchange="uMlP('+i+',\'od\',this)"></td><td>'+a1+'</td><td><input value="'+r.dj+'" onchange="uMlP('+i+',\'dj\',this)"></td><td>'+a2+'</td></tr>'});
-    h+='</tbody></table>';w.innerHTML=h;
+    // Sums and averages (only from days with value > 0)
+    const sumPr=da.reduce((s,r)=>s+r.pr,0),sumOd=da.reduce((s,r)=>s+r.od,0);
+    const dPr=da.filter(r=>r.pr>0),dOd=da.filter(r=>r.od>0),dKr=da.filter(r=>r.kr>0),dDj=da.filter(r=>r.dj>0);
+    const avgPr=dPr.length?r2(sumPr/dPr.length,0):0;
+    const avgOd=dOd.length?r2(sumOd/dOd.length,0):0;
+    const avgSrSzt=dKr.length?r2(dKr.reduce((s,r)=>s+(r.pr/r.kr),0)/dKr.length,1):0;
+    const avgDj=dDj.length?r2(dDj.reduce((s,r)=>s+r.dj,0)/dDj.length,0):0;
+    const avgSrDj=dDj.length?r2(dDj.reduce((s,r)=>s+(r.pr/r.dj),0)/dDj.length,1):0;
+    h+='</tbody><tfoot>';
+    h+='<tr style="background:var(--amber-bg)"><td><b>SUMA</b></td><td></td><td style="font-weight:700">'+sumPr+'</td><td style="font-weight:700">'+sumOd+'</td><td></td><td></td><td></td></tr>';
+    h+='<tr style="background:var(--pri-bg)"><td><b>ŚREDNIA</b></td><td></td><td style="font-weight:700">'+avgPr+'</td><td style="font-weight:700">'+avgOd+'</td><td style="font-weight:700">'+avgSrSzt+'</td><td style="font-weight:700">'+avgDj+'</td><td style="font-weight:700">'+avgSrDj+'</td></tr>';
+    h+='</tfoot></table>';w.innerHTML=h;
   }
 }
-function uMl(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='o_'+yr+'_'+m;ml[k][i][f]=pf(el.value);const r=ml[k][i];r.rz=(r.od||0)+(r.ci||0);r.sn=r.sp+r.pr-r.rz;sa();rMl()}
+function uMl(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='o_'+yr+'_'+m;ml[k][i][f]=pf(el.value);sa();rMl()}
 function uMlP(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='p_'+yr+'_'+m;ml[k][i][f]=pf(el.value);sa();rMl()}
 
 // SUROWCE (tony, PLN/t, + zużycie dzienne + wystarczy do)
