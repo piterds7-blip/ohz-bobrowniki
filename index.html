@@ -68,7 +68,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 .sbar{background:var(--pri);color:#fff;padding:8px 12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;border-radius:var(--radius);margin-bottom:10px}
 .si{text-align:center}.si .v{font-family:var(--mono);font-size:18px;font-weight:700;line-height:1.2}.si .l{font-size:9px;text-transform:uppercase;letter-spacing:.04em;opacity:.8}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--brd);border:1px solid var(--brd);border-radius:var(--radius);overflow:hidden}
-.cal-hdr{background:var(--pri);color:#fff;padding:6px 2px;text-align:center;font:700 11px var(--font)}.cal-hdr.wknd{background:var(--red)}
+.cal-hdr{background:#f0f0f0;color:#000;padding:8px 2px;text-align:center;font:800 12px var(--font);border:1px solid #ddd}.cal-hdr.wknd{background:#ffebee;color:#c00}
 .cal-cell{background:#fff;min-height:85px;padding:4px;cursor:pointer}.cal-cell:hover{background:var(--pri-bg)}
 .cal-cell.wknd{background:var(--red-bg)}.cal-cell.empty{background:#F5F5F5;cursor:default;min-height:40px}
 .cal-cell .dn{font:700 14px var(--font);color:var(--txt);margin-bottom:3px}.cal-cell.wknd .dn{color:var(--red)}
@@ -185,7 +185,7 @@ function pf(v){return parseFloat(String(v).replace(',','.'))||0} // parse float,
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const r2=(v,d=1)=>{const f=10**d;return Math.round(v*f)/f};
 const MO=['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
-const DP=['Pn','Wt','Śr','Cz','Pt','So','Nd'];
+const DP=['Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela'];
 function dim(y,m){return new Date(y,m+1,0).getDate()}
 function dow(y,m,d){let w=new Date(y,m,d).getDay();return w===0?6:w-1}
 function isWe(y,m,d){const w=new Date(y,m,d).getDay();return w===0||w===6}
@@ -496,6 +496,12 @@ function rMl(){
   if(!ml[k]){ml[k]=[];for(let d=1;d<=ds;d++){if(tp==='o')ml[k].push({d,sp:0,pr:0,od:0,ci:30,rz:30,sn:0});else ml[k].push({d,kr:0,pr:0,od:0,dj:0})}}
   const da=ml[k],w=$('#ml-w');
   if(tp==='o'){
+    // Auto-fill day 1 Stan pop. from previous month's last day Stan nast.
+    if(da[0].sp===0||da[0].sp===undefined){
+      const prevM=m===0?11:m-1;const prevY=m===0?yr-1:yr;
+      const prevK='o_'+prevY+'_'+prevM;
+      if(ml[prevK]&&ml[prevK].length){const lastDay=ml[prevK][ml[prevK].length-1];if(lastDay.sn!==undefined&&lastDay.sn!==0)da[0].sp=lastDay.sn}
+    }
     // Sequential calculation: each day depends on previous day's result
     for(let i=0;i<da.length;i++){
       if(i>0)da[i].sp=da[i-1].sn; // Stan pop. = previous day's Stan nast.
