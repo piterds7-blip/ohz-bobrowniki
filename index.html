@@ -210,6 +210,7 @@ function prn(t,h,orient,raw){
   document.head.appendChild(st);
   if(raw){$('#pa').innerHTML=h}
   else if(orient==='compact'||orient==='compactL'){$('#pa').innerHTML='<h2 style="font-size:10pt;margin:0 0 2px">'+t+'</h2>'+h}
+  else if(orient==='dawki'){$('#pa').innerHTML='<h2>'+t+'</h2>'+h}
   else{$('#pa').innerHTML='<h2>'+t+'</h2><div class="pm">OHZ Bobrowniki Sp. z o.o. · '+new Date().toLocaleDateString('pl')+'</div>'+h}
   setTimeout(()=>window.print(),200);
 }
