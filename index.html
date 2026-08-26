@@ -753,7 +753,7 @@ function doPrintPV(){
       h+='<tr style="background:#E3F2FD"><td style="text-align:left;padding-left:15px;color:#1565C0"><b>⊕ DODAĆ NA SEKTOR: '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</b></td><td></td><td style="color:#1565C0"><b>'+r2(ex.kg*s.sz,0)+'</b></td></tr>'})}
   });
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
-  if(p.uwagi)h+='<p style="margin-top:16px;font-size:16pt;font-weight:800;border:3px solid #2E7D32;border-radius:8px;padding:12px;text-align:center;background:#E8F5E9;color:#2E7D32"><b>Uwagi: '+p.uwagi+'</b></p>';
+  if(p.uwagi)h+='<p style="margin-top:8px;font-size:14pt;font-weight:800;text-align:center;color:#2E7D32">⚠ '+p.uwagi+'</p>';
   clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h,'dawki');
 }
 
