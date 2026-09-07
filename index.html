@@ -564,10 +564,12 @@ function rSur(){
 // Delivery modal
 function addDelivery(si){
   const s=sur[si];
+  window._delSi=si;
   opM('Przyjęcie na magazyn — '+s.nazwa,
     '<div style="background:#E8F5E9;padding:10px;border-radius:8px;margin-bottom:10px"><div style="font-size:13px;color:var(--txt2)">Aktualny stan:</div><div style="font-size:24px;font-weight:800;color:var(--pri)">'+r2(s.stan_t,2)+' t</div></div>'+
     '<div style="display:flex;gap:8px;margin-bottom:8px"><div class="fg" style="flex:2"><label>Ilość dostawy (t)</label><input type="number" id="del-amt" step="0.01" style="font-size:18px;font-weight:700;padding:8px" placeholder="np. 20,5"></div>'+
-    '<div class="fg"><label>Data dostawy</label><input type="date" id="del-date" value="'+isoToday()+'"></div></div>'+
+    '<div class="fg"><label>Data dostawy</label><input type="date" id="del-date" value="'+isoToday()+'" onchange="delPreview('+si+')"></div></div>'+
+    '<div id="del-preview" style="font-size:12px;color:var(--txt2);padding:0 0 8px"></div>'+
     '<div class="fg"><label>Uwagi (opcjonalnie)</label><input type="text" id="del-note" placeholder="np. nr faktury, dostawca"></div>',
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" style="font-size:14px;padding:8px 20px" onclick="okDelivery('+si+')">✅ Przyjmij dostawę</button>');
 }
@@ -577,12 +579,27 @@ function okDelivery(si){
   const note=$('#del-note').value||'';
   const s=sur[si];
   const oldStan=s.stan_t;
-  s.stan_t=r2(s.stan_t+amt,2);
+  // Calculate days between delivery date and today
+  const daysSince=Math.max(0,Math.round((new Date(isoToday())-new Date(date))/86400000));
+  const duKgDay=dailyUse(s.id); // daily usage in kg
+  const usedSinceT=r2(daysSince*duKgDay/1000,2); // convert to tons
+  const effectiveAmt=r2(Math.max(0,amt-usedSinceT),2);
+  s.stan_t=r2(s.stan_t+effectiveAmt,2);
   // Log delivery
   if(!s.deliveries)s.deliveries=[];
-  s.deliveries.push({date,amt,note,oldStan,newStan:s.stan_t,ts:Date.now()});
+  s.deliveries.push({date,amt,usedSince:usedSinceT,effectiveAmt,note,oldStan,newStan:s.stan_t,ts:Date.now()});
   sa(true);clM();rSur();
-  toast('✅ '+s.nazwa+': +'+amt+'t → stan: '+s.stan_t+'t');
+  let msg='✅ '+s.nazwa+': +'+amt+'t';
+  if(daysSince>0)msg+=' (dostawa z '+date+', zużycie '+daysSince+'d × '+r2(duKgDay,0)+'kg = −'+usedSinceT+'t)';
+  msg+=' → stan: '+s.stan_t+'t';
+  toast(msg);
+}
+function delPreview(si){
+  const date=$('#del-date').value||isoToday();
+  const days=Math.max(0,Math.round((new Date(isoToday())-new Date(date))/86400000));
+  const el=$('#del-preview');if(!el)return;
+  if(days===0){el.innerHTML='Dostawa z dzisiaj — bez korekty zużycia.'}
+  else{const du=dailyUse(sur[si].id);const used=r2(days*du/1000,2);el.innerHTML='⚠ Dostawa sprzed <b>'+days+' dni</b> — zużycie od tamtej daty: <b>'+days+'</b>d × <b>'+r2(du,0)+'</b> kg/d = <b>'+used+'</b> t zostanie odjęte od dostawy'}
 }
 function mvSur(i,dir){const j=i+dir;if(j<0||j>=sur.length)return;[sur[i],sur[j]]=[sur[j],sur[i]];sa(true);rSur();rDk()}
 function toggleZ(gi){
