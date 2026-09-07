@@ -544,7 +544,7 @@ function uMlP(i,f,el){const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,k='p_
 
 // SUROWCE (tony, PLN/t, + zużycie dzienne + wystarczy do)
 function rSur(){
-  let h='<table class="dt"><thead><tr><th>Surowiec</th><th>Kategoria</th><th>Cena PLN/t</th><th>Stan (t)</th><th>Zużycie dz. (kg)</th><th>Wystarczy do</th><th></th></tr></thead><tbody>';
+  let h='<table class="dt"><thead><tr><th>Surowiec</th><th>Kategoria</th><th>Cena PLN/t</th><th>Stan (t)</th><th></th><th>Zużycie dz. (kg)</th><th>Wystarczy do</th><th></th></tr></thead><tbody>';
   const katLabels={obj:'Objętościowa',tres:'Treściwa',dod:'Dodatek'};
   sur.forEach((s,i)=>{
     const du=dailyUse(s.id);const stanKg=s.stan_t*1000;let wyst='—';
@@ -555,10 +555,34 @@ function rSur(){
     h+='</select></td>';
     h+='<td><input step="1" value="'+r2(s.cena_t,0)+'" onchange="sur['+i+'].cena_t=pf(this.value);sa()"></td>';
     h+='<td><input step="0.01" value="'+r2(s.stan_t,2)+'" onchange="sur['+i+'].stan_t=pf(this.value);sa();rSur()"></td>';
+    h+='<td><button style="background:var(--pri);color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:14px;font-weight:700" onclick="addDelivery('+i+')" title="Dodaj dostawę">＋</button></td>';
     h+='<td>'+r2(du,1)+'</td><td style="text-align:left;font-family:var(--font);font-size:11px">'+wyst+'</td>';
     h+='<td><button class="btn bs bd" onclick="if(confirm(\'Usunąć?\')){sur.splice('+i+',1);sa();rSur()}">✕</button></td></tr>';
   });
   h+='</tbody></table>';$('#sur-w').innerHTML=h;
+}
+// Delivery modal
+function addDelivery(si){
+  const s=sur[si];
+  opM('Przyjęcie na magazyn — '+s.nazwa,
+    '<div style="background:#E8F5E9;padding:10px;border-radius:8px;margin-bottom:10px"><div style="font-size:13px;color:var(--txt2)">Aktualny stan:</div><div style="font-size:24px;font-weight:800;color:var(--pri)">'+r2(s.stan_t,2)+' t</div></div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:8px"><div class="fg" style="flex:2"><label>Ilość dostawy (t)</label><input type="number" id="del-amt" step="0.01" style="font-size:18px;font-weight:700;padding:8px" placeholder="np. 20,5"></div>'+
+    '<div class="fg"><label>Data dostawy</label><input type="date" id="del-date" value="'+isoToday()+'"></div></div>'+
+    '<div class="fg"><label>Uwagi (opcjonalnie)</label><input type="text" id="del-note" placeholder="np. nr faktury, dostawca"></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" style="font-size:14px;padding:8px 20px" onclick="okDelivery('+si+')">✅ Przyjmij dostawę</button>');
+}
+function okDelivery(si){
+  const amt=pf($('#del-amt').value);if(amt<=0){toast('Podaj ilość dostawy');return}
+  const date=$('#del-date').value||isoToday();
+  const note=$('#del-note').value||'';
+  const s=sur[si];
+  const oldStan=s.stan_t;
+  s.stan_t=r2(s.stan_t+amt,2);
+  // Log delivery
+  if(!s.deliveries)s.deliveries=[];
+  s.deliveries.push({date,amt,note,oldStan,newStan:s.stan_t,ts:Date.now()});
+  sa(true);clM();rSur();
+  toast('✅ '+s.nazwa+': +'+amt+'t → stan: '+s.stan_t+'t');
 }
 function mvSur(i,dir){const j=i+dir;if(j<0||j>=sur.length)return;[sur[i],sur[j]]=[sur[j],sur[i]];sa(true);rSur();rDk()}
 function toggleZ(gi){
