@@ -1249,31 +1249,58 @@ function getWeekKey(dateStr){const d=new Date(dateStr);const jan1=new Date(d.get
 // === DAWKI HISTORIA (snapshoty) ===
 let dawkiHist=LD('dawkiHist',[]);
 function snapDawki(){
-  const snap={ts:Date.now(),date:isoToday(),gr:JSON.parse(JSON.stringify(gr))};
-  dawkiHist.unshift(snap);if(dawkiHist.length>50)dawkiHist.length=50;
+  dawkiHist.unshift({ts:Date.now(),date:isoToday(),gr:JSON.parse(JSON.stringify(gr))});
+  if(dawkiHist.length>100)dawkiHist.length=100;
   SV('dawkiHist',dawkiHist);rDawkiHist();toast('Snapshot zapisany');
 }
 function rDawkiHist(){
-  if(!dawkiHist.length){$('#rd-list').innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2)">Brak zapisanych snapshotów. Kliknij „Zapisz snapshot" żeby utworzyć pierwszy.</div>';return}
+  if(!dawkiHist.length){$('#rd-list').innerHTML='<div style="padding:20px;text-align:center;color:var(--txt2)">Brak snapshotów.</div>';return}
   let h='';
   dawkiHist.forEach((snap,si)=>{
     const prev=dawkiHist[si+1];
-    h+='<div style="border-bottom:1px solid var(--brd);padding:8px 12px;cursor:pointer" onclick="this.querySelector(\'.rd-det\').style.display=this.querySelector(\'.rd-det\').style.display===\'none\'?\'block\':\'none\'">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center"><b>'+new Date(snap.ts).toLocaleString('pl')+'</b><button class="btn bs bd" onclick="event.stopPropagation();dawkiHist.splice('+si+',1);SV(\'dawkiHist\',dawkiHist);rDawkiHist()">✕</button></div>';
-    h+='<div class="rd-det" style="display:none;margin-top:6px">';
-    snap.gr.forEach(g=>{
-      h+='<div style="font-weight:700;color:var(--pri);margin-top:4px">'+g.nazwa+'</div>';
-      h+='<table class="dt" style="margin-bottom:6px"><thead><tr><th style="text-align:left">Surowiec</th><th>kg/szt</th></tr></thead><tbody>';
-      g.sk.forEach(sk=>{
-        const s=gS(sk.s);const name=s?s.nazwa:sk.s;
-        let changed=false,oldVal=null;
-        if(prev){const pg=prev.gr.find(x=>x.id===g.id);if(pg){const psk=pg.sk.find(x=>x.s===sk.s);if(psk&&psk.kg!==sk.kg){changed=true;oldVal=psk.kg}else if(!psk){changed=true;oldVal='nowy'}}}
-        h+='<tr><td>'+name+'</td><td'+(changed?' style="color:var(--red);font-weight:700"':'')+'>'+sk.kg+(changed&&oldVal!=null?' <span style="font-size:9px">(było: '+oldVal+')</span>':'')+'</td></tr>'});
-      h+='</tbody></table>';
-    });
+    h+='<div style="border:1px solid var(--brd);border-radius:8px;margin-bottom:8px;overflow:hidden">';
+    // Header
+    h+='<div style="background:var(--pri-bg);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="this.parentElement.querySelector(\'.rd-det\').style.display=this.parentElement.querySelector(\'.rd-det\').style.display===\'none\'?\'block\':\'none\'">';
+    h+='<div><b style="font-size:14px">'+snap.date+'</b> <span style="color:var(--txt2);font-size:11px">'+new Date(snap.ts).toLocaleTimeString('pl')+'</span></div>';
+    h+='<div style="display:flex;gap:4px">';
+    h+='<button class="btn bs bp" onclick="event.stopPropagation();restoreSnap('+si+')" style="font-size:11px;padding:3px 8px" title="Przywróć te dawki">🔄 Przywróć</button>';
+    if(canPass())h+='<button class="btn bs bd" onclick="event.stopPropagation();dawkiHist.splice('+si+',1);SV(\'dawkiHist\',dawkiHist);rDawkiHist()" style="padding:3px 6px">✕</button>';
     h+='</div></div>';
+    // Detail: FeedExpert table
+    h+='<div class="rd-det" style="display:none;padding:8px;overflow-x:auto">';
+    // Collect all surowce used across all groups in this snapshot
+    const allSids=new Set();snap.gr.forEach(g=>g.sk.forEach(sk=>{if(sk.kg>0)allSids.add(sk.s)}));
+    const sids=[...allSids];
+    h+='<table class="dt" style="min-width:'+(180+snap.gr.length*80)+'px"><thead><tr><th style="text-align:left">Surowiec</th>';
+    snap.gr.forEach(g=>{h+='<th style="font-size:10px">'+g.nazwa+'</th>'});
+    h+='</tr></thead><tbody>';
+    sids.forEach(sid=>{
+      const s=gS(sid);const name=s?s.nazwa:sid;
+      h+='<tr><td style="font-size:11px">'+name+'</td>';
+      snap.gr.forEach(g=>{
+        const sk=g.sk.find(x=>x.s===sid);const kg=sk?sk.kg:0;
+        // Check if changed vs previous snapshot
+        let changed=false;
+        if(prev){const pg=prev.gr.find(x=>x.id===g.id);if(pg){const psk=pg.sk.find(x=>x.s===sid);if(psk&&psk.kg!==kg)changed=true;else if(!psk&&kg>0)changed=true;else if(psk&&psk.kg>0&&kg===0)changed=true}}
+        h+='<td style="text-align:center;'+(changed?'color:var(--red);font-weight:800;background:#FFEBEE':'')+'">'+kg+'</td>';
+      });
+      h+='</tr>';
+    });
+    // Totals row
+    h+='<tr style="border-top:2px solid var(--amber)"><td style="font-weight:700">Całość kg</td>';
+    snap.gr.forEach(g=>{h+='<td style="text-align:center;font-weight:700;color:var(--amber)">'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
+    h+='</tr></tbody></table></div></div>';
   });
   $('#rd-list').innerHTML=h;
+}
+function restoreSnap(si){
+  const snap=dawkiHist[si];
+  if(!confirm('Przywrócić dawki z '+snap.date+'?\n\nTo NADPISZE obecne receptury wszystkich grup. Przed przywróceniem zostanie zapisany snapshot aktualnych dawek.'))return;
+  // Save current state first
+  dawkiHist.unshift({ts:Date.now(),date:isoToday()+'_backup',gr:JSON.parse(JSON.stringify(gr))});
+  // Restore
+  gr.length=0;snap.gr.forEach(g=>gr.push(JSON.parse(JSON.stringify(g))));
+  sa(true);rDawkiHist();toast('✅ Przywrócono dawki z '+snap.date);
 }
 
 // Auto-snapshot: daily, catch up missed days
@@ -1301,11 +1328,6 @@ function checkDailySnap(){
     if(dawkiHist.length>100)dawkiHist.length=100;
     SV('dawkiHist',dawkiHist);
   }
-}
-function snapDawki(){
-  dawkiHist.unshift({ts:Date.now(),date:isoToday(),gr:JSON.parse(JSON.stringify(gr))});
-  if(dawkiHist.length>100)dawkiHist.length=100;
-  SV('dawkiHist',dawkiHist);rDawkiHist();toast('Snapshot zapisany');
 }
 function scheduleAutoSnap(){
   clearTimeout(_snapTimer);
