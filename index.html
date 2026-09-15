@@ -102,6 +102,20 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 <section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Rok</label><input type="number" id="ml-y" value="2026" min="2020" max="2035" onchange="rMl()"></div><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
 <section class="tp" id="tab-dawki"><div class="card"><div class="ch"><span>Dawki TMR — kg świeżej masy / szt. / dobę</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addDkS()">+ Surowiec</button><button class="btn bs bpdf" onclick="pT('dawki')">📄 PDF</button></div></div><div class="tw" id="dk-w"></div></div><div class="card"><div class="ch">Sektory — podział sztuk</div><div class="tw" id="dk-s"></div></div></section>
+<section class="tp" id="tab-awaryjne">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px">
+      <div><h3 style="margin:0;color:var(--pri)">⚠ Dawki awaryjne</h3><p style="margin:4px 0 0;font-size:12px;color:var(--txt2)">Alternatywne receptury na wypadek braku surowca</p></div>
+      <div id="emerg-toggle"></div>
+    </div>
+    <div id="emerg-status" style="padding:0 12px 8px"></div>
+    <div style="padding:0 12px 12px;display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn bo" onclick="emergCopy()">📋 Kopiuj z dawek normalnych</button>
+      <button class="btn bs bpdf" onclick="emergExportPdf()">📄 PDF</button>
+    </div>
+    <div class="tw" id="emerg-table"></div>
+  </div>
+</section>
 <section class="tp" id="tab-planowanie">
   <div class="card"><div class="ch"><span>Planowanie kolejności wozów paszowych</span></div>
   <p style="padding:0 12px 6px;font-size:12px;color:var(--txt2)">Ustaw kolejność wozów przez przeciąganie lub strzałki. Pracownik w zakładce „Wóz paszowy" będzie realizował wozy w tej kolejności.</p>
@@ -220,8 +234,8 @@ function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.g
 // AUTH — 4 roles
 const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn',paszowoz:'paszowoz'};
 let passes=LD('passes',null),cR=null;
-const RT={tworca:['mleko','surowce','dawki','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','cielaki','koszty','raporty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',woz:'Wóz paszowy',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
+const RT={tworca:['mleko','surowce','dawki','awaryjne','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','awaryjne','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','cielaki','koszty','raporty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',woz:'Wóz paszowy',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
 const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
 function isRO(){return cR==='prezes'}
 function canPass(){return cR==='tworca'}
@@ -241,7 +255,7 @@ function showApp(){
   if(canPass())ex+='<button class="blo" onclick="showPassMgr()" style="margin-right:4px">🔑</button>';
   if(canEdit())ex+='<button class="blo" onclick="exportBackup()" style="margin-right:4px">⬇</button><button class="blo" onclick="importBackup()" style="margin-right:4px">⬆</button>';
   $('#hdr-extra').innerHTML=ex;
-  bTabs();startFbSync();
+  bTabs();startFbSync();updateEmergBanner();
 }
 function applyRO(){if(!isRO())return;setTimeout(()=>{
   const tab=document.querySelector('.tab-btn.active');if(!tab)return;const t=tab.dataset.t;
@@ -294,7 +308,7 @@ function importBackup(){
     }catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,koszty:rKoszty,planowanie:rPlan,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]();applyRO()}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,koszty:rKoszty,planowanie:rPlan,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]();applyRO()}
 function pT(t){const yr=$('#ml-y')?$('#ml-y').value:'2026';const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' '+yr),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia '+($('#nas-y')?$('#nas-y').value:'2026'),kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
   const orient={kalendarz:'landscape',harmonogram:'compactL',obecnosc:'compactL',mleko:'compact'};
   // Special compact print for harmonogram/obecnosc/mleko: generate clean HTML
@@ -395,7 +409,7 @@ const fbTimers={},fbEditTs={};
 try{firebase.initializeApp(firebaseConfig);fbDb=firebase.firestore()}catch(e){console.warn('Firebase init failed',e)}
 const MODULES={
   surowce:{get:()=>({sur,gtMap}),set:d=>{if(d.sur)sur=d.sur;if(d.gtMap)gtMap=d.gtMap},sv:()=>{SV('sur2',sur);SV('gtMap',gtMap)}},
-  grupy:{get:()=>({gr,wozOrder}),set:d=>{if(d.gr)gr=d.gr;if(d.wozOrder)wozOrder=d.wozOrder},sv:()=>{SV('gr2',gr);SV('wozOrder',wozOrder)}},
+  grupy:{get:()=>({gr,wozOrder,emergencyMode,grNormal,grEmergency}),set:d=>{if(d.gr)gr=d.gr;if(d.wozOrder)wozOrder=d.wozOrder;if(d.emergencyMode!==undefined)emergencyMode=d.emergencyMode;if(d.grNormal)grNormal=d.grNormal;if(d.grEmergency)grEmergency=d.grEmergency},sv:()=>{SV('gr2',gr);SV('wozOrder',wozOrder);SV('emergMode',emergencyMode);SV('grNormal',grNormal);SV('grEmerg',grEmergency)}},
   mleko:{get:()=>({ml}),set:d=>{if(d.ml)ml=d.ml},sv:()=>SV('ml',ml)},
   kadry:{get:()=>({hrD,obD,hrE,obE}),set:d=>{if(d.hrD)hrD=d.hrD;if(d.obD)obD=d.obD;if(d.hrE)hrE=d.hrE;if(d.obE)obE=d.obE},sv:()=>{SV('hrD',hrD);SV('obD',obD);SV('hrE',hrE);SV('obE',obE)}},
   nasienie:{get:()=>({nas}),set:d=>{if(d.nas)nas=d.nas},sv:()=>SV('nas2',nas)},
@@ -948,6 +962,88 @@ function okAddGrp(){
 }
 
 // ===== KOSZTY =====
+// ===== DAWKI AWARYJNE =====
+function rEmerg(){
+  // Toggle button
+  $('#emerg-toggle').innerHTML='<button onclick="emergToggle()" style="padding:8px 20px;border-radius:20px;border:2px solid '+(emergencyMode?'var(--red)':'var(--pri)')+';background:'+(emergencyMode?'var(--red)':'#fff')+';color:'+(emergencyMode?'#fff':'var(--pri)')+';font-size:14px;font-weight:800;cursor:pointer">'+(emergencyMode?'🔴 AWARYJNE AKTYWNE — wyłącz':'🟢 Tryb normalny — włącz awaryjne')+'</button>';
+  // Status
+  const st=$('#emerg-status');
+  if(emergencyMode)st.innerHTML='<div style="background:#FFEBEE;border:2px solid var(--red);border-radius:8px;padding:8px 12px;color:var(--red);font-weight:700;font-size:13px">⚠ UWAGA: Aplikacja używa DAWEK AWARYJNYCH. Normalne dawki są zapauzowane. Wszystkie raporty, koszty i zużycie liczą się z awaryjnych receptur.</div>';
+  else st.innerHTML='<div style="background:#E8F5E9;border:1px solid #4CAF50;border-radius:8px;padding:8px 12px;color:#2E7D32;font-size:12px">Tryb normalny. Dawki awaryjne są nieaktywne. Możesz je przygotować na wypadek potrzeby.</div>';
+  // Table: show emergency recipes (or placeholder)
+  if(!grEmergency||!grEmergency.length){
+    $('#emerg-table').innerHTML='<div style="padding:30px;text-align:center;color:var(--txt2)"><div style="font-size:40px;margin-bottom:8px">📋</div>Brak dawek awaryjnych. Kliknij „Kopiuj z dawek normalnych" żeby utworzyć kopię do edycji.</div>';
+    return;
+  }
+  // Render FeedExpert-style table for emergency recipes
+  const eGr=emergencyMode?gr:grEmergency; // if emergency is ON, gr IS the emergency set
+  const allSids=new Set();eGr.forEach(g=>g.sk.forEach(sk=>{if(sk.kg>0||eGr.some(gg=>gg.sk.find(x=>x.s===sk.s)))allSids.add(sk.s)}));
+  eGr.forEach(g=>g.sk.forEach(sk=>allSids.add(sk.s)));
+  const sids=sur.filter(s=>allSids.has(s.id)).map(s=>s.id);
+  let h='<table class="fe"><thead><tr><th style="text-align:left;min-width:150px">Surowiec</th>';
+  eGr.forEach(g=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h+='<th class="gh" style="font-size:9px">'+g.nazwa+'<br>'+tsz+' szt</th>'});
+  h+='</tr></thead><tbody>';
+  sids.forEach(sid=>{const s=gS(sid);if(!s)return;h+='<tr><td>'+s.nazwa+'</td>';
+    eGr.forEach((g,gi)=>{const item=g.sk.find(x=>x.s===sid);const kg=item?item.kg:0;
+      h+='<td><input value="'+kg+'" onchange="uEmergDk('+gi+',\''+sid+'\',this)"></td>'});h+='</tr>'});
+  h+='</tbody><tfoot><tr><td>Całość kg</td>';
+  eGr.forEach(g=>{h+='<td>'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
+  h+='</tr></tfoot></table>';
+  $('#emerg-table').innerHTML=h;
+}
+function uEmergDk(gi,sid,el){
+  const target=emergencyMode?gr:grEmergency;
+  const g=target[gi],v=pf(el.value);
+  let item=g.sk.find(x=>x.s===sid);
+  if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});
+  if(emergencyMode){sa()}else{SV('grEmerg',grEmergency);saM('grupy',false)}
+}
+function emergCopy(){
+  if(emergencyMode){
+    toast('Najpierw wyłącz tryb awaryjny');return;
+  }
+  if(grEmergency&&grEmergency.length&&!confirm('Nadpisać istniejące dawki awaryjne kopią z normalnych?'))return;
+  grEmergency=JSON.parse(JSON.stringify(gr));
+  SV('grEmerg',grEmergency);saM('grupy',true);rEmerg();toast('📋 Skopiowano dawki normalne → awaryjne');
+}
+function emergToggle(){
+  if(!emergencyMode){
+    // Activating emergency mode
+    if(!grEmergency||!grEmergency.length){toast('Najpierw przygotuj dawki awaryjne (kopiuj z normalnych)');return}
+    if(!confirm('⚠ WŁĄCZYĆ DAWKI AWARYJNE?\n\nCała aplikacja zacznie używać awaryjnych receptur.\nNormalne dawki zostaną zapauzowane.'))return;
+    grNormal=JSON.parse(JSON.stringify(gr)); // save normal
+    gr.length=0;grEmergency.forEach(g=>gr.push(JSON.parse(JSON.stringify(g)))); // load emergency into gr
+    emergencyMode=true;
+  } else {
+    // Deactivating emergency mode
+    if(!confirm('Wyłączyć tryb awaryjny i wrócić do normalnych dawek?'))return;
+    grEmergency=JSON.parse(JSON.stringify(gr)); // save emergency state
+    gr.length=0;grNormal.forEach(g=>gr.push(JSON.parse(JSON.stringify(g)))); // restore normal
+    emergencyMode=false;
+    grNormal=null;
+  }
+  SV('emergMode',emergencyMode);SV('grNormal',grNormal);SV('grEmerg',grEmergency);
+  sa(true);rEmerg();toast(emergencyMode?'🔴 Dawki awaryjne AKTYWNE':'🟢 Powrót do dawek normalnych');
+}
+function emergExportPdf(){
+  const eGr=emergencyMode?gr:grEmergency;if(!eGr||!eGr.length){toast('Brak dawek awaryjnych');return}
+  let h='<h3>Dawki awaryjne — '+isoToday()+'</h3>';
+  eGr.forEach(g=>{
+    h+='<h3 style="color:var(--red)">'+g.nazwa+'</h3><table><thead><tr><th style="text-align:left">Surowiec</th><th>kg/szt</th></tr></thead><tbody>';
+    g.sk.filter(sk=>sk.kg>0).forEach(sk=>{const s=gS(sk.s);h+='<tr><td>'+(s?s.nazwa:sk.s)+'</td><td>'+sk.kg+'</td></tr>'});
+    h+='<tr><td><b>Całość</b></td><td><b>'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</b></td></tr></tbody></table>'});
+  prn('⚠ DAWKI AWARYJNE — OHZ Bobrowniki',h,'dawki');
+}
+
+// Emergency mode indicator in header
+function updateEmergBanner(){
+  let eb=$('#emerg-banner');
+  if(emergencyMode){
+    if(!eb){eb=document.createElement('div');eb.id='emerg-banner';eb.style.cssText='background:#D32F2F;color:#fff;text-align:center;padding:6px;font:800 13px var(--font);position:sticky;top:0;z-index:100';document.querySelector('#app').prepend(eb)}
+    eb.textContent='⚠ TRYB AWARYJNY — aplikacja używa dawek awaryjnych';eb.style.display='block';
+  } else if(eb){eb.style.display='none'}
+}
+
 function rKoszty(){
   const katLabels={obj:'Objętościowe',tres:'Treściwe',dod:'Dodatki paszowe'};
   const katOrder=['obj','tres','dod'];
@@ -1036,6 +1132,9 @@ function pKoszty(){prn('Analiza kosztów żywienia stada — OHZ Bobrowniki',$('
 // ===== WÓZ PASZOWY =====
 const DEF_WOZ_ORDER=['g2','g1','g3','g4','g7','g6','g5','g2','g1','g3','g4']; // default sequence
 let wozOrder=LD('wozOrder',DEF_WOZ_ORDER);
+let emergencyMode=LD('emergMode',false);
+let grNormal=LD('grNormal',null); // backup of normal recipes when emergency is ON
+let grEmergency=LD('grEmerg',null); // emergency recipes
 let wozLog=LD('wozLog',{});
 
 // ===== PLANOWANIE WOZÓW =====
