@@ -635,6 +635,11 @@ function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');ret
 
 // DAWKI — FeedExpert (kg Prod only)
 function rDk(){
+  // If emergency mode is ON, lock normal Dawki tab
+  if(emergencyMode){
+    $('#dk-w').innerHTML='<div style="background:#FFEBEE;border:2px solid var(--red);border-radius:8px;padding:16px;text-align:center;margin:10px"><div style="font-size:32px;margin-bottom:8px">⚠</div><div style="font-size:16px;font-weight:700;color:var(--red)">DAWKI NORMALNE ZAPAUZOWANE</div><div style="font-size:13px;color:var(--txt2);margin-top:6px">Tryb awaryjny jest aktywny. Edycja dawek odbywa się w zakładce „Dawki awaryjne".</div><div style="margin-top:10px"><button class="btn bs" style="border-color:var(--red);color:var(--red)" onclick="emergToggle()">Wyłącz tryb awaryjny</button></div></div>';
+    $('#dk-s').innerHTML='';return;
+  }
   const used=new Set();
   gr.forEach(g=>g.sk.forEach(sk=>{if(sk.kg>0||gr.some(gg=>gg.sk.find(x=>x.s===sk.s)))used.add(sk.s)}));
   gr.forEach(g=>g.sk.forEach(sk=>used.add(sk.s)));
@@ -989,6 +994,22 @@ function rEmerg(){
   h+='</tbody><tfoot><tr><td>Całość kg</td>';
   eGr.forEach(g=>{h+='<td>'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
   h+='</tr></tfoot></table>';
+  // If emergency mode is ON, show sektory here (since normal Dawki is locked)
+  if(emergencyMode){
+    const grpColors=['#E8F5E9','#FFF3E0','#E3F2FD','#FCE4EC','#F3E5F5','#E0F7FA','#FFF8E1'];
+    h+='<h3 style="color:var(--red);margin:16px 0 6px">Sektory — podział sztuk (awaryjne)</h3>';
+    h+='<table class="dt" style="min-width:auto"><thead><tr><th>Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th><th></th></tr></thead><tbody>';
+    gr.forEach((g,gi)=>{
+      const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);const bg=grpColors[gi%grpColors.length];
+      g.se.forEach((sk,si)=>{
+        h+='<tr style="background:'+bg+';'+(si===0?'border-top:3px solid var(--red);':'')+'"><td style="font-size:11px;font-weight:700;color:var(--red)">'+(si===0?g.nazwa:'')+'</td>';
+        h+='<td>'+sk.n+'</td><td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=pf(this.value);sa();rEmerg()"></td>';
+        h+='<td>'+r2(totKg,1)+'</td><td style="font-weight:700">'+r2(totKg*sk.sz,0)+'</td>';
+        h+='<td><button class="btn bs bd" style="padding:1px 4px" onclick="if(gr['+gi+'].se.length>1){gr['+gi+'].se.splice('+si+',1);sa();rEmerg()}else if(confirm(\'Usunąć grupę?\')){gr.splice('+gi+',1);sa();rEmerg()}">✕</button></td></tr>';
+      });
+    });
+    h+='</tbody></table>';
+  }
   $('#emerg-table').innerHTML=h;
 }
 function uEmergDk(gi,sid,el){
@@ -1023,7 +1044,10 @@ function emergToggle(){
     grNormal=null;
   }
   SV('emergMode',emergencyMode);SV('grNormal',grNormal);SV('grEmerg',grEmergency);
-  sa(true);rEmerg();toast(emergencyMode?'🔴 Dawki awaryjne AKTYWNE':'🟢 Powrót do dawek normalnych');
+  sa(true);rEmerg();updateEmergBanner();
+  // Also refresh Dawki tab if visible
+  const ab=document.querySelector('.tab-btn.active');if(ab&&ab.dataset.t==='dawki')rDk();
+  toast(emergencyMode?'🔴 Dawki awaryjne AKTYWNE':'🟢 Powrót do dawek normalnych');
 }
 function emergExportPdf(){
   const eGr=emergencyMode?gr:grEmergency;if(!eGr||!eGr.length){toast('Brak dawek awaryjnych');return}
