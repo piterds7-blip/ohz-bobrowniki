@@ -111,6 +111,7 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
     <div id="emerg-status" style="padding:0 12px 8px"></div>
     <div style="padding:0 12px 12px;display:flex;gap:6px;flex-wrap:wrap">
       <button class="btn bo" onclick="emergCopy()">📋 Kopiuj z dawek normalnych</button>
+      <button class="btn bo" onclick="addDkS()">+ Surowiec</button>
       <button class="btn bs bpdf" onclick="emergExportPdf()">📄 PDF</button>
     </div>
     <div class="tw" id="emerg-table"></div>
@@ -635,10 +636,11 @@ function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');ret
 
 // DAWKI — FeedExpert (kg Prod only)
 function rDk(){
-  // If emergency mode is ON, lock normal Dawki tab
-  if(emergencyMode){
-    $('#dk-w').innerHTML='<div style="background:#FFEBEE;border:2px solid var(--red);border-radius:8px;padding:16px;text-align:center;margin:10px"><div style="font-size:32px;margin-bottom:8px">⚠</div><div style="font-size:16px;font-weight:700;color:var(--red)">DAWKI NORMALNE ZAPAUZOWANE</div><div style="font-size:13px;color:var(--txt2);margin-top:6px">Tryb awaryjny jest aktywny. Edycja dawek odbywa się w zakładce „Dawki awaryjne".</div><div style="margin-top:10px"><button class="btn bs" style="border-color:var(--red);color:var(--red)" onclick="emergToggle()">Wyłącz tryb awaryjny</button></div></div>';
-    $('#dk-s').innerHTML='';return;
+  // If emergency mode is ON, lock normal Dawki tab completely
+  const isEmerg=emergencyMode||LD('emergMode',false);
+  if(isEmerg){
+    const lockHtml='<div style="background:#FFEBEE;border:3px solid #D32F2F;border-radius:12px;padding:24px;text-align:center;margin:20px"><div style="font-size:48px;margin-bottom:12px">🔒</div><div style="font-size:20px;font-weight:800;color:#D32F2F">DAWKI NORMALNE ZAPAUZOWANE</div><div style="font-size:14px;color:var(--txt2);margin-top:8px">Tryb awaryjny jest aktywny.<br>Edycja dawek odbywa się w zakładce <b>„Dawki awaryjne"</b></div><div style="margin-top:16px"><button style="background:#D32F2F;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer" onclick="emergToggle()">Wyłącz tryb awaryjny</button></div></div>';
+    $('#dk-w').innerHTML=lockHtml;$('#dk-s').innerHTML='';return;
   }
   const used=new Set();
   gr.forEach(g=>g.sk.forEach(sk=>{if(sk.kg>0||gr.some(gg=>gg.sk.find(x=>x.s===sk.s)))used.add(sk.s)}));
@@ -815,7 +817,7 @@ function doPrintPV(){
   });
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
   if(p.uwagi)h+='<p style="margin-top:8px;font-size:14pt;font-weight:800;text-align:center;color:#2E7D32">⚠ '+p.uwagi+'</p>';
-  clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ',h,'dawki');
+  clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ'+(emergencyMode?' ⚠ AWARYJNE':''),h,'dawki');
 }
 
 // CIELAKI — 3 sektory (stare budki, nowe budki, automat)
@@ -1069,6 +1071,7 @@ function updateEmergBanner(){
 }
 
 function rKoszty(){
+  if(emergencyMode)$('#tab-koszty .card:first-child .ch span').textContent='⚠ Sekcja 1 — Koszty (DAWKI AWARYJNE)';
   const katLabels={obj:'Objętościowe',tres:'Treściwe',dod:'Dodatki paszowe'};
   const katOrder=['obj','tres','dod'];
   // Collect used surowce
@@ -1208,7 +1211,7 @@ function rWoz(){
     const tsz=g.se.reduce((a,s)=>a+s.sz,0);const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
     const surOrder=sur.map(s=>s.id);
     const sorted=g.sk.filter(x=>x.kg>0).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
-    h+='<div style="padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--pri);font-size:22px;margin:0">Wóz '+(currentIdx+1)+'/'+wozOrder.length+' — '+g.nazwa+'</h3><span style="font-size:16px;font-weight:700;color:var(--txt2)">'+tsz+' szt</span></div>';
+    h+='<div style="padding:12px">'+(emergencyMode?'<div style="background:#D32F2F;color:#fff;text-align:center;padding:6px;border-radius:6px;font:800 13px var(--font);margin-bottom:8px">⚠ DAWKI AWARYJNE</div>':'')+'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--pri);font-size:22px;margin:0">Wóz '+(currentIdx+1)+'/'+wozOrder.length+' — '+g.nazwa+'</h3><span style="font-size:16px;font-weight:700;color:var(--txt2)">'+tsz+' szt</span></div>';
     h+='<div style="margin-bottom:8px;background:var(--amber-bg);padding:10px 14px;border-radius:8px;border:2px solid var(--amber);display:flex;align-items:center;gap:10px"><label style="font-size:14px;font-weight:700;color:var(--amber)">🔄 Niedojady:</label><input type="number" id="woz-nied" min="0" step="10" value="0" style="width:100px;font-size:22px;font-weight:800;text-align:center;border:2px solid var(--amber);border-radius:8px;padding:6px" oninput="recalcWoz()"><span style="font-size:14px;font-weight:700;color:var(--amber)">kg</span></div>';
     h+='<input type="hidden" id="woz-nied-dir" value="Jałówki Rosn">';
     h+='<div id="woz-table-wrap">';
