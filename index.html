@@ -760,7 +760,7 @@ function renderPV(){
   const p=_pv;const tsz=p.se.reduce((a,s)=>a+s.sz,0);
   const niedojady=p.niedojady||0;
   let h='<div style="max-height:75vh;overflow-y:auto;padding:2px">';
-  h+='<h3 style="margin-bottom:6px">'+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
+  h+='<h3 style="margin-bottom:6px">'+(p.isEmergency?'<span style="color:var(--red)">⚠ AWARYJNE — </span>':'')+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
   // Calc reduction
   let totKgOrig=0;p.sk.forEach(sk=>totKgOrig+=sk.kg);
   const totalWozOrig=r2(totKgOrig*tsz,1);
@@ -792,7 +792,7 @@ function renderPV(){
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+sumSz+'</b></td><td><b>'+r2(totKgOrig*sumSz,0)+'</b></td></tr></tfoot></table>';
   h+='<div class="fg"><label>Uwagi / notatki do wydruku</label><textarea id="pv-uw" rows="2" style="margin-top:4px;font-size:13px" onchange="_pv.uwagi=this.value">'+p.uwagi+'</textarea></div>';
   h+='</div>';
-  opM('Podgląd wydruku — '+p.nazwa,h,
+  opM((p.isEmergency?'⚠ Podgląd wydruku (AWARYJNE) — ':'Podgląd wydruku — ')+p.nazwa,h,
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bpdf" onclick="doPrintPV()">🖨️ Drukuj / PDF</button>');
 }
 function doPrintPV(){
@@ -802,7 +802,7 @@ function doPrintPV(){
   const totalWoz=r2(totKg*tsz,1);
   const totalSwiezy=niedojady>0?Math.max(0,totalWoz-niedojady):totalWoz;
   const coeff=totalWoz>0&&niedojady>0?totalSwiezy/totalWoz:1;
-  let h='<h3>'+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
+  let h='<h3>'+(p.isEmergency?'⚠ AWARYJNE — ':'')+p.nazwa+' — '+fmtDate(new Date())+'</h3>';
   h+='<table><thead><tr><th style="text-align:left">Składnik</th><th>kg/szt.</th><th>kg na wóz</th><th>kg w wozie</th></tr></thead><tbody>';
   let run=0;
   if(niedojady>0){run=niedojady;h+='<tr><td style="text-align:left"><b>Niedojady</b></td><td>—</td><td><b>'+niedojady+'</b></td><td><b>'+niedojady+'</b></td></tr>'}
@@ -817,7 +817,7 @@ function doPrintPV(){
   });
   h+='</tbody><tfoot><tr><td style="text-align:left"><b>Suma</b></td><td><b>'+tsz+'</b></td><td><b>'+r2(totKg*tsz,0)+'</b></td></tr></tfoot></table>';
   if(p.uwagi)h+='<p style="margin-top:8px;font-size:14pt;font-weight:800;text-align:center;color:#2E7D32">⚠ '+p.uwagi+'</p>';
-  clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ'+(emergencyMode?' ⚠ AWARYJNE':''),h,'dawki');
+  clM();prn('OHZ Bobrowniki — TABELA PASZ NA WÓZ'+(p.isEmergency?' ⚠ AWARYJNE':''),h,'dawki');
 }
 
 // CIELAKI — 3 sektory (stare budki, nowe budki, automat)
@@ -988,7 +988,7 @@ function rEmerg(){
   eGr.forEach(g=>g.sk.forEach(sk=>allSids.add(sk.s)));
   const sids=sur.filter(s=>allSids.has(s.id)).map(s=>s.id);
   let h='<table class="fe"><thead><tr><th style="text-align:left;min-width:150px">Surowiec</th>';
-  eGr.forEach(g=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h+='<th class="gh" style="font-size:9px">'+g.nazwa+'<br>'+tsz+' szt</th>'});
+  eGr.forEach((g,gi)=>{const tsz=g.se.reduce((a,s)=>a+s.sz,0);h+='<th class="gh" style="font-size:9px">'+g.nazwa+'<br>'+tsz+' szt <button class="btn bs bpdf" style="padding:1px 4px;font-size:8px" onclick="pEmergGr('+gi+')">📄</button></th>'});
   h+='</tr></thead><tbody>';
   sids.forEach(sid=>{const s=gS(sid);if(!s)return;h+='<tr><td>'+s.nazwa+'</td>';
     eGr.forEach((g,gi)=>{const item=g.sk.find(x=>x.s===sid);const kg=item?item.kg:0;
@@ -1020,6 +1020,16 @@ function uEmergDk(gi,sid,el){
   let item=g.sk.find(x=>x.s===sid);
   if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});
   if(emergencyMode){sa()}else{SV('grEmerg',grEmergency);saM('grupy',false)}
+}
+function pEmergGr(gi){
+  const eGr=emergencyMode?gr:grEmergency;
+  const g=eGr[gi];if(!g)return;
+  const surOrder=sur.map(s=>s.id);
+  const sorted=g.sk.filter(x=>x.kg>0).map(x=>({s:x.s,kg:x.kg})).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
+  _pv={gi,nazwa:g.nazwa,z:g.z,sk:sorted,
+    se:g.se.map(x=>({n:x.n,sz:x.sz,sk_extra:x.sk_extra?x.sk_extra.map(e=>({s:e.s,kg:e.kg})):[]})),
+    uwagi:(g.z||1)>=2?'2 RAZY DZIENNIE':'1 RAZ DZIENNIE',niedojady:0,niedSrc:'',isEmergency:true,emergSource:eGr};
+  renderPV();
 }
 function emergCopy(){
   if(emergencyMode){
