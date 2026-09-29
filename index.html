@@ -1443,7 +1443,9 @@ function restoreSnap(si){
 let _snapTimer=null;
 function checkDailySnap(){
   const today=isoToday();
-  const lastDate=dawkiHist.length?dawkiHist[0].date:null;
+  // Only consider entries with a plain YYYY-MM-DD date (skip "_backup" entries from emergency toggle)
+  const plainEntries=dawkiHist.filter(h=>/^\d{4}-\d{2}-\d{2}$/.test(h.date));
+  const lastDate=plainEntries.length?plainEntries[0].date:null;
   if(!lastDate||lastDate<today){
     // Create snapshots for each missed day (use current recipe — best we have)
     if(lastDate){
