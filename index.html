@@ -637,8 +637,7 @@ function okAS(){const n=$('#as-n').value.trim();if(!n){toast('Podaj nazwę');ret
 // DAWKI — FeedExpert (kg Prod only)
 function rDk(){
   // If emergency mode is ON, lock normal Dawki tab completely
-  const isEmerg=emergencyMode||LD('emergMode',false);
-  if(isEmerg){
+  if(emergencyMode){
     const lockHtml='<div style="background:#FFEBEE;border:3px solid #D32F2F;border-radius:12px;padding:24px;text-align:center;margin:20px"><div style="font-size:48px;margin-bottom:12px">🔒</div><div style="font-size:20px;font-weight:800;color:#D32F2F">DAWKI NORMALNE ZAPAUZOWANE</div><div style="font-size:14px;color:var(--txt2);margin-top:8px">Tryb awaryjny jest aktywny.<br>Edycja dawek odbywa się w zakładce <b>„Dawki awaryjne"</b></div><div style="margin-top:16px"><button style="background:#D32F2F;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer" onclick="emergToggle()">Wyłącz tryb awaryjny</button></div></div>';
     $('#dk-w').innerHTML=lockHtml;$('#dk-s').innerHTML='';return;
   }
@@ -1436,7 +1435,7 @@ function restoreSnap(si){
   dawkiHist.unshift({ts:Date.now(),date:isoToday()+'_backup',gr:JSON.parse(JSON.stringify(gr))});
   // Restore
   gr.length=0;snap.gr.forEach(g=>gr.push(JSON.parse(JSON.stringify(g))));
-  sa(true);rDawkiHist();toast('✅ Przywrócono dawki z '+snap.date);
+  sa(true);rDawkiHist();rDk();rSur();toast('✅ Przywrócono dawki z '+snap.date);
 }
 
 // Auto-snapshot: daily, catch up missed days
