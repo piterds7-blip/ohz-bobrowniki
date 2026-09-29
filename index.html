@@ -679,7 +679,7 @@ function rDk(){
       const mapKey=g.nazwa+'|'+sk.n;
       const curGt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
       sh+='<tr style="background:'+bgColor+';'+(si===0?borderTop:'')+'"><td style="font-size:11px;font-weight:700;color:var(--pri)">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+' <button style="background:var(--pri);color:#fff;border:none;border-radius:3px;font-size:9px;padding:0 4px;cursor:pointer" onclick="addSekExtra('+gi+','+si+')" title="Dodaj surowiec do sektora">+</button></td>';
-      sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=pf(this.value);sa();rDk();rSur()"></td>';
+      sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=pf(this.value);sa();scheduleAutoSnap();rDk();rSur()"></td>';
       sh+='<td>'+r2(totKg,1)+'</td><td style="font-weight:700">'+r2(totKg*sk.sz,0)+'</td>';
       sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
       Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
@@ -725,8 +725,8 @@ function moveSek(fromGi,si){
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="const toGi=+$(\'#ms-g\').value;gr[toGi].se.push(gr['+fromGi+'].se.splice('+si+',1)[0]);sa();clM();rDk();rSur();toast(\'Przeniesiono\')">Przenieś</button>');
 }
 function delSek(gi,si){
-  if(gr[gi].se.length>1){gr[gi].se.splice(si,1);sa();rDk();rSur()}
-  else if(confirm('To ostatni sektor w grupie „'+gr[gi].nazwa+'". Usunąć całą grupę?')){gr.splice(gi,1);sa(true);rDk();rSur();toast('Usunięto grupę')}
+  if(gr[gi].se.length>1){snapSafety('przed_usunieciem_sektora');gr[gi].se.splice(si,1);sa();rDk();rSur()}
+  else if(confirm('To ostatni sektor w grupie „'+gr[gi].nazwa+'". Usunąć całą grupę?')){snapSafety('przed_usunieciem_grupy');gr.splice(gi,1);sa(true);rDk();rSur();toast('Usunięto grupę')}
 }
 function addSekExtra(gi,si){
   const sek=gr[gi].se[si];
@@ -742,7 +742,7 @@ function okSekExtra(gi,si){
   gr[gi].se[si].sk_extra.push({s:sid,kg});
   sa();clM();rDk();rSur();toast('Dodano');
 }
-function addSek(){opM('Dodaj sektor','<div class="fg" style="margin-bottom:8px"><label>Grupa</label><select id="as-g">'+gr.map((g,i)=>'<option value="'+i+'">'+g.nazwa+'</option>').join('')+'</select></div><div class="fg" style="margin-bottom:8px"><label>Nazwa sektora</label><input type="text" id="as-sn"></div><div class="fg"><label>Sztuk</label><input type="number" id="as-ss" value="10"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr[+$(\'#as-g\').value].se.push({n:$(\'#as-sn\').value.trim()||\'Nowy\',sz:+$(\'#as-ss\').value||0});sa();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
+function addSek(){opM('Dodaj sektor','<div class="fg" style="margin-bottom:8px"><label>Grupa</label><select id="as-g">'+gr.map((g,i)=>'<option value="'+i+'">'+g.nazwa+'</option>').join('')+'</select></div><div class="fg" style="margin-bottom:8px"><label>Nazwa sektora</label><input type="text" id="as-sn"></div><div class="fg"><label>Sztuk</label><input type="number" id="as-ss" value="10"></div>','<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="gr[+$(\'#as-g\').value].se.push({n:$(\'#as-sn\').value.trim()||\'Nowy\',sz:pf($(\'#as-ss\').value)});sa();scheduleAutoSnap();clM();rDk();toast(\'Dodano\')">Dodaj</button>')}
 
 // Per-group PDF — preview with editable values
 let _pv=null; // preview state
@@ -1424,9 +1424,33 @@ function rDawkiHist(){
     // Totals row
     h+='<tr style="border-top:2px solid var(--amber)"><td style="font-weight:700">Całość kg</td>';
     snap.gr.forEach(g=>{h+='<td style="text-align:center;font-weight:700;color:var(--amber)">'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
-    h+='</tr></tbody></table></div></div>';
+    h+='</tr></tbody></table>';
+    // Sectors section: sztuki per sector, changes vs previous snapshot highlighted
+    h+='<div style="font-weight:700;color:var(--pri);margin:12px 0 4px">Sektory — podział sztuk</div>';
+    h+='<table class="dt" style="min-width:auto"><thead><tr><th style="text-align:left">Grupa</th><th style="text-align:left">Sektor</th><th>Sztuk</th></tr></thead><tbody>';
+    snap.gr.forEach((g,gi)=>{
+      const pg=prev?prev.gr.find(x=>x.id===g.id):null;
+      const bd=gi>0?'border-top:3px solid var(--pri);':'';
+      g.se.forEach((sk,i)=>{
+        const psk=pg?pg.se.find(x=>x.n===sk.n):null;
+        const isNew=prev&&pg&&!psk, isCh=psk&&psk.sz!==sk.sz;
+        const st=(isNew||isCh)?'color:var(--red);font-weight:800;background:#FFEBEE':'';
+        h+='<tr style="'+(i===0?bd:'')+'"><td style="font-weight:700;color:var(--pri)">'+(i===0?g.nazwa:'')+'</td><td>'+sk.n+(isNew?' <span style="font-size:9px;color:var(--red)">(nowy)</span>':'')+'</td><td style="text-align:center;'+st+'">'+sk.sz+(isCh?' <span style="font-size:9px">(było: '+psk.sz+')</span>':'')+'</td></tr>';
+      });
+      // Sectors that existed in previous snapshot but are gone now
+      if(pg)pg.se.forEach(psk=>{if(!g.se.find(x=>x.n===psk.n))h+='<tr style="background:#FFEBEE"><td></td><td style="color:var(--red);text-decoration:line-through">'+psk.n+'</td><td style="text-align:center;color:var(--red);font-size:10px">usunięty (było: '+psk.sz+')</td></tr>'});
+    });
+    // Whole groups that were removed since previous snapshot
+    if(prev)prev.gr.forEach(pg=>{if(!snap.gr.find(x=>x.id===pg.id))h+='<tr style="background:#FFEBEE;border-top:3px solid var(--red)"><td style="color:var(--red);text-decoration:line-through;font-weight:700">'+pg.nazwa+'</td><td colspan="2" style="color:var(--red);font-size:10px">grupa usunięta ('+pg.se.map(s=>s.n+': '+s.sz).join(', ')+')</td></tr>'});
+    h+='</tbody></table></div></div>';
   });
   $('#rd-list').innerHTML=h;
+}
+// Safety snapshot taken right before a destructive change (deleting a sector/group)
+function snapSafety(label){
+  dawkiHist.unshift({ts:Date.now(),date:isoToday()+'_'+label,gr:JSON.parse(JSON.stringify(gr))});
+  if(dawkiHist.length>100)dawkiHist.length=100;
+  SV('dawkiHist',dawkiHist);
 }
 function restoreSnap(si){
   const snap=dawkiHist[si];
