@@ -310,7 +310,82 @@ function importBackup(){
 }
 function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
 function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,koszty:rKoszty,planowanie:rPlan,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]();applyRO()}
-function pT(t){const yr=$('#ml-y')?$('#ml-y').value:'2026';const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' '+yr),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia '+($('#nas-y')?$('#nas-y').value:'2026'),kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
+// ===== CLEAN PRINT DOCUMENTS (own window, fills A4) =====
+function printDoc(title,body,orient,extraCss){
+  const css='@page{size:A4 '+orient+';margin:8mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+    'html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#000;background:#fff}'+
+    '.ttl{display:flex;justify-content:space-between;align-items:baseline;height:11mm;border-bottom:1.5pt solid #000;margin-bottom:2mm}'+
+    '.ttl h1{font-size:18pt;margin:0;font-weight:800}.ttl span{font-size:9pt;color:#444}'+
+    'table{border-collapse:collapse;width:99.6%;table-layout:fixed;margin:0 auto}th,td{border:0.8pt solid #000;overflow:hidden}'+
+    'th{background:#e6e6e6;font-weight:800}'+(extraCss||'');
+  const w=window.open('','_blank');if(!w){toast('Przeglądarka zablokowała okno wydruku — zezwól na wyskakujące okna');return}
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+title+'</title><style>'+css+'</style></head><body>'+
+    '<div class="ttl"><h1>'+title+'</h1><span>OHZ Bobrowniki</span></div>'+body+
+    '<script>window.onload=function(){setTimeout(function(){window.print()},150)}<'+'/script></body></html>');
+  w.document.close();
+}
+const DPS=['Pn','Wt','Śr','Cz','Pt','So','Nd'];
+// Calendar: landscape, 7 columns, rows stretch to fill page, big X on done days
+function printKal(){
+  const m=+$('#kal-m').value,y=+$('#kal-y').value,ent=kal[y+'_'+m]||{},ds=dim(y,m),fd=dow(y,m,1);
+  const weeks=Math.ceil((fd+ds)/7);
+  const rowH=Math.floor((184-13-9)/weeks*10)/10; // mm: page 210-16 margins, title 13, header 9
+  let h='<table><colgroup>'+'<col style="width:14.2857%">'.repeat(7)+'</colgroup><thead><tr>';
+  DP.forEach((d,i)=>h+='<th style="height:9mm;font-size:13pt;'+(i>=5?'color:#a00000;background:#f3dede':'')+'">'+d+'</th>');
+  h+='</tr></thead><tbody>';
+  let day=1-fd;
+  for(let w=0;w<weeks;w++){h+='<tr style="height:'+rowH+'mm">';
+    for(let i=0;i<7;i++,day++){
+      if(day<1||day>ds){h+='<td style="background:#f2f2f2"></td>';continue}
+      const tx=(ent[day]||'').replace(/</g,'&lt;').replace(/\n/g,'<br>'),done=ent['done_'+day];
+      h+='<td class="c'+(i>=5?' we':'')+'"><div class="n">'+day+'</div><div class="t">'+tx+'</div>'+
+        (done?'<svg class="x" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="4" y1="4" x2="96" y2="96"/><line x1="96" y1="4" x2="4" y2="96"/></svg>':'')+'</td>';
+    }h+='</tr>';}
+  h+='</tbody></table>';
+  printDoc('Kalendarz — '+MO[m]+' '+y,h,'landscape',
+    'td.c{position:relative;vertical-align:top;padding:1.5mm 2mm}td.we{background:#fbf1f1}'+
+    '.n{font-size:17pt;font-weight:800;line-height:1}td.we .n{color:#a00000}'+
+    '.t{font-size:12pt;font-weight:700;margin-top:1.5mm;line-height:1.25;word-wrap:break-word}'+
+    '.x{position:absolute;inset:0;width:100%;height:100%}.x line{stroke:#1a237e;stroke-width:1.2;vector-effect:non-scaling-stroke;stroke-width:1.6pt}');
+}
+// Milk: portrait, one row per day, rows sized so the whole month fills exactly one page
+function printMl(){
+  rMl(); // make sure Stan pop./Stan nast. are recalculated
+  const yr=+$('#ml-y').value||2026,m=+$('#ml-m').value,tp=$('#ml-v').value,da=ml[tp+'_'+yr+'_'+m]||[];
+  const f0=v=>(v===undefined||v===null||v==='')?'':Math.round(v).toLocaleString('pl-PL');
+  const f1=v=>v?(+v).toFixed(1).replace('.',','):'—';
+  let head,rows=[],foot=[];
+  if(tp==='o'){
+    head=['Dzień','Stan pop.','Produkcja','Odstawa','Cielęta','Rozchód','Stan nast.'];
+    da.forEach(r=>rows.push([r.d,f0(r.sp),f0(r.pr),r.od?f0(r.od):'—',f0(r.ci),f0(r.rz),f0(r.sn)]));
+    const s=k=>da.reduce((a,r)=>a+(+r[k]||0),0);
+    foot.push(['RAZEM','',f0(s('pr')),f0(s('od')),f0(s('ci')),f0(s('rz')),'']);
+  } else {
+    head=['Dzień','Krowy','Produkcja','Odstawa','Śr./szt.','Dojne','Śr./dojną'];
+    da.forEach(r=>rows.push([r.d,f0(r.kr),f0(r.pr),r.od?f0(r.od):'—',r.kr>0?f1(r.pr/r.kr):'—',f0(r.dj),r.dj>0?f1(r.pr/r.dj):'—']));
+    const pos=k=>da.filter(r=>+r[k]>0),sum=k=>da.reduce((a,r)=>a+(+r[k]||0),0),avg=k=>{const p=pos(k);return p.length?sum(k)/p.length:0};
+    const dk=pos('kr'),dd=pos('dj');
+    foot.push(['SUMA','',f0(sum('pr')),f0(sum('od')),'','','']);
+    foot.push(['ŚREDNIA',f0(avg('kr')),f0(avg('pr')),f0(avg('od')),dk.length?f1(dk.reduce((a,r)=>a+r.pr/r.kr,0)/dk.length):'—',f0(avg('dj')),dd.length?f1(dd.reduce((a,r)=>a+r.pr/r.dj,0)/dd.length):'—']);
+  }
+  const n=rows.length+foot.length+1;
+  const rowH=Math.min(9,Math.floor((272-13-1)/n*10)/10); // page 297-16 margins, title 13
+  const fs=Math.max(8,Math.min(12,rowH*1.45)).toFixed(1);
+  let h='<table><colgroup><col style="width:13%">'+'<col style="width:14.5%">'.repeat(6)+'</colgroup><thead><tr style="height:'+rowH+'mm">';
+  head.forEach(x=>h+='<th>'+x+'</th>');h+='</tr></thead><tbody>';
+  rows.forEach(r=>{const we=isWe(yr,m,r[0]);
+    h+='<tr style="height:'+rowH+'mm"'+(we?' class="we"':'')+'><td class="d">'+r[0]+' <small>'+DPS[dow(yr,m,r[0])]+'</small></td>';
+    r.slice(1).forEach(v=>h+='<td>'+v+'</td>');h+='</tr>'});
+  h+='</tbody><tfoot>';
+  foot.forEach(r=>{h+='<tr style="height:'+rowH+'mm"><td class="d">'+r[0]+'</td>';r.slice(1).forEach(v=>h+='<td>'+v+'</td>');h+='</tr>'});
+  h+='</tfoot></table>';
+  printDoc((tp==='o'?'Odstawa mleka':'Produkcja mleka')+' — '+MO[m]+' '+yr,h,'portrait',
+    'th,td{font-size:'+fs+'pt;padding:0 2.5mm;text-align:right;white-space:nowrap}th{text-align:center;font-size:'+(fs*0.9).toFixed(1)+'pt}'+
+    'td.d{text-align:left;font-weight:800}td.d small{font-weight:600;color:#555;font-size:80%}'+
+    'tr.we td{background:#f1f1f1}tr.we td.d{color:#a00000}tr.we td.d small{color:#a00000}'+
+    'tfoot td{background:#e6e6e6;font-weight:800;border-top:1.6pt solid #000}');
+}
+function pT(t){if(t==='kalendarz')return printKal();if(t==='mleko')return printMl();const yr=$('#ml-y')?$('#ml-y').value:'2026';const ti={mleko:()=>(($('#ml-v').value==='o'?'Odstawa':'Produkcja')+' mleka — '+MO[+$('#ml-m').value]+' '+yr),surowce:()=>'Stany magazynowe surowców',dawki:()=>'Dawki TMR — wszystkie grupy',cielaki:()=>'Cielęta — kalkulacja pasz',nasienie:()=>'Zakup nasienia '+($('#nas-y')?$('#nas-y').value:'2026'),kalendarz:()=>'Kalendarz — '+MO[+$('#kal-m').value]+' '+$('#kal-y').value};
   const orient={kalendarz:'landscape',harmonogram:'compactL',obecnosc:'compactL',mleko:'compact'};
   // Special compact print for harmonogram/obecnosc/mleko: generate clean HTML
   if(t==='harmonogram'||t==='obecnosc'||t==='mleko'){
@@ -904,26 +979,23 @@ function okPr(pf,gp){const n=$('#ap-n').value.trim();if(!n){toast('Podaj imię')
 function delPr(pf,gp,wi){const data=pf==='hr'?hrD:obD;const name=data[gp][wi].imie;if(!confirm('Usunąć pracownika „'+name+'"?'))return;data[gp].splice(wi,1);sa();rSch(pf);toast('Usunięto')}
 function pSch(pf){
   const m=+$('#'+pf+'-m').value,g=$('#'+pf+'-g').value;
-  const title=(pf==='hr'?'Harmonogram pracy':'Lista obecności')+' — '+MO[m]+' '+$('#'+pf+'-y').value+' — '+g;
+  const gn={obsluga:'Obsługa',dojarze:'Dojarze',biuro:'Biuro'}[g]||g;
+  const title=(pf==='hr'?'Harmonogram pracy':'Lista obecności')+' — '+MO[m]+' '+$('#'+pf+'-y').value+' — '+gn;
   const wrap=$('#'+pf+'-w');if(!wrap)return;
   const clone=wrap.cloneNode(true);
-  clone.querySelectorAll('select').forEach(sel=>{const txt=document.createTextNode(sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].text:'');sel.replaceWith(txt)});
-  clone.querySelectorAll('input').forEach(inp=>{const txt=document.createTextNode(inp.value||'');inp.replaceWith(txt)});
-  clone.querySelectorAll('button').forEach(btn=>btn.remove());
-  const doc='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+title+'</title><style>'+
-    '@page{size:A4 landscape;margin:8mm}'+
-    '*{box-sizing:border-box}body{font-family:Arial,sans-serif;margin:0;padding:0}'+
-    'h2{font-size:11pt;margin:0 0 3mm 0}'+
-    'table{border-collapse:collapse;width:100%}'+
-    'th,td{border:1px solid #999;padding:1px 4px;font-size:7.5pt;line-height:1.2;text-align:center}'+
-    'th{background:#ddd;font-weight:700;font-size:7pt}'+
-    '.we{color:#c00}'+
-    '</style></head><body>'+
-    '<h2>'+title+'</h2>'+clone.innerHTML+
-    '<script>window.onload=function(){window.print();}<'+'/script>'+
-    '</body></html>';
-  const w=window.open('','_blank');
-  w.document.write(doc);w.document.close();
+  clone.querySelectorAll('select').forEach(sel=>sel.replaceWith(document.createTextNode(sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].text:'')));
+  clone.querySelectorAll('input').forEach(inp=>inp.replaceWith(document.createTextNode(inp.value||'')));
+  clone.querySelectorAll('button').forEach(b=>b.remove());
+  const tbl=clone.querySelector('table');if(!tbl)return;
+  tbl.removeAttribute('class');tbl.removeAttribute('style');
+  const trs=tbl.querySelectorAll('tr');
+  const rowH=Math.min(9,Math.floor((184-13-1)/trs.length*10)/10);
+  const fs=Math.max(7,Math.min(11,rowH*1.5)).toFixed(1);
+  trs.forEach(tr=>{tr.style.height=rowH+'mm';tr.querySelectorAll('td,th').forEach(x=>x.removeAttribute('style'))});
+  printDoc(title,tbl.outerHTML,'landscape',
+    'th,td{font-size:'+fs+'pt;padding:0 1.5mm;text-align:center;white-space:nowrap}th{font-size:'+(fs*0.9).toFixed(1)+'pt}'+
+    'td:first-child,th:first-child{text-align:left;font-weight:800;width:16mm}tr.we td{background:#f1f1f1}tr.we td:first-child{color:#a00000}'+
+    'tfoot td,tfoot th{background:#e6e6e6;font-weight:800;border-top:1.6pt solid #000}');
 }
 
 // NASIENIE (edycja + usuwanie)
