@@ -80,6 +80,87 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 .mox{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt2)}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}.toast.show{opacity:1}
 .rap-sub{}
+/* ===== Wóz paszowy (układ dnia) ===== */
+.woz-gora{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.dzien-tyt{font:700 20px var(--font);color:var(--pri);margin-right:4px}
+.dzien-nav{display:flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--brd);border-radius:8px;padding:3px}
+.dzien-nav input{border:0;font-weight:600;padding:4px}
+.woz-stat{font-size:12px;color:var(--txt2);font-weight:600}
+.w-baner{background:var(--amber-bg);border:1px solid #e0c060;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:10px}
+.w-baner.zly{background:#D32F2F;color:#fff;border:none;font-weight:800;text-align:center}
+.woz-uklad{display:grid;grid-template-columns:290px minmax(0,1fr);gap:14px;align-items:start}
+.woz-uklad>*{min-width:0}
+.boczny{position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto;background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:10px}
+.boczny h3{font:700 15px var(--font);margin:2px 0 4px;display:flex;align-items:center;gap:6px;color:var(--pri)}
+.opis-b{font-size:11.5px;color:var(--txt2);margin-bottom:6px}
+.grupa-et{font-size:12px;font-weight:700;margin:10px 0 3px;display:flex;align-items:center;gap:6px}
+.grupa-et i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.chip{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;align-items:center;background:#fff;border:1px solid var(--brd);border-left-width:6px;border-radius:6px;padding:5px 8px;margin-bottom:5px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.chip:hover{box-shadow:0 2px 8px rgba(30,50,40,.12)}
+.chip .uchwyt{grid-row:span 2;color:var(--txt2);font-size:15px;letter-spacing:-2px;cursor:grab}
+.chip .n{font-weight:700;font-size:13.5px}
+.chip .s{font-size:12px;color:var(--txt2);text-align:right}
+.chip .post{grid-column:2/4;display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--txt2)}
+.post-bar{flex:1;height:5px;border-radius:3px;background:#E1E6E1;overflow:hidden}
+.post-bar i{display:block;height:100%;background:var(--pri-l)}
+.chip.pelny .n::after{content:' ✓';color:#2E7D32}
+.chip.nd{border-left-color:#8A6A3E;background:repeating-linear-gradient(135deg,#FBF7EF 0 8px,#F6EEDD 8px 16px)}
+.wpole{width:72px;padding:3px 5px;text-align:right;font-weight:700;border:1px solid var(--brd);border-radius:5px}
+.wx{border:none;background:none;color:var(--red);cursor:pointer;font-size:13px;padding:2px 5px}
+.wx.b{color:var(--txt2)}
+.legenda{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--txt2);margin:0 0 8px}
+.legenda i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-2px}
+.legenda i.hnd,.wanna .seg.nd{background:repeating-linear-gradient(45deg,#8A6A3E 0 6px,#AD8B5A 6px 12px)}
+.legenda i.hex,.wanna .seg.ex{background:repeating-linear-gradient(45deg,#4A68A0 0 5px,#6685BE 5px 10px)}
+.kursy-kol{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:14px;align-items:start}
+.zad-tyt{font:700 18px var(--font);margin:0 0 8px;display:flex;align-items:baseline;gap:8px}
+.zad-tyt small{font:500 12px var(--font);color:var(--txt2)}
+.kurs{background:var(--card);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px;overflow:hidden}
+.kurs.zrobiony{border-color:#2E7D32;box-shadow:0 0 0 1px #2E7D32}
+.kurs.cel-ok,.nowy-kurs.cel-ok{outline:3px dashed var(--pri-l);outline-offset:-3px;background:var(--pri-bg)}
+.kurs-pas{height:6px}
+.kurs-nag{display:flex;align-items:center;gap:8px;padding:8px 10px 6px;flex-wrap:wrap}
+.kurs-nr{font:800 19px/1 var(--font)}
+.kurs-nag .uchwyt{cursor:grab;color:var(--txt2);font-size:16px;letter-spacing:-2px}
+.kurs-nag select{max-width:170px;padding:4px}
+.kurs-nag .prawo{margin-left:auto;display:flex;gap:2px;align-items:center}
+.kurs-nag .ok{color:#2E7D32;font-weight:700;font-size:13px}
+.wanna-wrap{padding:2px 10px 4px}
+.wanna{position:relative;height:36px;border-radius:3px 3px 16px 16px;background:#E2E7E1;box-shadow:inset 0 2px 4px rgba(0,0,0,.12);overflow:hidden;display:flex}
+.wanna .seg{height:100%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px var(--font);overflow:hidden;border-right:1px solid rgba(255,255,255,.35);min-width:0}
+.wanna .poj{position:absolute;top:-2px;bottom:-2px;border-left:2px dashed var(--red)}
+.wanna.pusta::after{content:'Wóz pusty — dodaj sektor';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:12px}
+.wanna-opis{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--txt2);padding:3px 2px 0;flex-wrap:wrap}
+.wanna-opis b{color:var(--txt)}
+.kurs-wiersze{padding:4px 10px 6px}
+.kw{display:grid;grid-template-columns:12px minmax(90px,1fr) 44px 64px 80px 52px 48px 26px;gap:6px;align-items:center;padding:4px;border-bottom:1px solid #E6EBE6;font-size:13px}
+.kw.nag{font-size:11px;color:var(--txt2);font-weight:600}
+.kw.nag span{text-align:right}
+.kw .r{text-align:right}.kw .dot{width:10px;height:10px;border-radius:50%}
+.kw .ok{color:#2E7D32;font-weight:700}.kw .mn{color:var(--amber);font-weight:700}.kw .wi{color:var(--red);font-weight:700}
+.kw.ndw{background:repeating-linear-gradient(135deg,#FBF7EF 0 8px,#F6EEDD 8px 16px)}
+.kurs-dod{margin:2px 10px 8px;border:1px solid #CBD5E6;background:#F4F6FB;border-radius:8px;padding:5px 9px;font-size:12.5px;display:grid;gap:3px}
+.kurs-dod .tyt{font-weight:700;font-size:11px;color:#3A5688;text-transform:uppercase}
+.upusc{margin:6px 10px 10px;border:2px dashed var(--brd);border-radius:8px;padding:7px;text-align:center;color:var(--txt2);font-size:12px}
+.nowy-kurs{border:2px dashed var(--brd);border-radius:10px;padding:16px;text-align:center;color:var(--txt2);margin-bottom:12px;font-size:13px}
+.wybor-woz{display:grid;gap:6px;max-height:60vh;overflow:auto}
+.wybor-woz label{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--brd);border-radius:8px;padding:8px;cursor:pointer}
+.wybor-woz small{color:var(--txt2)}
+.wybor-woz .btn{text-align:left;justify-content:flex-start}
+@media(max-width:900px){.woz-uklad{grid-template-columns:1fr}.boczny{position:static;max-height:none}}
+@media(max-width:560px){.kw{grid-template-columns:10px minmax(70px,1fr) 76px 46px 44px 24px}.kw .ukr{display:none}.kurs-nag select{max-width:130px}}
+/* ===== Użytkownicy ===== */
+.osoba{display:flex;align-items:center;gap:10px}.osoba small{display:block;color:var(--txt2);font-size:11.5px;max-width:420px;white-space:normal}
+.avatar{width:36px;height:36px;border-radius:50%;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.znacznik{font-size:11px;border:1px solid var(--brd);border-radius:10px;padding:1px 7px;color:var(--txt2)}
+.status{font-size:12px;font-weight:700;border-radius:10px;padding:2px 9px}.status.on{background:#DDEFDC;color:#1B5E20}.status.off{background:#FDE2E2;color:#B71C1C}
+.rola-zn{display:inline-block;color:#fff;font-weight:700;font-size:12px;border-radius:12px;padding:3px 10px}
+.lv{border:none;border-radius:14px;padding:4px 10px;font-weight:700;font-size:12.5px;cursor:pointer}
+.lvb{display:inline-block}.lv0{background:#EEE;color:#888}.lv1{background:#E3EDF7;color:#2C5A8A}.lv2{background:#FFF1D6;color:#9A6B10}.lv3{background:#DDEFDC;color:#1B5E20}
+table.upr td,table.upr th{text-align:center}table.upr td.l,table.uz td.l,table.uz th.l,table.upr th.l{text-align:left}
+table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--font)}
+.uz-info{padding:10px 12px;font-size:12px;color:var(--txt2);border-top:1px solid var(--brd);line-height:1.5}
+
 #pa{display:none}
 @media print{body>*{display:none!important}#pa{display:block!important;position:absolute;left:0;top:0;width:100%;padding:10mm;font-size:10pt;color:#000}
 #pa table{border-collapse:collapse;width:100%}#pa table th,#pa table td{border:1px solid #555;padding:4px 6px;font-size:10pt;font-weight:600}
@@ -119,7 +200,8 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 </section>
 <section class="tp" id="tab-planowanie">
   <div class="card"><div class="ch"><span>Planowanie kolejności wozów paszowych</span></div>
-  <p style="padding:0 12px 6px;font-size:12px;color:var(--txt2)">Ustaw kolejność wozów przez przeciąganie lub strzałki. Pracownik w zakładce „Wóz paszowy" będzie realizował wozy w tej kolejności.</p>
+  <p style="padding:0 12px 6px;font-size:12px;color:var(--txt2)">Ustaw kolejność wozów przez przeciąganie lub strzałki. Ta kolejność służy do przycisku <b>⚡ Ułóż wozy wg planu</b> w zakładce „Wóz paszowy” – każdy kolejny wóz tej samej grupy trafia do 2. zadania (po południu).</p>
+  <div style="padding:0 12px 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label style="font-size:13px;font-weight:600">Pojemność wozu paszowego (kg):</label><input id="woz-poj" inputmode="decimal" style="width:110px" onchange="wozPoj=pf(this.value);SV('wozPoj',wozPoj);saM('wozy');toast('Zapisano pojemność')"><span style="font-size:11px;color:var(--txt2)">0 = nie pokazuj linii pojemności</span></div>
   <div id="plan-list"></div>
   <div style="padding:12px"><button class="btn bo" onclick="planAutoGen()">🔄 Generuj automatycznie z dawek</button></div>
   </div>
@@ -140,12 +222,8 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
   <div class="card"><div class="ch">Sekcja 3 — Koszt wg grup żywieniowych</div><div class="tw" id="kos-s3"></div></div>
   <div class="card"><div class="ch">Sekcja 4 — Koszt na sztukę wg kategorii pasz</div><div class="tw" id="kos-s4"></div></div>
 </section>
-<section class="tp" id="tab-woz">
-  <div class="card"><div class="ch"><span>Wóz paszowy — receptury do wykonania</span></div>
-  <div id="woz-panel"></div></div>
-  <div class="card"><div class="ch"><span>Postęp dzisiaj</span></div>
-  <div id="woz-raport"></div></div>
-</section>
+<section class="tp" id="tab-woz"><div id="woz-w"></div></section>
+<section class="tp" id="tab-uzytkownicy"><div id="uz-w"></div></section>
 <section class="tp" id="tab-raporty">
   <div style="display:flex;background:var(--card);border:1px solid var(--brd);border-radius:var(--radius);margin-bottom:8px;overflow-x:auto">
     <button class="tab-btn active" onclick="switchRap(this,'rap-woz')">Wóz</button>
@@ -232,58 +310,100 @@ function prn(t,h,orient,raw){
 function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
 function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()}
 
-// AUTH — 4 roles
+// AUTH — logowanie hasłem roli; dostęp do zakładek ustawia Twórca w zakładce „Użytkownicy”
 const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn',paszowoz:'paszowoz'};
 let passes=LD('passes',null),cR=null;
-const RT={tworca:['mleko','surowce','dawki','awaryjne','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],zootechnik:['mleko','surowce','dawki','awaryjne','cielaki','koszty','planowanie','woz','raporty','harmonogram','obecnosc','nasienie','kalendarz'],prezes:['mleko','surowce','dawki','cielaki','koszty','raporty','harmonogram','obecnosc','nasienie','kalendarz'],magazynier:['surowce'],paszowoz:['woz']};
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',woz:'Wóz paszowy',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz'};
+const ROLE_ORDER=['tworca','zootechnik','prezes','magazynier','paszowoz'];
 const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
-function isRO(){return cR==='prezes'}
+const ROLE_KOL={tworca:'#24493A',zootechnik:'#C0773A',prezes:'#3D6FA3',magazynier:'#00838F',paszowoz:'#7A5BA6'};
+const TAB_ORDER=['mleko','surowce','dawki','woz','awaryjne','cielaki','koszty','planowanie','raporty','harmonogram','obecnosc','nasienie','kalendarz','uzytkownicy'];
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',woz:'Wóz paszowy',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz',uzytkownicy:'Użytkownicy'};
+const POZIOMY=['brak','podgląd','wpis','pełny'];
+const POZ_ZAKL={mleko:[0,1,3],surowce:[0,1,3],dawki:[0,1,3],woz:[0,1,2,3],awaryjne:[0,1,3],cielaki:[0,1,3],koszty:[0,1,3],planowanie:[0,1,3],raporty:[0,1,3],harmonogram:[0,1,3],obecnosc:[0,1,3],nasienie:[0,1,3],kalendarz:[0,1,3]};
+const DEF_UPR={
+  zootechnik:{mleko:3,surowce:3,dawki:3,woz:3,awaryjne:3,cielaki:3,koszty:3,planowanie:3,raporty:3,harmonogram:3,obecnosc:3,nasienie:3,kalendarz:3},
+  prezes:{mleko:1,surowce:1,dawki:1,woz:0,awaryjne:0,cielaki:1,koszty:1,planowanie:0,raporty:1,harmonogram:3,obecnosc:3,nasienie:1,kalendarz:1},
+  magazynier:{mleko:0,surowce:3,dawki:0,woz:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0},
+  paszowoz:{mleko:0,surowce:0,dawki:0,woz:2,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0}
+};
+let UPR=LD('upr',null)||JSON.parse(JSON.stringify(DEF_UPR)),BLOK=LD('blok',{})||{},LASTL=LD('lastL',{})||{};
+function lvl(t){if(!cR)return 0;if(cR==='tworca')return 3;if(t==='uzytkownicy')return 0;const v=UPR?.[cR]?.[t];return v==null?(DEF_UPR[cR]?.[t]??0):+v}
 function canPass(){return cR==='tworca'}
 function canEdit(){return cR==='tworca'||cR==='zootechnik'||cR==='magazynier'}
+function cfgSave(o){SV('passes',passes);SV('upr',UPR);SV('blok',BLOK);if(fbDb)return fbDb.collection('ohz_data').doc('config').set(o,{merge:true}).catch(e=>{console.warn('config',e);toast('Nie udało się zapisać w chmurze')})}
 function doLogin(){
   const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}
   const pw=Object.assign({},DEF_PASSES,passes||{});let role=null;
-  for(const[r,v]of Object.entries(pw))if(v===p){role=r;break}
+  for(const r of ROLE_ORDER)if(pw[r]===p){role=r;break}
   if(!role){$('#le').textContent='Nieprawidłowe hasło';return}
-  cR=role;SV('sess',role);showApp();
+  if(role!=='tworca'&&BLOK[role]){$('#le').textContent='Dostęp dla tej roli jest zablokowany — skontaktuj się z twórcą';return}
+  cR=role;SV('sess',role);
+  if(fbDb)fbDb.collection('ohz_data').doc('config').set({lastLogin:{[role]:Date.now()}},{merge:true}).catch(()=>{});
+  showApp();
 }
 function doLogout(){cR=null;localStorage.removeItem('ohz_sess');$('#app').style.display='none';$('#login-screen').style.display='flex';$('#lp').value='';$('#le').textContent=''}
+function goTab(t){const b=document.querySelector('.tab-btn[data-t="'+t+'"]');if(b)b.click()}
 function showApp(){
   $('#login-screen').style.display='none';$('#app').style.display='block';
   $('#urb').textContent=RL[cR]||cR;
   let ex='';
-  if(canPass())ex+='<button class="blo" onclick="showPassMgr()" style="margin-right:4px">🔑</button>';
+  if(canPass())ex+='<button class="blo" onclick="goTab(\'uzytkownicy\')" title="Użytkownicy i dostępy" style="margin-right:4px">👥</button>';
   if(canEdit())ex+='<button class="blo" onclick="exportBackup()" style="margin-right:4px">⬇</button><button class="blo" onclick="importBackup()" style="margin-right:4px">⬆</button>';
   $('#hdr-extra').innerHTML=ex;
   bTabs();startFbSync();updateEmergBanner();
 }
-function applyRO(){if(!isRO())return;setTimeout(()=>{
-  const tab=document.querySelector('.tab-btn.active');if(!tab)return;const t=tab.dataset.t;
-  // Harmonogram i Obecność: pełny dostęp dla prezesa
-  if(t==='harmonogram'||t==='obecnosc')return;
-  // Mleko: dropdowny odblokowane, pola danych zablokowane
-  if(t==='mleko'){$$('.tp.active td input').forEach(el=>el.disabled=true);return}
-  // Reszta: wszystko read-only
-  $$('.tp.active input,.tp.active select,.tp.active textarea').forEach(el=>el.disabled=true);
-  $$('.tp.active .btn,.tp.active .bpdf,.tp.active button:not(.tab-btn)').forEach(el=>{if(!el.closest('.tab-bar')&&!el.closest('.fr')){el.style.opacity='0.3';el.style.pointerEvents='none'}});
-},60)}
-// Password manager
-function showPassMgr(){
+// Konfiguracja (hasła, uprawnienia, blokady) — nasłuch na żywo, działa od razu na wszystkich urządzeniach
+let _tabSig='';
+function startCfg(){if(!fbDb||window._cfgOn)return;window._cfgOn=true;
+  fbDb.collection('ohz_data').doc('config').onSnapshot(doc=>{if(!doc.exists)return;const d=doc.data();
+    if(d.passes){passes=d.passes;SV('passes',passes)}
+    if(d.upr){UPR=d.upr;SV('upr',UPR)}
+    BLOK=d.blok||{};SV('blok',BLOK);LASTL=d.lastLogin||{};SV('lastL',LASTL);
+    if(!cR)return;
+    if(cR!=='tworca'&&BLOK[cR]){doLogout();$('#le').textContent='Dostęp dla tej roli został zablokowany przez twórcę';return}
+    const sig=TAB_ORDER.map(t=>lvl(t)).join('');
+    const ab=document.querySelector('.tab-btn.active'),cur=ab?ab.dataset.t:null;
+    if(sig!==_tabSig){bTabs(cur)}
+    else if(cur==='uzytkownicy'&&!document.activeElement?.closest?.('#uz-w'))rUz();
+  },e=>console.warn('config',e))}
+// Podgląd: zablokuj edycję w aktywnej zakładce (filtry daty/miesiąca w .fr zostają aktywne)
+function applyRO(){setTimeout(()=>{
+  const ab=document.querySelector('.tab-btn.active');if(!ab)return;const t=ab.dataset.t;
+  if(t==='woz'||t==='uzytkownicy'||lvl(t)>=3)return;
+  const tp=$('#tab-'+t);if(!tp)return;
+  tp.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.closest('.fr'))el.disabled=true});
+  tp.querySelectorAll('button').forEach(el=>{if(el.classList.contains('tab-btn'))return;if(el.closest('.fr')&&!el.classList.contains('bpdf'))return;el.style.display='none'});
+  tp.querySelectorAll('[onclick]').forEach(el=>{if(el.tagName!=='BUTTON'&&!el.closest('.fr')&&!el.closest('.rd-head'))el.style.pointerEvents='none'});
+},40)}
+// ===== ZAKŁADKA: UŻYTKOWNICY (tylko Twórca) =====
+function rUz(){
+  if(cR!=='tworca'){$('#uz-w').innerHTML='';return}
   const pw=Object.assign({},DEF_PASSES,passes||{});
-  opM('Zarządzanie hasłami',
-    '<div class="fg" style="margin-bottom:8px"><label>Twórca</label><input type="text" id="pw-tw" value="'+(pw.tworca||'')+'"></div>'+
-    '<div class="fg" style="margin-bottom:8px"><label>Zootechnik</label><input type="text" id="pw-zo" value="'+(pw.zootechnik||'')+'"></div>'+
-    '<div class="fg" style="margin-bottom:8px"><label>Prezes</label><input type="text" id="pw-pr" value="'+(pw.prezes||'')+'"></div>'+
-    '<div class="fg"><label>Magazynier</label><input type="text" id="pw-mg" value="'+(pw.magazynier||'')+'"></div>',
-    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="savePasswords()">Zapisz</button>');
+  const fmtT=ts=>ts?new Date(ts).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'jeszcze nikt się nie logował';
+  const wiersze=ROLE_ORDER.map(r=>{const bl=r!=='tworca'&&BLOK[r];
+    return '<tr'+(bl?' style="opacity:.55"':'')+'><td class="l"><div class="osoba"><span class="avatar" style="background:'+ROLE_KOL[r]+'">'+RL[r].split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase()+'</span><div><b>'+RL[r]+'</b>'+(r===cR?' <span class="znacznik">to Ty</span>':'')+'<small>'+(r==='tworca'?'pełny dostęp, zawsze':TAB_ORDER.filter(t=>t!=='uzytkownicy'&&lvl2(r,t)>0).map(t=>TL[t]).join(', ')||'brak dostępu do zakładek')+'</small></div></div></td>'+
+      '<td class="l"><div style="display:flex;gap:4px;align-items:center"><input type="password" id="pw-'+r+'" value="'+escH(pw[r]||'')+'" autocomplete="off" style="width:150px"><button class="btn bs bo" onclick="const i=$(\'#pw-'+r+'\');i.type=i.type===\'password\'?\'text\':\'password\'" title="Pokaż / ukryj">👁</button></div></td>'+
+      '<td class="l"><span class="status '+(bl?'off':'on')+'">'+(bl?'zablokowane':'aktywne')+'</span></td>'+
+      '<td class="l" style="color:var(--txt2);font-size:12px">'+fmtT(LASTL[r])+'</td>'+
+      '<td class="l">'+(r!=='tworca'?'<button class="btn bs '+(bl?'bo':'bd')+'" onclick="uzBlok(\''+r+'\')">'+(bl?'Odblokuj':'Zablokuj')+'</button>':'')+'</td></tr>'}).join('');
+  const macierz=TAB_ORDER.filter(t=>t!=='uzytkownicy').map(t=>'<tr><td class="l"><b>'+TL[t]+'</b></td><td><span class="lv lv3 lvb">pełny</span></td>'+
+    ROLE_ORDER.slice(1).map(r=>{const v=lvl2(r,t);return '<td><select class="lv lv'+v+'" onchange="uzUpr(\''+r+'\',\''+t+'\',this.value)">'+POZ_ZAKL[t].map(x=>'<option value="'+x+'"'+(x===v?' selected':'')+'>'+POZIOMY[x]+'</option>').join('')+'</select></td>'}).join('')+'</tr>').join('');
+  $('#uz-w').innerHTML=
+    '<div class="card"><div class="ch"><span>Konta (role) <small style="font-weight:500;color:var(--txt2)">'+ROLE_ORDER.filter(r=>r==='tworca'||!BLOK[r]).length+' aktywnych</small></span><button class="btn bp" onclick="uzZapiszHasla()">Zapisz hasła</button></div>'+
+    '<div class="tw"><table class="dt uz"><thead><tr><th class="l">Rola</th><th class="l">Hasło do logowania</th><th class="l">Status</th><th class="l">Ostatnie logowanie</th><th></th></tr></thead><tbody>'+wiersze+'</tbody></table></div>'+
+    '<div class="uz-info">Każda rola loguje się jednym hasłem — wszyscy pracownicy danej roli używają tego samego. Hasła muszą być różne dla każdej roli (po haśle aplikacja rozpoznaje rolę). Zablokowana rola zostaje od razu wylogowana na wszystkich urządzeniach i nie może się zalogować.</div></div>'+
+    '<div class="card"><div class="ch"><span>Co może każda rola <small style="font-weight:500;color:var(--txt2)">zmiana działa od razu na wszystkich urządzeniach</small></span><button class="btn bs bo" onclick="uzDomyslne()">Przywróć domyślne</button></div>'+
+    '<div class="tw"><table class="dt upr" style="max-width:900px"><thead><tr><th class="l">Zakładka</th>'+ROLE_ORDER.map(r=>'<th><span class="rola-zn" style="background:'+ROLE_KOL[r]+'">'+RL[r]+'</span></th>').join('')+'</tr></thead><tbody>'+macierz+'</tbody></table></div>'+
+    '<div class="uz-info"><b>brak</b> – zakładka ukryta · <b>podgląd</b> – tylko odczyt, bez edycji i wydruków (filtry miesiąca i dat działają) · <b>wpis</b> – Wóz paszowy: zadane kilogramy, niedojady, „Gotowe”; układ wozów ustala zootechnik · <b>pełny</b> – wszystko. Twórca ma zawsze pełny dostęp, żeby nie dało się zablokować aplikacji.</div></div>';
 }
-function savePasswords(){
-  passes={tworca:$('#pw-tw').value.trim()||'tworca',zootechnik:$('#pw-zo').value.trim()||'admin',prezes:$('#pw-pr').value.trim()||'prezes',magazynier:$('#pw-mg').value.trim()||'magazyn',paszowoz:$('#pw-wz').value.trim()||'paszowoz'};
-  SV('passes',passes);
-  // Also save to Firebase
-  if(fbDb)fbDb.collection('ohz_data').doc('config').set({passes}).catch(e=>console.warn(e));
-  clM();toast('Hasła zapisane');
+function lvl2(r,t){if(r==='tworca')return 3;const v=UPR?.[r]?.[t];return v==null?(DEF_UPR[r]?.[t]??0):+v}
+function uzUpr(r,t,v){UPR=JSON.parse(JSON.stringify(UPR||{}));UPR[r]=UPR[r]||{};UPR[r][t]=+v;cfgSave({upr:UPR});toast(RL[r]+' – '+TL[t]+': '+POZIOMY[+v]);rUz()}
+function uzDomyslne(){if(!confirm('Przywrócić domyślne uprawnienia wszystkich ról?'))return;UPR=JSON.parse(JSON.stringify(DEF_UPR));cfgSave({upr:UPR});rUz();toast('Przywrócono domyślne uprawnienia')}
+function uzBlok(r){const nb=!BLOK[r];if(nb&&!confirm('Zablokować rolę „'+RL[r]+'”? Wszyscy zalogowani tą rolą zostaną wylogowani.'))return;BLOK=Object.assign({},BLOK,{[r]:nb});cfgSave({blok:{[r]:nb}});rUz();toast(nb?'Zablokowano: '+RL[r]:'Odblokowano: '+RL[r])}
+function uzZapiszHasla(){
+  const np={};for(const r of ROLE_ORDER){const v=($('#pw-'+r)?.value||'').trim();if(v.length<4){toast('Hasło dla roli „'+RL[r]+'” musi mieć co najmniej 4 znaki');return}np[r]=v}
+  const vals=Object.values(np);if(new Set(vals).size!==vals.length){toast('Każda rola musi mieć inne hasło');return}
+  passes=np;cfgSave({passes});toast('Hasła zapisane');
 }
 // Backup export/import
 function exportBackup(){
@@ -308,8 +428,8 @@ function importBackup(){
       toast('Kopia przywrócona');const ab=document.querySelector('.tab-btn.active');if(ab)oT(ab.dataset.t);
     }catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
-function bTabs(){const ts=RT[cR]||[];const b=$('#tbar');b.innerHTML=ts.map((t,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(ts[0])$('#tab-'+ts[0]).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(ts[0])oT(ts[0])}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,koszty:rKoszty,planowanie:rPlan,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal};if(m[t])m[t]();applyRO()}
+function bTabs(keep){const ts=TAB_ORDER.filter(t=>lvl(t)>0);_tabSig=TAB_ORDER.map(t=>lvl(t)).join('');const first=ts.includes(keep)?keep:ts[0];const b=$('#tbar');b.innerHTML=ts.map(t=>'<button class="tab-btn'+(t===first?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(first)$('#tab-'+first).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(first)oT(first);else $$('.tp').forEach(p=>p.classList.remove('active'))}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,koszty:rKoszty,planowanie:rPlan,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,uzytkownicy:rUz};if(m[t])m[t]();applyRO()}
 // ===== CLEAN PRINT DOCUMENTS (own window, fills A4) =====
 function printDoc(title,body,orient,extraCss){
   const css='@page{size:A4 '+orient+';margin:8mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
@@ -494,6 +614,7 @@ const MODULES={
   nasienie:{get:()=>({nas}),set:d=>{if(d.nas)nas=d.nas},sv:()=>SV('nas2',nas)},
   kalendarz:{get:()=>({kal}),set:d=>{if(d.kal)kal=d.kal},sv:()=>SV('kal',kal)},
   cielaki:{get:()=>({ciData}),set:d=>{if(d.ciData)ciData=d.ciData},sv:()=>SV('ciData3',ciData)},
+  wozy:{get:()=>({wozDni,wozPoj}),set:d=>{if(d.wozDni)wozDni=d.wozDni;if(d.wozPoj!=null)wozPoj=d.wozPoj},sv:()=>{SV('wozDni',wozDni);SV('wozPoj',wozPoj)}},
   logi:{get:()=>({hist,lastDed,wozLog,dawkiHist}),set:d=>{
     if(d.hist){Object.keys(d.hist).forEach(k=>{if(!hist[k])hist[k]=d.hist[k]})}
     if(d.wozLog){Object.keys(d.wozLog).forEach(k=>{if(!wozLog[k])wozLog[k]=d.wozLog[k];else{const ex=new Set(wozLog[k].map(e=>e.timestamp));d.wozLog[k].forEach(e=>{if(!ex.has(e.timestamp))wozLog[k].push(e)})}})}
@@ -525,7 +646,7 @@ function saM(mod,immediate){
 }
 function startFbSync(){
   if(!fbDb){setSyncBadge('offline');catchUpDeductions();return}
-  fbDb.collection('ohz_data').doc('config').get().then(doc=>{if(doc.exists&&doc.data().passes){passes=doc.data().passes;SV('passes',passes)}}).catch(()=>{});
+  startCfg();
   fbDb.collection('ohz_data').doc('grupy').get().then(doc=>{
     if(!doc.exists){
       fbDb.collection('ohz_data').doc('state').get().then(old=>{
@@ -1250,6 +1371,7 @@ let wozLog=LD('wozLog',{});
 
 // ===== PLANOWANIE WOZÓW =====
 function rPlan(){
+  if($('#woz-poj'))$('#woz-poj').value=wozPoj||0;
   let h='<table style="width:100%;border-collapse:collapse">';
   h+='<thead><tr><th style="width:40px;padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri)">#</th><th style="padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri);text-align:left">Grupa</th><th style="width:60px;padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri)">Szt.</th><th style="width:80px;padding:6px;background:var(--pri);color:#fff;border:1px solid var(--pri)"></th></tr></thead><tbody>';
   wozOrder.forEach((gid,i)=>{
@@ -1282,82 +1404,223 @@ function planAutoGen(){
   SV('wozOrder',wozOrder);saM('grupy',true);rPlan();toast('Wygenerowano '+wozOrder.length+' wozów');
 }
 
+// ===== WÓZ PASZOWY — dzienny układ wozów (wzór: Weibloem) =====
+// Wóz = receptura (grupa żywieniowa) + sektory, na które go rozwozimy. Ilości liczą się na żywo z zakładki Dawki.
+let wozDni=LD('wozDni',{});      // {data:{kursy:[{id,z,gid,rz:[{sid,kg}],nd:[{nid,src,kg}],done}],nied:[{id,src,kg}],uwagi}}
+let wozPoj=LD('wozPoj',0);       // pojemność wozu w kg (0 = nie pokazuj)
+const WZ={data:null};
+const GR_KOL=['#2E7D32','#C0773A','#3D6FA3','#7A5BA6','#B8860B','#00838F','#AD1457','#5D4037','#455A64','#827717'];
+const KAT_ODC={obj:['#4E7A3A','#6B9550','#8DB070'],tres:['#B07A0B','#C99A2E','#DDB95A'],dod:['#3D6FA3','#5A88B8','#7FA3CB']};
+const escH=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fK=v=>Math.round(+v||0).toLocaleString('pl-PL');
+const fK1=v=>(+v||0).toFixed(1).replace('.',',');
+function grKol(gid){const i=gr.findIndex(g=>g.id===gid);return GR_KOL[(i<0?0:i)%GR_KOL.length]}
+function sekKey(g,s){return g.id+'|'+s.n}
+function sekBy(k){if(!k)return null;const i=k.indexOf('|');const g=gr.find(x=>x.id===k.slice(0,i));if(!g)return null;const s=g.se.find(x=>x.n===k.slice(i+1));return s?{g,s}:null}
+function recKg(g){return g?g.sk.reduce((a,x)=>a+(+x.kg||0),0):0}
+function planSek(k){const o=sekBy(k);return o?recKg(o.g)*(+o.s.sz||0):0}           // kg na jeden wóz
+function dzienW(d){return wozDni[d]||(wozDni[d]={kursy:[],nied:[],uwagi:''})}
+function kursyZ(d,z){return (wozDni[d]?.kursy||[]).filter(k=>k.z===z)}
+function nrKursu(d,id){return [...kursyZ(d,1),...kursyZ(d,2)].findIndex(k=>k.id===id)+1}
+function kgRz(r){return r.kg!=null&&r.kg!==''?+r.kg:planSek(r.sid)}
+function extrasK(k){const out=[];k.rz.forEach(r=>{const o=sekBy(r.sid);if(o&&o.s.sk_extra)o.s.sk_extra.forEach(ex=>{if(ex.kg>0)out.push({sid:r.sid,sek:o.s.n,s:ex.s,kg:ex.kg*(+o.s.sz||0)})})});return out}
+function masaK(k){const tot=k.rz.reduce((a,r)=>a+kgRz(r),0),nd=(k.nd||[]).reduce((a,x)=>a+(+x.kg||0),0),ex=extrasK(k).reduce((a,x)=>a+x.kg,0);return{tot,nd,sw:Math.max(0,tot-nd),ex,razem:tot+ex}}
+function skladK(k){const g=gr.find(x=>x.id===k.gid),m=masaK(k),rk=recKg(g);if(!g||rk<=0)return[];
+  const ord=sur.map(s=>s.id);
+  return g.sk.filter(x=>x.kg>0).sort((a,b)=>ord.indexOf(a.s)-ord.indexOf(b.s)).map(x=>({s:x.s,kgSzt:x.kg,kg:m.sw*x.kg/rk}))}
+function ndSrcName(src){const o=sekBy(src);return o?o.s.n+' ('+o.g.nazwa+')':(src||'')}
+function ndRozdane(d,nid){return (wozDni[d]?.kursy||[]).reduce((a,k)=>a+(k.nd||[]).filter(x=>x.nid===nid).reduce((b,x)=>b+(+x.kg||0),0),0)}
+function zapW(){
+  const keys=Object.keys(wozDni).sort();while(keys.length>90)delete wozDni[keys.shift()]; // ostatnie 90 dni
+  SV('wozDni',wozDni);saM('wozy');
+}
+function dzienTygPL(d){return ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'][new Date(d+'T12:00').getDay()]}
+function ulozWozy(cicho){
+  const data=WZ.data,d=dzienW(data);
+  if(!cicho&&d.kursy.length&&!confirm('Zastąpić obecny układ wozów na '+data+' układem z „Planowania wozów”?'))return;
+  const cnt={};d.kursy=[];
+  wozOrder.forEach(gid=>{const g=gr.find(x=>x.id===gid);if(!g)return;cnt[gid]=(cnt[gid]||0)+1;
+    d.kursy.push({id:uid(),z:Math.min(2,cnt[gid]),gid,rz:g.se.map(s=>({sid:sekKey(g,s),kg:null})),nd:[],done:null})});
+  zapW();rWoz();if(!cicho)toast('Ułożono '+d.kursy.length+' wozów wg planu');
+}
+function wozZmienDate(n){const t=new Date(WZ.data+'T12:00');t.setDate(t.getDate()+n);WZ.data=isoDate(t);rWoz()}
+
 function rWoz(){
-  const today=isoToday();if(!wozLog[today])wozLog[today]=[];
-  const done=wozLog[today];
-  const currentIdx=done.length;
-  let h='';
-  if(currentIdx>=wozOrder.length){
-    h='<div style="padding:30px;text-align:center;color:var(--pri)"><div style="font-size:48px;margin-bottom:10px">✅</div><b style="font-size:18px">Wszystkie wozy na dziś wykonane!</b><p style="margin-top:8px;color:var(--txt2)">Wykonano '+done.length+' wozów</p></div>';
-  } else {
-    const gid=wozOrder[currentIdx];const g=gr.find(x=>x.id===gid);
-    if(!g){h='<p style="padding:20px;color:var(--red)">Grupa '+gid+' nie znaleziona</p>';$('#woz-panel').innerHTML=h;return}
-    const tsz=g.se.reduce((a,s)=>a+s.sz,0);const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
-    const surOrder=sur.map(s=>s.id);
-    const sorted=g.sk.filter(x=>x.kg>0).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
-    h+='<div style="padding:12px">'+(emergencyMode?'<div style="background:#D32F2F;color:#fff;text-align:center;padding:6px;border-radius:6px;font:800 13px var(--font);margin-bottom:8px">⚠ DAWKI AWARYJNE</div>':'')+'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--pri);font-size:22px;margin:0">Wóz '+(currentIdx+1)+'/'+wozOrder.length+' — '+g.nazwa+'</h3><span style="font-size:16px;font-weight:700;color:var(--txt2)">'+tsz+' szt</span></div>';
-    h+='<div style="margin-bottom:8px;background:var(--amber-bg);padding:10px 14px;border-radius:8px;border:2px solid var(--amber);display:flex;align-items:center;gap:10px"><label style="font-size:14px;font-weight:700;color:var(--amber)">🔄 Niedojady:</label><input type="number" id="woz-nied" min="0" step="10" value="0" style="width:100px;font-size:22px;font-weight:800;text-align:center;border:2px solid var(--amber);border-radius:8px;padding:6px" oninput="recalcWoz()"><span style="font-size:14px;font-weight:700;color:var(--amber)">kg</span></div>';
-    h+='<input type="hidden" id="woz-nied-dir" value="Jałówki Rosn">';
-    h+='<div id="woz-table-wrap">';
-    h+=buildWozTbl(sorted,tsz,totKg,0);
-    h+='</div>';
-    // Sektory - big bold
-    h+='<div style="margin-top:12px;background:#f5f5f5;border-radius:8px;padding:10px">';
-    h+='<div style="font-size:14px;font-weight:700;color:var(--pri);margin-bottom:6px">📍 Podział na sektory:</div>';
-    h+='<table style="width:100%;border-collapse:collapse">';
-    g.se.forEach(s=>{
-      h+='<tr><td style="padding:8px;font-size:15px;font-weight:600;border-bottom:1px solid #ddd">'+s.n+'</td><td style="padding:8px;font-size:15px;font-weight:600;text-align:center;border-bottom:1px solid #ddd">'+s.sz+' szt</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:var(--pri);border-bottom:1px solid #ddd">'+r2(totKg*s.sz,0)+' kg</td></tr>';
-      if(s.sk_extra&&s.sk_extra.length){s.sk_extra.forEach(ex=>{const exS=gS(ex.s);h+='<tr style="background:#E3F2FD"><td colspan="2" style="padding:6px 8px 6px 20px;font-size:13px;font-weight:600;color:#1565C0;border-bottom:1px solid #ddd">⊕ '+(exS?exS.nazwa:'?')+' ('+ex.kg+' kg/szt)</td><td style="padding:6px 8px;font-size:18px;font-weight:800;text-align:right;color:#1565C0;border-bottom:1px solid #ddd">'+r2(ex.kg*s.sz,0)+' kg</td></tr>'})}
-    });h+='</table></div>';
-    h+='<div style="margin-top:14px;text-align:center"><button onclick="wozGotowe()" style="background:var(--pri);color:#fff;border:none;border-radius:12px;padding:16px 40px;font-size:20px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2)">✅ GOTOWE</button></div></div>';
-  }
-  $('#woz-panel').innerHTML=h;
-  // Today's log - simplified for paszowoz, no timestamp info (control tool for zootechnik only)
-  let lr='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Status</th></tr></thead><tbody>';
-  done.forEach((d,i)=>{lr+='<tr><td>'+(i+1)+'</td><td>'+d.nazwa+'</td><td style="color:var(--pri)">✓ Wykonano</td></tr>'});
-  if(!done.length)lr+='<tr><td colspan="3" style="text-align:center;color:var(--txt2)">Brak wozów dziś</td></tr>';
-  lr+='</tbody></table>';
-  $('#woz-raport').innerHTML=lr;
+  if(!WZ.data)WZ.data=isoToday();
+  const L=lvl('woz'),F=L>=3,W=L>=2,data=WZ.data,showTime=cR!=='paszowoz';
+  if(W&&data===isoToday()&&!(wozDni[data]?.kursy||[]).length&&wozOrder.length&&(fbInitialLoaded||!fbDb))ulozWozy(true);
+  const d=wozDni[data]||{kursy:[],nied:[],uwagi:''};
+  // --- boczny panel: sektory ---
+  const chipy=gr.map(g=>{
+    if(!g.se.length)return'';const kol=grKol(g.id);
+    return '<div class="grupa-et"><i style="background:'+kol+'"></i>'+escH(g.nazwa)+' <span style="font-weight:500;color:var(--txt2)">· '+(g.z||1)+'×/dobę · '+fK1(recKg(g))+' kg/szt</span></div>'+
+      g.se.map(s=>{const k=sekKey(g,s),plan=planSek(k)*(g.z||1),przyp=d.kursy.reduce((a,x)=>a+x.rz.filter(r=>r.sid===k).reduce((b,r)=>b+kgRz(r),0),0),p=plan>0?Math.min(100,przyp/plan*100):0;
+        return '<div class="chip'+(p>=97?' pelny':'')+'" style="border-left-color:'+kol+'"'+(F?' draggable="true" ondragstart="wDrag(event,\'sek\',\''+escH(k)+'\')" onclick="wTapSek(\''+escH(k)+'\')"':'')+'>'+
+          (F?'<span class="uchwyt">⋮⋮</span>':'<span></span>')+'<span class="n">'+escH(s.n)+'</span><span class="s">'+s.sz+' szt</span>'+
+          '<span class="post"><span class="post-bar"><i style="width:'+p+'%"></i></span>'+fK(przyp)+' / '+fK(plan)+' kg</span></div>'}).join('')}).join('');
+  // --- boczny panel: niedojady ---
+  const nd=(d.nied||[]).map(n=>{const rozd=ndRozdane(data,n.id),reszta=(+n.kg||0)-rozd;
+    return '<div class="chip nd"'+(W?' draggable="true" ondragstart="wDrag(event,\'nd\',\''+n.id+'\')" onclick="wTapNd(\''+n.id+'\',event)"':'')+'>'+
+      (W?'<span class="uchwyt">⋮⋮</span>':'<span></span>')+'<span class="n">♻ '+escH(ndSrcName(n.src)||'niedojady')+'</span>'+
+      '<span class="s">'+(W?'<input class="wpole" inputmode="decimal" value="'+(n.kg||0)+'" onclick="event.stopPropagation()" onchange="wNdKg(\''+n.id+'\',this.value)">':fK(n.kg))+' kg</span>'+
+      '<span class="post">'+(rozd>0?'domieszano '+fK(rozd)+' kg · ':'')+(reszta>0.5?'<b>'+fK(reszta)+' kg</b> do rozdania':'rozdane w całości')+
+      (W?' <button class="wx" onclick="event.stopPropagation();wNdUsun(\''+n.id+'\')">✕</button>':'')+'</span></div>'}).join('');
+  // --- kursy ---
+  const kol=z=>{const lista=kursyZ(data,z);
+    return '<div><div class="zad-tyt">'+z+'. zadanie <small>'+(z===1?'rano':'po południu')+' · '+lista.length+' '+(lista.length===1?'wóz':lista.length>=2&&lista.length<=4?'wozy':'wozów')+'</small></div>'+
+      lista.map(k=>kursHTML(data,k,F,W,showTime)).join('')+
+      (F?'<div class="nowy-kurs" ondragover="wOver(event)" ondragleave="wLeave(event)" ondrop="wDrop(event,\'nowy\','+z+')">Upuść tu sektor, aby utworzyć nowy wóz<br><button class="btn bs bo" style="margin-top:6px" onclick="wNowy('+z+')">+ Pusty wóz</button></div>':'')+'</div>'};
+  const leg='<div class="legenda"><span><i style="background:'+KAT_ODC.obj[0]+'"></i>objętościowe</span><span><i style="background:'+KAT_ODC.tres[0]+'"></i>treściwe</span><span><i style="background:'+KAT_ODC.dod[0]+'"></i>dodatki</span><span><i class="hnd"></i>niedojady</span><span><i class="hex"></i>dodać na sektor</span><span>· liczby w wozie = kolejność załadunku</span></div>';
+  const doneN=d.kursy.filter(k=>k.done).length;
+  let h='<div class="woz-gora"><span class="dzien-tyt">'+dzienTygPL(data).replace(/^./,c=>c.toUpperCase())+'</span>'+
+    '<div class="dzien-nav"><button class="btn bs bo" onclick="wozZmienDate(-1)">◀</button><input type="date" value="'+data+'" onchange="WZ.data=this.value||isoToday();rWoz()"><button class="btn bs bo" onclick="wozZmienDate(1)">▶</button></div>'+
+    (data!==isoToday()?'<button class="btn bs bo" onclick="WZ.data=isoToday();rWoz()">Dziś</button>':'')+
+    '<span class="woz-stat">'+doneN+' / '+d.kursy.length+' wozów zrobionych</span>'+
+    '<span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">'+(F?'<button class="btn bo" onclick="ulozWozy()">⚡ Ułóż wozy wg planu</button>':'')+
+    '<button class="btn bp" onclick="drukujKarty()">🖨 Drukuj karty załadunku</button></span></div>'+
+    (emergencyMode?'<div class="w-baner zly">⚠ DAWKI AWARYJNE — wozy liczą się z receptur awaryjnych</div>':'')+
+    (!d.kursy.length?'<div class="w-baner">Ten dzień nie ma jeszcze wozów.'+(F?' Kliknij <b>⚡ Ułóż wozy wg planu</b> (kolejność z zakładki „Planowanie wozów”) albo przeciągnij sektory na pole „nowy wóz”.':'')+'</div>':'')+
+    '<div class="woz-uklad"><aside class="boczny">'+
+      '<h3>Sektory</h3><div class="opis-b">'+(F?'Przeciągnij sektor na wóz albo stuknij, żeby wybrać wóz. ':'')+'Pasek: rozwiezione / plan na dobę.</div>'+(chipy||'<div class="opis-b">Brak sektorów – dodaj je w zakładce Dawki.</div>')+
+      '<h3 style="margin-top:14px">♻ Niedojady'+(W?' <button class="btn bs bo" style="margin-left:auto" onclick="wNdNowy()">+ Wpisz</button>':'')+'</h3><div class="opis-b">Resztki zebrane rano. Przeciągnij na wóz – zastąpią część świeżej paszy i pojawią się jako pierwszy wiersz karty.</div>'+nd+
+    '</aside><section>'+leg+'<div class="kursy-kol">'+kol(1)+(kursyZ(data,2).length||gr.some(g=>(g.z||1)>=2)?kol(2):'')+'</div>'+
+    '<div class="card" style="margin-top:4px"><div class="ch">Uwagi do dnia</div><div style="padding:8px 12px"><textarea rows="2" style="width:100%"'+(W?'':' disabled')+' onchange="dzienW(WZ.data).uwagi=this.value;zapW()">'+escH(d.uwagi||'')+'</textarea></div></div>'+
+    '</section></div>';
+  $('#woz-w').innerHTML=h;
 }
-function buildWozTbl(sorted,tsz,totKg,niedKg){
-  const freshKg=Math.max(0,totKg*tsz-niedKg);
-  const coeff=(totKg*tsz)>0?freshKg/(totKg*tsz):1;
-  let h='<table style="width:100%;border-collapse:collapse;margin-top:6px"><thead><tr><th style="text-align:left;padding:6px 8px;background:var(--pri);color:#fff;font-size:13px;border:1px solid var(--pri)">SKŁADNIK</th><th style="width:90px;padding:6px;background:var(--pri);color:#fff;font-size:13px;text-align:right;border:1px solid var(--pri)">KG</th><th style="width:100px;padding:6px;background:var(--pri);color:#fff;font-size:13px;text-align:right;border:1px solid var(--pri)">W WOZIE</th></tr></thead><tbody>';
-  let run=0;
-  if(niedKg>0){run=niedKg;h+='<tr style="background:#FFF3E0"><td style="padding:8px;font-size:16px;font-weight:700;color:#E65100;border:1px solid #ddd">🔄 NIEDOJADY</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:#E65100;border:1px solid #ddd">'+niedKg+'</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:#E65100;border:1px solid #ddd">'+niedKg+'</td></tr>'}
-  sorted.forEach((sk,idx)=>{const s=gS(sk.s);if(!s)return;const nw=r2(sk.kg*tsz*coeff,1);run=r2(run+nw,1);
-    const bg=idx%2===0?'#fff':'#f8f8f8';
-    h+='<tr style="background:'+bg+'"><td style="padding:8px;font-size:15px;font-weight:600;border:1px solid #ddd">'+s.nazwa+'</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;border:1px solid #ddd">'+nw+'</td><td style="padding:8px;font-size:20px;font-weight:800;text-align:right;color:var(--pri);border:1px solid #ddd">'+run+'</td></tr>'});
-  const razem=r2(freshKg+niedKg,1);
-  h+='</tbody><tfoot><tr><td style="padding:10px 8px;font-size:16px;font-weight:800;background:var(--amber-bg);border:2px solid var(--amber)">RAZEM W WOZIE</td><td style="padding:10px;background:var(--amber-bg);border:2px solid var(--amber)"></td><td style="padding:10px;font-size:26px;font-weight:900;text-align:right;background:var(--amber-bg);color:var(--amber);border:2px solid var(--amber)">'+razem+'</td></tr></tfoot></table>';
-  return h;
+function kursHTML(data,k,F,W,showTime){
+  const g=gr.find(x=>x.id===k.gid),m=masaK(k),sk=skladK(k),ex=extrasK(k),skala=Math.max(m.razem,wozPoj||0,1),kolor=g?grKol(g.id):'#999';
+  const cnt={obj:0,tres:0,dod:0};let nr=0;
+  const segNd=m.nd>0?'<div class="seg nd" style="width:'+(m.nd/skala*100)+'%" title="Niedojady – '+fK(m.nd)+' kg">'+(m.nd/skala>.04?'♻':'')+'</div>':'';
+  const segs=sk.map(x=>{const s=gS(x.s),kat=s?.kat||'obj',c=KAT_ODC[kat]||KAT_ODC.obj,col=c[cnt[kat]++%3],pr=x.kg/skala*100;nr++;
+    return '<div class="seg" style="width:'+pr+'%;background:'+col+'" title="'+nr+'. '+escH(s?.nazwa)+' – '+fK(x.kg)+' kg">'+(pr>3.2?nr:'')+'</div>'}).join('');
+  const segEx=m.ex>0?'<div class="seg ex" style="width:'+(m.ex/skala*100)+'%" title="Dodać na sektor – '+fK1(m.ex)+' kg">'+(m.ex/skala>.04?'+':'')+'</div>':'';
+  const przekr=wozPoj>0&&m.razem>wozPoj;
+  const wiersze=k.rz.map(r=>{const o=sekBy(r.sid),plan=planSek(r.sid),kg=kgRz(r),p=plan>0?kg/plan*100:null,s=o?.s;
+    return '<div class="kw"><span class="dot" style="background:'+(o?grKol(o.g.id):'#999')+'"></span><span><b>'+escH(s?.n||'(usunięty sektor)')+'</b>'+(o&&o.g.id!==k.gid?' <small style="color:var(--txt2)">'+escH(o.g.nazwa)+'</small>':'')+'</span>'+
+      '<span class="r ukr">'+(s?.sz??'–')+'</span><span class="r ukr">'+fK(plan)+'</span>'+
+      '<span>'+(W?'<input class="wpole" inputmode="decimal" placeholder="'+Math.round(plan)+'" value="'+(r.kg!=null&&r.kg!==''?r.kg:'')+'" onchange="wRzKg(\''+k.id+'\',\''+escH(r.sid)+'\',this.value)">':'<b>'+fK(kg)+'</b>')+'</span>'+
+      '<span class="r">'+(s&&s.sz>0?fK1(kg/s.sz):'–')+'</span><span class="r '+(p==null?'':Math.abs(p-100)<=3?'ok':p<100?'mn':'wi')+'">'+(p==null?'–':Math.round(p)+'%')+'</span>'+
+      (F?'<button class="wx" onclick="wRzUsun(\''+k.id+'\',\''+escH(r.sid)+'\')">✕</button>':'<span></span>')+'</div>'}).join('');
+  const ndW=(k.nd||[]).map((x,i)=>'<div class="kw ndw"><span>♻</span><span>Niedojady'+(x.src?' z '+escH(ndSrcName(x.src)):'')+'</span><span class="ukr"></span><span class="ukr"></span>'+
+      '<span>'+(W?'<input class="wpole" inputmode="decimal" value="'+(x.kg||0)+'" onchange="wKNdKg(\''+k.id+'\','+i+',this.value)">':'<b>'+fK(x.kg)+'</b>')+'</span><span></span><span></span>'+
+      (W?'<button class="wx" onclick="wKNdUsun(\''+k.id+'\','+i+')">✕</button>':'<span></span>')+'</div>').join('');
+  const exW=ex.length?'<div class="kurs-dod"><span class="tyt">Dodać na sektor</span>'+ex.map(x=>'<div>➕ <b>'+escH(gS(x.s)?.nazwa||'?')+'</b> '+fK1(x.kg)+' kg <span style="color:var(--txt2)">przed wydaniem na <b>'+escH(x.sek)+'</b></span></div>').join('')+'</div>':'';
+  const dt=k.done?new Date(k.done):null,hh=dt?String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0'):'';
+  return '<div class="kurs'+(k.done?' zrobiony':'')+'"'+(F||W?' ondragover="wOver(event)" ondragleave="wLeave(event)" ondrop="wDrop(event,\'kurs\',\''+k.id+'\')"':'')+'>'+
+    '<div class="kurs-pas" style="background:'+kolor+'"></div>'+
+    '<div class="kurs-nag">'+(F?'<span class="uchwyt" draggable="true" ondragstart="wDrag(event,\'kurs\',\''+k.id+'\')" title="Przeciągnij, żeby zmienić kolejność">⋮⋮</span>':'')+
+      '<span class="kurs-nr">Wóz '+nrKursu(data,k.id)+'</span>'+
+      (F?'<select onchange="wRec(\''+k.id+'\',this.value)"><option value="">— receptura —</option>'+gr.map(x=>'<option value="'+x.id+'"'+(x.id===k.gid?' selected':'')+'>'+escH(x.nazwa)+'</option>').join('')+'</select>':'<b>'+escH(g?.nazwa||'bez receptury')+'</b>')+
+      '<span class="prawo">'+(W?'<button class="btn bs '+(k.done?'bp':'bo')+'" onclick="wDone(\''+k.id+'\')">'+(k.done?'✓ Zrobiony'+(showTime?' '+hh:''):'Gotowe')+'</button>':(k.done?'<span class="ok">✓ zrobiony</span>':''))+
+      (F?'<button class="wx b" title="W górę" onclick="wPrzesun(\''+k.id+'\',-1)">▲</button><button class="wx b" title="W dół" onclick="wPrzesun(\''+k.id+'\',1)">▼</button><button class="wx b" title="Przenieś do '+(k.z===1?2:1)+'. zadania" onclick="wZad(\''+k.id+'\')">⇄</button>':'')+
+      '<button class="wx b" title="Karta załadunku" onclick="drukujKarty(\''+k.id+'\')">🖨</button>'+(F?'<button class="wx" title="Usuń wóz" onclick="wUsun(\''+k.id+'\')">✕</button>':'')+'</span></div>'+
+    '<div class="wanna-wrap"><div class="wanna'+(m.razem>0?'':' pusta')+'"'+(przekr?' style="box-shadow:inset 0 0 0 2px var(--red)"':'')+'>'+segNd+segs+segEx+(wozPoj>0&&m.razem>wozPoj?'<div class="poj" style="left:'+(wozPoj/skala*100)+'%"></div>':'')+'</div>'+
+      '<div class="wanna-opis"><span>Masa: <b>'+fK(m.razem)+' kg</b>'+(m.nd>0||m.ex>0?' (świeży TMR '+fK(m.sw)+(m.nd>0?' + ♻ '+fK(m.nd):'')+(m.ex>0?' + dodatki '+fK1(m.ex):'')+')':'')+'</span>'+
+      '<span>'+(wozPoj>0?(przekr?'<b style="color:var(--red)">ponad pojemność o '+fK(m.razem-wozPoj)+' kg</b>':'pojemność '+fK(wozPoj)+' kg · '+Math.round(m.razem/wozPoj*100)+'%'):(g?fK1(recKg(g))+' kg/szt':'wybierz recepturę'))+'</span></div></div>'+
+    '<div class="kurs-wiersze">'+(wiersze||ndW?'<div class="kw nag"><span></span><span style="text-align:left">Sektor</span><span class="ukr">szt</span><span class="ukr">plan kg</span><span>zadane kg</span><span>kg/szt</span><span>% planu</span><span></span></div>':'')+ndW+wiersze+'</div>'+exW+
+    (F||W?'<div class="upusc">Upuść sektor lub niedojady</div>':'')+'</div>';
 }
-function recalcWoz(){
-  const nied=+($('#woz-nied')?$('#woz-nied').value:0)||0;
-  const wrap=$('#woz-table-wrap');if(!wrap)return;
-  const idx=(wozLog[isoToday()]||[]).length;if(idx>=wozOrder.length)return;
-  const gid=wozOrder[idx];const g=gr.find(x=>x.id===gid);if(!g)return;
-  const tsz=g.se.reduce((a,s)=>a+s.sz,0);const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
-  const surOrder=sur.map(s=>s.id);
-  const sorted=g.sk.filter(x=>x.kg>0).sort((a,b)=>surOrder.indexOf(a.s)-surOrder.indexOf(b.s));
-  wrap.innerHTML=buildWozTbl(sorted,tsz,totKg,nied);
+// --- edycja ---
+function wFind(id){return dzienW(WZ.data).kursy.find(k=>k.id===id)}
+function wRec(id,gid){const k=wFind(id);if(!k)return;k.gid=gid;zapW();rWoz()}
+function wRzKg(id,sid,v){const k=wFind(id);if(!k)return;const r=k.rz.find(x=>x.sid===sid);if(!r)return;r.kg=String(v).trim()===''?null:pf(v);zapW();rWoz()}
+function wRzUsun(id,sid){const k=wFind(id);if(!k)return;k.rz=k.rz.filter(x=>x.sid!==sid);zapW();rWoz()}
+function wUsun(id){const d=dzienW(WZ.data),k=wFind(id);if(!k)return;if(!confirm('Usunąć Wóz '+nrKursu(WZ.data,id)+'?'))return;d.kursy=d.kursy.filter(x=>x.id!==id);zapW();rWoz()}
+function wNowy(z,gid,sid){const d=dzienW(WZ.data);const k={id:uid(),z,gid:gid||'',rz:sid?[{sid,kg:null}]:[],nd:[],done:null};
+  const lastIdx=d.kursy.map(x=>x.z).lastIndexOf(z);d.kursy.splice(lastIdx<0?d.kursy.length:lastIdx+1,0,k);zapW();rWoz();return k}
+function wDodajSek(id,sid){const k=wFind(id),o=sekBy(sid);if(!k||!o)return;
+  if(k.rz.some(r=>r.sid===sid)){toast(o.s.n+' jest już na tym wozie');return}
+  if(!k.gid)k.gid=o.g.id;k.rz.push({sid,kg:null});zapW();rWoz();toast(o.s.n+' → Wóz '+nrKursu(WZ.data,id))}
+function wDodajNd(id,nid){const d=dzienW(WZ.data),k=wFind(id),n=(d.nied||[]).find(x=>x.id===nid);if(!k||!n)return;
+  const reszta=(+n.kg||0)-ndRozdane(WZ.data,nid);if(reszta<=0.5){toast('Te niedojady są już rozdane');return}
+  k.nd=k.nd||[];k.nd.push({nid,src:n.src,kg:Math.round(reszta)});zapW();rWoz();toast('♻ '+Math.round(reszta)+' kg → Wóz '+nrKursu(WZ.data,id))}
+function wKNdKg(id,i,v){const k=wFind(id);if(!k||!k.nd[i])return;k.nd[i].kg=pf(v);zapW();rWoz()}
+function wKNdUsun(id,i){const k=wFind(id);if(!k)return;k.nd.splice(i,1);zapW();rWoz()}
+function wPrzesun(id,dir){const d=dzienW(WZ.data),k=wFind(id);const lista=kursyZ(WZ.data,k.z),i=lista.indexOf(k),j=i+dir;if(j<0||j>=lista.length)return;
+  const a=d.kursy.indexOf(k),b=d.kursy.indexOf(lista[j]);[d.kursy[a],d.kursy[b]]=[d.kursy[b],d.kursy[a]];zapW();rWoz()}
+function wZad(id){const k=wFind(id);if(!k)return;const d=dzienW(WZ.data);d.kursy=d.kursy.filter(x=>x!==k);k.z=k.z===1?2:1;
+  const lastIdx=d.kursy.map(x=>x.z).lastIndexOf(k.z);d.kursy.splice(lastIdx<0?d.kursy.length:lastIdx+1,0,k);zapW();rWoz()}
+function wDone(id){const data=WZ.data,k=wFind(id);if(!k)return;const g=gr.find(x=>x.id===k.gid),nr=nrKursu(data,id);
+  if(!wozLog[data])wozLog[data]=[];
+  if(k.done){if(!confirm('Cofnąć oznaczenie „zrobiony” dla Wozu '+nr+'?'))return;k.done=null;wozLog[data]=wozLog[data].filter(e=>e.kid!==id)}
+  else{const now=new Date(),m=masaK(k);k.done=now.getTime();
+    wozLog[data]=wozLog[data].filter(e=>e.kid!==id);
+    wozLog[data].push({kid:id,gid:k.gid,nazwa:'Wóz '+nr+' — '+(g?g.nazwa:'?'),czas:String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'),niedojady:Math.round(m.nd),niedDir:m.nd>0?(g?g.nazwa:''):'',kg:Math.round(m.razem),timestamp:now.toISOString()})}
+  zapW();saM('logi');rWoz();toast(k.done?'Wóz '+nr+' zapisany':'Cofnięto')}
+// niedojady w panelu bocznym
+function wNdNowy(){
+  const opts=gr.map(g=>g.se.map(s=>'<option value="'+escH(sekKey(g,s))+'">'+escH(s.n)+' ('+escH(g.nazwa)+')</option>').join('')).join('');
+  opM('Niedojady zebrane rano','<div class="fg" style="margin-bottom:8px"><label>Skąd (sektor)</label><select id="wn-s"><option value="">— nie podano —</option>'+opts+'</select></div><div class="fg"><label>Ilość (kg)</label><input id="wn-k" inputmode="decimal" style="font-size:18px;font-weight:700"></div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="wNdZapisz()">Zapisz</button>');
+  setTimeout(()=>{const i=$('#wn-k');if(i)i.focus()},50)}
+function wNdZapisz(){const kg=pf($('#wn-k').value);if(kg<=0){toast('Podaj ilość');return}const d=dzienW(WZ.data);d.nied=d.nied||[];d.nied.push({id:uid(),src:$('#wn-s').value,kg});clM();zapW();rWoz()}
+function wNdKg(id,v){const n=(dzienW(WZ.data).nied||[]).find(x=>x.id===id);if(!n)return;n.kg=pf(v);zapW();rWoz()}
+function wNdUsun(id){const d=dzienW(WZ.data);if(ndRozdane(WZ.data,id)>0&&!confirm('Te niedojady są już domieszane do wozów – usunąć je też z wozów?'))return;
+  d.nied=(d.nied||[]).filter(x=>x.id!==id);d.kursy.forEach(k=>{k.nd=(k.nd||[]).filter(x=>x.nid!==id)});zapW();rWoz()}
+// wybór wozu stuknięciem (telefon)
+function wWybor(tyt,fn,zNowym){const l=[...kursyZ(WZ.data,1),...kursyZ(WZ.data,2)];
+  window._wFn=fn;
+  opM(tyt,'<div class="wybor-woz">'+l.map(k=>{const g=gr.find(x=>x.id===k.gid);return '<button class="btn bo" onclick="clM();_wFn(\''+k.id+'\')"><b>Wóz '+nrKursu(WZ.data,k.id)+'</b> · '+k.z+'. zad. · '+escH(g?.nazwa||'bez receptury')+' · '+fK(masaK(k).razem)+' kg</button>'}).join('')+
+    (zNowym?'<button class="btn bp" onclick="clM();_wFn(\'nowy1\')">+ Nowy wóz (1. zadanie)</button><button class="btn bp" onclick="clM();_wFn(\'nowy2\')">+ Nowy wóz (2. zadanie)</button>':'')+'</div>','<button class="btn bo" onclick="clM()">Anuluj</button>')}
+function wTapSek(sid){const o=sekBy(sid);if(!o)return;wWybor('Dodaj „'+o.s.n+'” do wozu',id=>{if(id==='nowy1'||id==='nowy2')wNowy(+id.slice(-1),o.g.id,sid);else wDodajSek(id,sid)},true)}
+function wTapNd(nid,e){if(e&&e.target.tagName==='INPUT')return;wWybor('Domieszaj niedojady do wozu',id=>wDodajNd(id,nid),false)}
+// przeciąganie (komputer)
+function wDrag(e,typ,id){e.dataTransfer.setData('text/plain',typ+'::'+id);e.dataTransfer.effectAllowed='move'}
+function wOver(e){e.preventDefault();e.currentTarget.classList.add('cel-ok')}
+function wLeave(e){e.currentTarget.classList.remove('cel-ok')}
+function wDrop(e,cel,arg){e.preventDefault();e.currentTarget.classList.remove('cel-ok');
+  const v=e.dataTransfer.getData('text/plain');const i=v.indexOf('::');if(i<0)return;const typ=v.slice(0,i),id=v.slice(i+2);
+  const F=lvl('woz')>=3;
+  if(cel==='nowy'){if(!F)return;if(typ==='sek'){const o=sekBy(id);wNowy(arg,o?o.g.id:'',id)}
+    else if(typ==='kurs'){const k=wFind(id);if(k&&k.z!==arg)wZad(id)}return}
+  if(typ==='sek'&&F)wDodajSek(arg,id);
+  else if(typ==='nd')wDodajNd(arg,id);
+  else if(typ==='kurs'&&F&&id!==arg){const d=dzienW(WZ.data),k=wFind(id),t=wFind(arg);if(!k||!t)return;
+    d.kursy=d.kursy.filter(x=>x!==k);k.z=t.z;d.kursy.splice(d.kursy.indexOf(t),0,k);zapW();rWoz()}
 }
-function wozGotowe(){
-  const today=isoToday();if(!wozLog[today])wozLog[today]=[];
-  const idx=wozLog[today].length;if(idx>=wozOrder.length)return;
-  const gid=wozOrder[idx];const g=gr.find(x=>x.id===gid);
-  const now=new Date();const czas=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  const nied=+($('#woz-nied')?$('#woz-nied').value:0)||0;
-  const niedDir=$('#woz-nied-dir')?$('#woz-nied-dir').value:'';
-  wozLog[today].push({gid,nazwa:g?g.nazwa:'?',czas,niedojady:nied,niedDir,timestamp:now.toISOString()});
-  SV('wozLog',wozLog);sa();rWoz();toast('Wóz '+(idx+1)+' zapisany');
+// --- karty załadunku ---
+function drukujKarty(kid){
+  const data=WZ.data,lista=[...kursyZ(data,1),...kursyZ(data,2)];
+  if(!lista.length){toast('Brak wozów na ten dzień – ułóż wozy wg planu');return}
+  if(kid){drukujKartyWybrane([kid]);return}
+  opM('Drukuj karty załadunku — '+data,
+    '<div style="display:flex;gap:6px;margin-bottom:8px"><button class="btn bs bo" onclick="$$(\'#wyb-woz input\').forEach(x=>x.checked=true)">Zaznacz wszystkie</button><button class="btn bs bo" onclick="$$(\'#wyb-woz input\').forEach(x=>x.checked=false)">Odznacz</button></div>'+
+    '<div class="wybor-woz" id="wyb-woz">'+lista.map(k=>{const g=gr.find(x=>x.id===k.gid),m=masaK(k);
+      return '<label><input type="checkbox" value="'+k.id+'" checked><span><b>Wóz '+nrKursu(data,k.id)+'</b> · '+k.z+'. zadanie · '+escH(g?.nazwa||'bez receptury')+'<br><small>'+escH(k.rz.map(r=>sekBy(r.sid)?.s.n||'?').join(', ')||'brak sektorów')+' · '+fK(m.razem)+' kg</small></span></label>'}).join('')+'</div>',
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="const ids=$$(\'#wyb-woz input:checked\').map(x=>x.value);if(!ids.length){toast(\'Zaznacz co najmniej jeden wóz\');return}clM();drukujKartyWybrane(ids)">🖨 Drukuj</button>');
 }
+function drukujKartyWybrane(ids){
+  const data=WZ.data,d=wozDni[data]||{},lista=[...kursyZ(data,1),...kursyZ(data,2)].filter(k=>ids.includes(k.id));if(!lista.length)return;
+  const karty=lista.map(k=>{
+    const g=gr.find(x=>x.id===k.gid),m=masaK(k);let nar=0,i=0;
+    const nd=(k.nd||[]).map(x=>{nar+=+x.kg||0;return '<tr class="nd"><td class="nr">♻</td><td class="l">NIEDOJADY'+(x.src?' <small>z '+escH(ndSrcName(x.src))+'</small>':'')+'</td><td><b>'+fK(x.kg)+'</b></td><td>'+fK(nar)+'</td><td></td></tr>'}).join('');
+    const sk=skladK(k).map(x=>{nar+=x.kg;return '<tr><td class="nr">'+(++i)+'</td><td class="l">'+escH(gS(x.s)?.nazwa||'?')+'</td><td><b>'+fK(x.kg)+'</b></td><td>'+fK(nar)+'</td><td></td></tr>'}).join('');
+    const sek=k.rz.map(r=>{const o=sekBy(r.sid),kg=kgRz(r),s=o?.s;
+      const ex=(s?.sk_extra||[]).filter(x=>x.kg>0).map(x=>escH(gS(x.s)?.nazwa||'?')+' '+fK1(x.kg*(+s.sz||0))+' kg');
+      return (ex.length?'<tr class="ex"><td class="l" colspan="5">➕ Przed wydaniem na <b>'+escH(s.n)+'</b> dosypać do wozu i wymieszać: '+ex.join(' · ')+'</td></tr>':'')+
+        '<tr><td class="l"><b>'+escH(s?.n||'?')+'</b>'+(o?' <small>('+escH(o.g.nazwa)+')</small>':'')+'</td><td>'+(s?.sz??'')+'</td><td><b>'+fK(kg)+'</b></td><td>'+(s&&s.sz>0?fK1(kg/s.sz):'')+'</td><td></td></tr>'}).join('');
+    return '<div class="karta"><div class="kh"><span class="wn">WÓZ '+nrKursu(data,k.id)+'</span><span>'+k.z+'. zadanie ('+(k.z===1?'rano':'po południu')+')</span><span>'+escH(g?.nazwa||'bez receptury')+'</span><span class="dt">'+data+'</span></div>'+
+      (emergencyMode?'<div class="awar">⚠ DAWKI AWARYJNE</div>':'')+
+      '<table class="zal"><colgroup><col style="width:15mm"><col><col style="width:38mm"><col style="width:38mm"><col style="width:16mm"></colgroup><thead><tr><th>Kol.</th><th class="l">Składnik</th><th>Załadować kg</th><th>W wozie kg</th><th>✓</th></tr></thead><tbody>'+nd+sk+'</tbody>'+
+      '<tfoot><tr><td></td><td class="l">RAZEM W WOZIE</td><td>'+fK(m.tot)+'</td><td></td><td></td></tr></tfoot></table>'+
+      '<table class="zal"><colgroup><col><col style="width:24mm"><col style="width:32mm"><col style="width:26mm"><col style="width:16mm"></colgroup><thead><tr><th class="l">Rozwieźć na sektory (w tej kolejności)</th><th>Sztuk</th><th>kg</th><th>kg/szt</th><th>✓</th></tr></thead><tbody>'+sek+'</tbody></table>'+
+      (d.uwagi?'<div class="uw"><b>Uwagi:</b> '+escH(d.uwagi)+'</div>':'')+'</div>'}).join('');
+  printDoc('Karty załadunku — '+data+' ('+dzienTygPL(data)+')',karty,'portrait',
+    '.karta{break-after:page;page-break-after:always}.karta:last-child{break-after:auto;page-break-after:auto}'+
+    '.kh{display:flex;gap:7mm;align-items:baseline;flex-wrap:wrap;font-size:15pt;font-weight:700;margin:1mm 0 4mm}.kh .wn{font-size:26pt;font-weight:900}.kh .dt{margin-left:auto;font-size:11pt;font-weight:600}'+
+    '.awar{font-size:15pt;font-weight:900;border:2pt solid #000;padding:2mm;text-align:center;margin-bottom:3mm}'+
+    'table.zal{margin-bottom:6mm}table.zal th,table.zal td{font-size:15pt;padding:2.2mm 3mm;text-align:right}table.zal th{font-size:11pt}'+
+    '.l{text-align:left!important}td.nr{text-align:center;font-weight:800}small{font-size:70%;font-weight:600}'+
+    'tr.nd td{font-weight:800}tr.ex td{font-size:12pt}tfoot td{font-size:17pt;font-weight:900;border-top:1.8pt solid #000}.uw{font-size:13pt;margin-top:2mm}');
+}
+
 // Raport wozów (for zootechnik)
 function rWozRap(){
   if($('#wr-date')&&!$('#wr-date').value)$('#wr-date').value=isoToday();
   const d=$('#wr-date')?$('#wr-date').value:isoToday();
-  const log=wozLog[d]||[];
-  let h='<table class="dt"><thead><tr><th>#</th><th>Grupa</th><th>Godzina</th><th>Niedojady</th><th>Trafiły do</th></tr></thead><tbody>';
+  const kd=wozDni[d]?.kursy||[];const log=(wozLog[d]||[]).filter(l=>!l.kid||kd.some(k=>k.id===l.kid&&k.done));
+  let h='<table class="dt"><thead><tr><th>#</th><th>Wóz</th><th>Godzina</th><th>Niedojady</th><th>Trafiły do</th></tr></thead><tbody>';
   log.forEach((l,i)=>{h+='<tr><td>'+(i+1)+'</td><td>'+l.nazwa+'</td><td style="font-weight:700">'+l.czas+'</td><td>'+(l.niedojady>0?'<span style="color:var(--amber);font-weight:700">'+l.niedojady+' kg</span>':'—')+'</td><td>'+(l.niedDir||'—')+'</td></tr>'});
   if(!log.length)h+='<tr><td colspan="5" style="text-align:center;color:var(--txt2)">Brak wozów na '+d+'</td></tr>';
   h+='</tbody></table>';
@@ -1735,7 +1998,7 @@ function pDek(){
 }
 
 (function(){
-  const s=LD('sess',null);if(s&&Object.assign({},DEF_PASSES,passes||{})[s]){cR=s;showApp()}
+  const s=LD('sess',null);if(s&&Object.assign({},DEF_PASSES,passes||{})[s]&&(s==='tworca'||!BLOK[s])){cR=s;showApp()}startCfg();
   const cm=new Date().getMonth();
   ['ml-m','hr-m','ob-m','kal-m'].forEach(id=>{const e=$('#'+id);if(e)fMS(e,cm)});
   $('#ml-v').addEventListener('change',rMl);$('#ml-m').addEventListener('change',rMl);
