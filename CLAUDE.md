@@ -5,7 +5,7 @@ Właściciel nie jest programistą: odpowiadaj po polsku, prostym językiem, bez
 ## Co to jest
 - Aplikacja PWA w jednym pliku `index.html` (HTML + CSS + JS, bez budowania). `sw.js` = tryb offline, `manifest.json` = instalacja na telefonie.
 - Dane: Firebase Firestore, projekt `ohz-bobrowniki-po-app`, kolekcja `ohz_data` (dokument na moduł + `config` z uprawnieniami i blokadami ról).
-- Logowanie: Firebase Authentication, jedno konto na rolę: `<rola>@ohz-bobrowniki.app` (tworca, zootechnik, prezes, magazynier, paszowoz).
+- Logowanie: Firebase Authentication, jedno konto na rolę: `<rola>@ohz-bobrowniki.app` (tworca, zootechnik, prezes, magazynier, paszowoz). Ekran logowania ma tylko pole hasła — aplikacja sprawdza je kolejno na kontach ról, więc hasła ról muszą być różne.
 - Zasady bazy: `firestore.rules` — po zmianie trzeba je wkleić w konsoli Firebase (Firestore → Rules → Publish).
 
 ## Zasady

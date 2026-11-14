@@ -177,7 +177,7 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
 </style>
 </head>
 <body>
-<div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><select id="lr"><option value="zootechnik">Zootechnik</option><option value="prezes">Prezes</option><option value="magazynier">Magazynier</option><option value="paszowoz">Wóz paszowy</option><option value="tworca">Twórca</option></select><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button id="lb" onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
+<div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button id="lb" onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
 <div id="app">
 <header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳</span><button class="blo" onclick="forceRefresh()" title="Odśwież dane" style="font-size:16px;padding:2px 6px">⟳</button><span id="hdr-extra"></span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
 <nav class="tab-bar" id="tbar"></nav>
@@ -335,16 +335,26 @@ function cfgSave(o){SV('upr',UPR);SV('blok',BLOK);if(fbDb)return fbDb.collection
 const AUTH_DOMAIN_ROLE='@ohz-bobrowniki.app';
 function roleFromUser(u){if(!u||!u.email)return null;const r=u.email.toLowerCase().replace(AUTH_DOMAIN_ROLE,'');return ROLE_ORDER.includes(r)&&u.email.toLowerCase().endsWith(AUTH_DOMAIN_ROLE)?r:null}
 function doLogin(){
-  const p=$('#lp').value.trim(),r=$('#lr').value;if(!p){$('#le').textContent='Wpisz hasło';return}
+  const p=$('#lp').value;if(!p.trim()){$('#le').textContent='Wpisz hasło';return}
   if(!fbAuth){$('#le').textContent='Brak połączenia z serwerem logowania';return}
+  if(p.length<6){$('#le').textContent='Nieprawidłowe hasło';return}
   $('#le').textContent='Logowanie…';$('#lb').disabled=true;
-  fbAuth.signInWithEmailAndPassword(r+AUTH_DOMAIN_ROLE,p).then(()=>{
-    $('#le').textContent='';
-    if(fbDb)fbDb.collection('ohz_data').doc('config').set({lastLogin:{[r]:Date.now()}},{merge:true}).catch(()=>{});
-  }).catch(e=>{
-    const c=e&&e.code||'';
-    $('#le').textContent=c==='auth/network-request-failed'?'Brak internetu — pierwsze logowanie wymaga połączenia':c==='auth/too-many-requests'?'Zbyt wiele prób — spróbuj za kilka minut':'Nieprawidłowe hasło';
-  }).finally(()=>{$('#lb').disabled=false});
+  // Hasło decyduje o roli: sprawdzamy konta ról po kolei (ostatnio używana rola najpierw)
+  const last=LD('lastRole',null),kol=last&&ROLE_ORDER.includes(last)?[last,...ROLE_ORDER.filter(r=>r!==last)]:ROLE_ORDER.slice();
+  const proba=i=>{
+    if(i>=kol.length){$('#le').textContent='Nieprawidłowe hasło';$('#lb').disabled=false;return}
+    const r=kol[i];
+    fbAuth.signInWithEmailAndPassword(r+AUTH_DOMAIN_ROLE,p).then(()=>{
+      $('#le').textContent='';$('#lb').disabled=false;SV('lastRole',r);
+      if(fbDb)fbDb.collection('ohz_data').doc('config').set({lastLogin:{[r]:Date.now()}},{merge:true}).catch(()=>{});
+    }).catch(e=>{
+      const c=e&&e.code||'';
+      if(c==='auth/network-request-failed'){$('#le').textContent='Brak internetu — pierwsze logowanie wymaga połączenia';$('#lb').disabled=false;return}
+      if(c==='auth/too-many-requests'){$('#le').textContent='Zbyt wiele prób — spróbuj za kilka minut';$('#lb').disabled=false;return}
+      proba(i+1);
+    });
+  };
+  proba(0);
 }
 function zmienHaslo(){
   const u=fbAuth&&fbAuth.currentUser;if(!u){toast('Brak połączenia');return}
@@ -405,7 +415,7 @@ function rUz(){
   $('#uz-w').innerHTML=
     '<div class="card"><div class="ch"><span>Konta (role) <small style="font-weight:500;color:var(--txt2)">'+ROLE_ORDER.filter(r=>r==='tworca'||!BLOK[r]).length+' aktywnych</small></span></div>'+
     '<div class="tw"><table class="dt uz"><thead><tr><th class="l">Rola</th><th class="l">Konto logowania</th><th class="l">Status</th><th class="l">Ostatnie logowanie</th><th></th></tr></thead><tbody>'+wiersze+'</tbody></table></div>'+
-    '<div class="uz-info">Każda rola ma jedno konto — przy logowaniu wybiera się rolę i wpisuje hasło. Hasło zmienia się przyciskiem 🔒 u góry ekranu — zmienia hasło roli, na którą jesteś zalogowany (żeby zmienić hasło innej roli, zaloguj się na nią). Awaryjnie: konsola Firebase → Authentication → usuń konto i utwórz je ponownie z nowym hasłem. Zablokowana rola zostaje od razu wylogowana na wszystkich urządzeniach i nie może się zalogować.</div></div>'+
+    '<div class="uz-info">Każda rola loguje się jednym hasłem — wszyscy pracownicy danej roli używają tego samego, a po haśle aplikacja rozpoznaje rolę, więc hasła muszą być różne dla każdej roli. Hasło zmienia się przyciskiem 🔒 u góry ekranu — zmienia hasło roli, na którą jesteś zalogowany (żeby zmienić hasło innej roli, zaloguj się na nią). Awaryjnie: konsola Firebase → Authentication → usuń konto i utwórz je ponownie z nowym hasłem. Zablokowana rola zostaje od razu wylogowana na wszystkich urządzeniach i nie może się zalogować.</div></div>'+
     '<div class="card"><div class="ch"><span>Co może każda rola <small style="font-weight:500;color:var(--txt2)">zmiana działa od razu na wszystkich urządzeniach</small></span><button class="btn bs bo" onclick="uzDomyslne()">Przywróć domyślne</button></div>'+
     '<div class="tw"><table class="dt upr" style="max-width:900px"><thead><tr><th class="l">Zakładka</th>'+ROLE_ORDER.map(r=>'<th><span class="rola-zn" style="background:'+ROLE_KOL[r]+'">'+RL[r]+'</span></th>').join('')+'</tr></thead><tbody>'+macierz+'</tbody></table></div>'+
     '<div class="uz-info"><b>brak</b> – zakładka ukryta · <b>podgląd</b> – tylko odczyt, bez edycji i wydruków (filtry miesiąca i dat działają) · <b>wpis</b> – Wóz paszowy: zadane kilogramy, niedojady, „Gotowe”; układ wozów ustala zootechnik · <b>pełny</b> – wszystko. Twórca ma zawsze pełny dostęp, żeby nie dało się zablokować aplikacji.</div></div>';
