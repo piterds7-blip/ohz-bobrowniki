@@ -8,6 +8,7 @@
 <link rel="manifest" href="manifest.json">
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <title>OHZ Bobrowniki</title>
 <style>
 :root{--pri:#1B5E20;--pri-l:#2E7D32;--pri-bg:#E8F5E9;--bg:#F5F5F0;--card:#fff;--txt:#1A1A1A;--txt2:#5F6B5F;--brd:#D5DCD5;--amber:#B8860B;--amber-bg:#FFF8E7;--red:#C62828;--red-bg:#FFEBEE;--blue:#1565C0;--radius:8px;--shadow:0 1px 3px rgba(0,0,0,.08);--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--mono:"SF Mono","Cascadia Code",Consolas,monospace}
@@ -17,8 +18,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--txt);line-height:1
 .login-box{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border-radius:16px;padding:32px 24px;width:100%;max-width:340px;text-align:center;border:1px solid rgba(255,255,255,.2)}
 .login-box h1{font-size:22px;margin-bottom:4px}.login-box .sub{font-size:13px;opacity:.75;margin-bottom:24px}
 .login-icon{font-size:48px;margin-bottom:12px}
-.login-box input{width:100%;padding:12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.15);color:#fff;font:500 16px var(--font);margin-bottom:12px;text-align:center}
-.login-box input::placeholder{color:rgba(255,255,255,.5)}.login-box input:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.25)}
+.login-box input,.login-box select{width:100%;padding:12px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:rgba(255,255,255,.15);color:#fff;font:500 16px var(--font);margin-bottom:12px;text-align:center}
+.login-box input::placeholder{color:rgba(255,255,255,.5)}.login-box select option{color:#000}.login-box input:focus,.login-box select:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.25)}
 .login-box button{width:100%;padding:12px;border:none;border-radius:8px;background:#fff;color:var(--pri);font:700 15px var(--font);cursor:pointer}
 .login-error{color:#FFCDD2;font-size:13px;margin-top:8px;min-height:20px}
 #app{display:none}
@@ -176,7 +177,7 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
 </style>
 </head>
 <body>
-<div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
+<div id="login-screen"><div class="login-box"><div class="login-icon">🔑</div><h1>OHZ Bobrowniki</h1><div class="sub">Aplikacja zarządzania fermą</div><select id="lr"><option value="zootechnik">Zootechnik</option><option value="prezes">Prezes</option><option value="magazynier">Magazynier</option><option value="paszowoz">Wóz paszowy</option><option value="tworca">Twórca</option></select><input type="password" id="lp" placeholder="Wpisz hasło" autofocus><button id="lb" onclick="doLogin()">Zaloguj</button><div class="login-error" id="le"></div></div></div>
 <div id="app">
 <header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳</span><button class="blo" onclick="forceRefresh()" title="Odśwież dane" style="font-size:16px;padding:2px 6px">⟳</button><span id="hdr-extra"></span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
 <nav class="tab-bar" id="tbar"></nav>
@@ -310,9 +311,8 @@ function prn(t,h,orient,raw){
 function fMS(el,s){el.innerHTML=MO.map((m,i)=>'<option value="'+i+'"'+(i===s?' selected':'')+'>'+m+'</option>').join('')}
 function fmtDate(d){return d.getDate().toString().padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()}
 
-// AUTH — logowanie hasłem roli; dostęp do zakładek ustawia Twórca w zakładce „Użytkownicy”
-const DEF_PASSES={tworca:'tworca',zootechnik:'admin',prezes:'prezes',magazynier:'magazyn',paszowoz:'paszowoz'};
-let passes=LD('passes',null),cR=null;
+// AUTH — logowanie przez Firebase Authentication (konto na rolę); dostęp do zakładek ustawia Twórca w zakładce „Użytkownicy”
+let cR=null;try{localStorage.removeItem('ohz_passes')}catch(e){}
 const ROLE_ORDER=['tworca','zootechnik','prezes','magazynier','paszowoz'];
 const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
 const ROLE_KOL={tworca:'#24493A',zootechnik:'#C0773A',prezes:'#3D6FA3',magazynier:'#00838F',paszowoz:'#7A5BA6'};
@@ -330,23 +330,38 @@ let UPR=LD('upr',null)||JSON.parse(JSON.stringify(DEF_UPR)),BLOK=LD('blok',{})||
 function lvl(t){if(!cR)return 0;if(cR==='tworca')return 3;if(t==='uzytkownicy')return 0;const v=UPR?.[cR]?.[t];return v==null?(DEF_UPR[cR]?.[t]??0):+v}
 function canPass(){return cR==='tworca'}
 function canEdit(){return cR==='tworca'||cR==='zootechnik'||cR==='magazynier'}
-function cfgSave(o){SV('passes',passes);SV('upr',UPR);SV('blok',BLOK);if(fbDb)return fbDb.collection('ohz_data').doc('config').set(o,{merge:true}).catch(e=>{console.warn('config',e);toast('Nie udało się zapisać w chmurze')})}
+function cfgSave(o){SV('upr',UPR);SV('blok',BLOK);if(fbDb)return fbDb.collection('ohz_data').doc('config').set(o,{merge:true}).catch(e=>{console.warn('config',e);toast('Nie udało się zapisać w chmurze')})}
+// Logowanie przez Firebase Authentication: każda rola ma konto <rola>@ohz-bobrowniki.app
+const AUTH_DOMAIN_ROLE='@ohz-bobrowniki.app';
+function roleFromUser(u){if(!u||!u.email)return null;const r=u.email.toLowerCase().replace(AUTH_DOMAIN_ROLE,'');return ROLE_ORDER.includes(r)&&u.email.toLowerCase().endsWith(AUTH_DOMAIN_ROLE)?r:null}
 function doLogin(){
-  const p=$('#lp').value.trim();if(!p){$('#le').textContent='Wpisz hasło';return}
-  const pw=Object.assign({},DEF_PASSES,passes||{});let role=null;
-  for(const r of ROLE_ORDER)if(pw[r]===p){role=r;break}
-  if(!role){$('#le').textContent='Nieprawidłowe hasło';return}
-  if(role!=='tworca'&&BLOK[role]){$('#le').textContent='Dostęp dla tej roli jest zablokowany — skontaktuj się z twórcą';return}
-  cR=role;SV('sess',role);
-  if(fbDb)fbDb.collection('ohz_data').doc('config').set({lastLogin:{[role]:Date.now()}},{merge:true}).catch(()=>{});
-  showApp();
+  const p=$('#lp').value.trim(),r=$('#lr').value;if(!p){$('#le').textContent='Wpisz hasło';return}
+  if(!fbAuth){$('#le').textContent='Brak połączenia z serwerem logowania';return}
+  $('#le').textContent='Logowanie…';$('#lb').disabled=true;
+  fbAuth.signInWithEmailAndPassword(r+AUTH_DOMAIN_ROLE,p).then(()=>{
+    $('#le').textContent='';
+    if(fbDb)fbDb.collection('ohz_data').doc('config').set({lastLogin:{[r]:Date.now()}},{merge:true}).catch(()=>{});
+  }).catch(e=>{
+    const c=e&&e.code||'';
+    $('#le').textContent=c==='auth/network-request-failed'?'Brak internetu — pierwsze logowanie wymaga połączenia':c==='auth/too-many-requests'?'Zbyt wiele prób — spróbuj za kilka minut':'Nieprawidłowe hasło';
+  }).finally(()=>{$('#lb').disabled=false});
 }
-function doLogout(){cR=null;localStorage.removeItem('ohz_sess');$('#app').style.display='none';$('#login-screen').style.display='flex';$('#lp').value='';$('#le').textContent=''}
+function zmienHaslo(){
+  const u=fbAuth&&fbAuth.currentUser;if(!u){toast('Brak połączenia');return}
+  const stare=prompt('Zmiana hasła roli „'+(RL[cR]||cR)+'”.\nPodaj OBECNE hasło:');if(!stare)return;
+  const nowe=prompt('Podaj NOWE hasło (min. 6 znaków):');if(!nowe)return;
+  if(nowe.length<6){alert('Hasło musi mieć co najmniej 6 znaków');return}
+  if(prompt('Powtórz NOWE hasło:')!==nowe){alert('Hasła się różnią — nic nie zmieniono');return}
+  u.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(u.email,stare))
+    .then(()=>u.updatePassword(nowe)).then(()=>alert('Hasło zmienione. Przekaż nowe hasło osobom z tej roli.'))
+    .catch(e=>alert(e&&(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'||e.code==='auth/invalid-login-credentials')?'Obecne hasło jest nieprawidłowe':'Nie udało się zmienić hasła: '+(e&&e.code||e)));
+}
+function doLogout(){localStorage.removeItem('ohz_sess');if(fbAuth)fbAuth.signOut().finally(()=>location.reload());else location.reload()}
 function goTab(t){const b=document.querySelector('.tab-btn[data-t="'+t+'"]');if(b)b.click()}
 function showApp(){
   $('#login-screen').style.display='none';$('#app').style.display='block';
   $('#urb').textContent=RL[cR]||cR;
-  let ex='';
+  let ex='<button class="blo" onclick="zmienHaslo()" title="Zmień hasło tej roli" style="margin-right:4px">🔒</button>';
   if(canPass())ex+='<button class="blo" onclick="goTab(\'uzytkownicy\')" title="Użytkownicy i dostępy" style="margin-right:4px">👥</button>';
   if(canEdit())ex+='<button class="blo" onclick="exportBackup()" style="margin-right:4px">⬇</button><button class="blo" onclick="importBackup()" style="margin-right:4px">⬆</button>';
   $('#hdr-extra').innerHTML=ex;
@@ -356,11 +371,11 @@ function showApp(){
 let _tabSig='';
 function startCfg(){if(!fbDb||window._cfgOn)return;window._cfgOn=true;
   fbDb.collection('ohz_data').doc('config').onSnapshot(doc=>{if(!doc.exists)return;const d=doc.data();
-    if(d.passes){passes=d.passes;SV('passes',passes)}
+    if(d.passes&&cR==='tworca')fbDb.collection('ohz_data').doc('config').update({passes:firebase.firestore.FieldValue.delete()}).catch(()=>{});
     if(d.upr){UPR=d.upr;SV('upr',UPR)}
     BLOK=d.blok||{};SV('blok',BLOK);LASTL=d.lastLogin||{};SV('lastL',LASTL);
     if(!cR)return;
-    if(cR!=='tworca'&&BLOK[cR]){doLogout();$('#le').textContent='Dostęp dla tej roli został zablokowany przez twórcę';return}
+    if(cR!=='tworca'&&BLOK[cR]){alert('Dostęp dla tej roli został zablokowany przez twórcę');doLogout();return}
     const sig=TAB_ORDER.map(t=>lvl(t)).join('');
     const ab=document.querySelector('.tab-btn.active'),cur=ab?ab.dataset.t:null;
     if(sig!==_tabSig){bTabs(cur)}
@@ -378,20 +393,19 @@ function applyRO(){setTimeout(()=>{
 // ===== ZAKŁADKA: UŻYTKOWNICY (tylko Twórca) =====
 function rUz(){
   if(cR!=='tworca'){$('#uz-w').innerHTML='';return}
-  const pw=Object.assign({},DEF_PASSES,passes||{});
   const fmtT=ts=>ts?new Date(ts).toLocaleString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'jeszcze nikt się nie logował';
   const wiersze=ROLE_ORDER.map(r=>{const bl=r!=='tworca'&&BLOK[r];
     return '<tr'+(bl?' style="opacity:.55"':'')+'><td class="l"><div class="osoba"><span class="avatar" style="background:'+ROLE_KOL[r]+'">'+RL[r].split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase()+'</span><div><b>'+RL[r]+'</b>'+(r===cR?' <span class="znacznik">to Ty</span>':'')+'<small>'+(r==='tworca'?'pełny dostęp, zawsze':TAB_ORDER.filter(t=>t!=='uzytkownicy'&&lvl2(r,t)>0).map(t=>TL[t]).join(', ')||'brak dostępu do zakładek')+'</small></div></div></td>'+
-      '<td class="l"><div style="display:flex;gap:4px;align-items:center"><input type="password" id="pw-'+r+'" value="'+escH(pw[r]||'')+'" autocomplete="off" style="width:150px"><button class="btn bs bo" onclick="const i=$(\'#pw-'+r+'\');i.type=i.type===\'password\'?\'text\':\'password\'" title="Pokaż / ukryj">👁</button></div></td>'+
+      '<td class="l" style="font-size:12px">'+r+AUTH_DOMAIN_ROLE+'</td>'+
       '<td class="l"><span class="status '+(bl?'off':'on')+'">'+(bl?'zablokowane':'aktywne')+'</span></td>'+
       '<td class="l" style="color:var(--txt2);font-size:12px">'+fmtT(LASTL[r])+'</td>'+
       '<td class="l">'+(r!=='tworca'?'<button class="btn bs '+(bl?'bo':'bd')+'" onclick="uzBlok(\''+r+'\')">'+(bl?'Odblokuj':'Zablokuj')+'</button>':'')+'</td></tr>'}).join('');
   const macierz=TAB_ORDER.filter(t=>t!=='uzytkownicy').map(t=>'<tr><td class="l"><b>'+TL[t]+'</b></td><td><span class="lv lv3 lvb">pełny</span></td>'+
     ROLE_ORDER.slice(1).map(r=>{const v=lvl2(r,t);return '<td><select class="lv lv'+v+'" onchange="uzUpr(\''+r+'\',\''+t+'\',this.value)">'+POZ_ZAKL[t].map(x=>'<option value="'+x+'"'+(x===v?' selected':'')+'>'+POZIOMY[x]+'</option>').join('')+'</select></td>'}).join('')+'</tr>').join('');
   $('#uz-w').innerHTML=
-    '<div class="card"><div class="ch"><span>Konta (role) <small style="font-weight:500;color:var(--txt2)">'+ROLE_ORDER.filter(r=>r==='tworca'||!BLOK[r]).length+' aktywnych</small></span><button class="btn bp" onclick="uzZapiszHasla()">Zapisz hasła</button></div>'+
-    '<div class="tw"><table class="dt uz"><thead><tr><th class="l">Rola</th><th class="l">Hasło do logowania</th><th class="l">Status</th><th class="l">Ostatnie logowanie</th><th></th></tr></thead><tbody>'+wiersze+'</tbody></table></div>'+
-    '<div class="uz-info">Każda rola loguje się jednym hasłem — wszyscy pracownicy danej roli używają tego samego. Hasła muszą być różne dla każdej roli (po haśle aplikacja rozpoznaje rolę). Zablokowana rola zostaje od razu wylogowana na wszystkich urządzeniach i nie może się zalogować.</div></div>'+
+    '<div class="card"><div class="ch"><span>Konta (role) <small style="font-weight:500;color:var(--txt2)">'+ROLE_ORDER.filter(r=>r==='tworca'||!BLOK[r]).length+' aktywnych</small></span></div>'+
+    '<div class="tw"><table class="dt uz"><thead><tr><th class="l">Rola</th><th class="l">Konto logowania</th><th class="l">Status</th><th class="l">Ostatnie logowanie</th><th></th></tr></thead><tbody>'+wiersze+'</tbody></table></div>'+
+    '<div class="uz-info">Każda rola ma jedno konto — przy logowaniu wybiera się rolę i wpisuje hasło. Hasło zmienia się przyciskiem 🔒 u góry ekranu — zmienia hasło roli, na którą jesteś zalogowany (żeby zmienić hasło innej roli, zaloguj się na nią). Awaryjnie: konsola Firebase → Authentication → usuń konto i utwórz je ponownie z nowym hasłem. Zablokowana rola zostaje od razu wylogowana na wszystkich urządzeniach i nie może się zalogować.</div></div>'+
     '<div class="card"><div class="ch"><span>Co może każda rola <small style="font-weight:500;color:var(--txt2)">zmiana działa od razu na wszystkich urządzeniach</small></span><button class="btn bs bo" onclick="uzDomyslne()">Przywróć domyślne</button></div>'+
     '<div class="tw"><table class="dt upr" style="max-width:900px"><thead><tr><th class="l">Zakładka</th>'+ROLE_ORDER.map(r=>'<th><span class="rola-zn" style="background:'+ROLE_KOL[r]+'">'+RL[r]+'</span></th>').join('')+'</tr></thead><tbody>'+macierz+'</tbody></table></div>'+
     '<div class="uz-info"><b>brak</b> – zakładka ukryta · <b>podgląd</b> – tylko odczyt, bez edycji i wydruków (filtry miesiąca i dat działają) · <b>wpis</b> – Wóz paszowy: zadane kilogramy, niedojady, „Gotowe”; układ wozów ustala zootechnik · <b>pełny</b> – wszystko. Twórca ma zawsze pełny dostęp, żeby nie dało się zablokować aplikacji.</div></div>';
@@ -400,11 +414,6 @@ function lvl2(r,t){if(r==='tworca')return 3;const v=UPR?.[r]?.[t];return v==null
 function uzUpr(r,t,v){UPR=JSON.parse(JSON.stringify(UPR||{}));UPR[r]=UPR[r]||{};UPR[r][t]=+v;cfgSave({upr:UPR});toast(RL[r]+' – '+TL[t]+': '+POZIOMY[+v]);rUz()}
 function uzDomyslne(){if(!confirm('Przywrócić domyślne uprawnienia wszystkich ról?'))return;UPR=JSON.parse(JSON.stringify(DEF_UPR));cfgSave({upr:UPR});rUz();toast('Przywrócono domyślne uprawnienia')}
 function uzBlok(r){const nb=!BLOK[r];if(nb&&!confirm('Zablokować rolę „'+RL[r]+'”? Wszyscy zalogowani tą rolą zostaną wylogowani.'))return;BLOK=Object.assign({},BLOK,{[r]:nb});cfgSave({blok:{[r]:nb}});rUz();toast(nb?'Zablokowano: '+RL[r]:'Odblokowano: '+RL[r])}
-function uzZapiszHasla(){
-  const np={};for(const r of ROLE_ORDER){const v=($('#pw-'+r)?.value||'').trim();if(v.length<4){toast('Hasło dla roli „'+RL[r]+'” musi mieć co najmniej 4 znaki');return}np[r]=v}
-  const vals=Object.values(np);if(new Set(vals).size!==vals.length){toast('Każda rola musi mieć inne hasło');return}
-  passes=np;cfgSave({passes});toast('Hasła zapisane');
-}
 // Backup export/import
 function exportBackup(){
   const data={};Object.entries(MODULES).forEach(([mod,h])=>{data[mod]=h.get()});
@@ -605,7 +614,8 @@ gr.forEach(g=>{if(g.realSz==null)g.realSz=g.se.reduce((a,s)=>a+s.sz,0)*(g.z||1)}
 const firebaseConfig={apiKey:"AIzaSyC3vYPG90_aMEaKWJuhmzD1tj5lXT8Zh5o",authDomain:"ohz-bobrowniki-po-app.firebaseapp.com",projectId:"ohz-bobrowniki-po-app",storageBucket:"ohz-bobrowniki-po-app.firebasestorage.app",messagingSenderId:"90224575465",appId:"1:90224575465:web:07614843e409aafd600178"};
 let fbDb=null,fbInitialLoaded=false,fbApplyingRemote=false;
 const fbTimers={},fbEditTs={};
-try{firebase.initializeApp(firebaseConfig);fbDb=firebase.firestore()}catch(e){console.warn('Firebase init failed',e)}
+let fbAuth=null;
+try{firebase.initializeApp(firebaseConfig);fbDb=firebase.firestore();fbAuth=firebase.auth()}catch(e){console.warn('Firebase init failed',e)}
 const MODULES={
   surowce:{get:()=>({sur,gtMap}),set:d=>{if(d.sur)sur=d.sur;if(d.gtMap)gtMap=d.gtMap},sv:()=>{SV('sur2',sur);SV('gtMap',gtMap)}},
   grupy:{get:()=>({gr,wozOrder,emergencyMode,grNormal,grEmergency}),set:d=>{if(d.gr)gr=d.gr;if(d.wozOrder)wozOrder=d.wozOrder;if(d.emergencyMode!==undefined)emergencyMode=d.emergencyMode;if(d.grNormal)grNormal=d.grNormal;if(d.grEmergency)grEmergency=d.grEmergency},sv:()=>{SV('gr2',gr);SV('wozOrder',wozOrder);SV('emergMode',emergencyMode);SV('grNormal',grNormal);SV('grEmerg',grEmergency)}},
@@ -1998,7 +2008,11 @@ function pDek(){
 }
 
 (function(){
-  const s=LD('sess',null);if(s&&Object.assign({},DEF_PASSES,passes||{})[s]&&(s==='tworca'||!BLOK[s])){cR=s;showApp()}startCfg();
+  localStorage.removeItem('ohz_sess');
+  if(fbAuth)fbAuth.onAuthStateChanged(u=>{const r=roleFromUser(u);
+    if(u&&!r){fbAuth.signOut();return}
+    if(r&&!cR){if(r!=='tworca'&&BLOK[r]){alert('Dostęp dla tej roli jest zablokowany — skontaktuj się z twórcą');doLogout();return}cR=r;startCfg();showApp()}
+  });
   const cm=new Date().getMonth();
   ['ml-m','hr-m','ob-m','kal-m'].forEach(id=>{const e=$('#'+id);if(e)fMS(e,cm)});
   $('#ml-v').addEventListener('change',rMl);$('#ml-m').addEventListener('change',rMl);

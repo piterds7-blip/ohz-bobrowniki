@@ -1,0 +1,45 @@
+rules_version = '2';
+// Zasady bezpieczeństwa bazy OHZ Bobrowniki.
+// Wkleić w konsoli Firebase: Firestore Database -> Rules -> Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Zalogowany na jedno z 5 kont ról aplikacji
+    function rola() {
+      return request.auth.token.email.split('@')[0];
+    }
+    function zalogowany() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'tworca@ohz-bobrowniki.app',
+          'zootechnik@ohz-bobrowniki.app',
+          'prezes@ohz-bobrowniki.app',
+          'magazynier@ohz-bobrowniki.app',
+          'paszowoz@ohz-bobrowniki.app'
+        ];
+    }
+    // Rola zablokowana przez Twórcę w zakładce "Użytkownicy" traci dostęp do danych
+    function niezablokowany() {
+      return rola() == 'tworca'
+        || !(get(/databases/$(database)/documents/ohz_data/config).data.get('blok', {}).get(rola(), false));
+    }
+
+    // Ustawienia (uprawnienia, blokady): odczyt dla zalogowanych,
+    // zmiany tylko Twórca; pozostali mogą zapisać jedynie godzinę swojego logowania
+    match /ohz_data/config {
+      allow read: if zalogowany();
+      allow write: if zalogowany() && (
+        rola() == 'tworca'
+        || (resource != null
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastLogin']))
+      );
+    }
+
+    // Dane fermy
+    match /ohz_data/{dokument} {
+      allow read, write: if dokument != 'config' && zalogowany() && niezablokowany();
+    }
+
+    // Wszystko inne zablokowane
+  }
+}
