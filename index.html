@@ -81,6 +81,72 @@ table.fe tfoot td{font-weight:700;background:var(--amber-bg);color:var(--amber);
 .mox{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt2)}
 .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}.toast.show{opacity:1}
 .rap-sub{}
+/* ===== Stado (AfiFarm) ===== */
+.afi-gora{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#tab-stado .chips{display:flex;gap:6px;flex-wrap:wrap}
+#tab-stado .chip{border:1px solid var(--brd);background:#fff;border-radius:16px;padding:6px 13px;font:600 12px var(--font);color:var(--txt2);cursor:pointer}
+#tab-stado .chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.afi-fresh{display:flex;gap:8px;align-items:center;background:var(--pri-bg);border:1px solid #B9D8BB;border-radius:8px;padding:7px 12px;font-size:12.5px;flex-wrap:wrap}
+.afi-fresh .dot{width:10px;height:10px;border-radius:50%;background:#2E7D32;display:inline-block}
+.afi-fresh.stare{background:var(--red-bg);border-color:#EF9A9A;color:var(--red)}.afi-fresh.stare .dot{background:var(--red)}
+.afi-row{display:flex;gap:12px;align-items:flex-start}
+.afi-card{padding:12px 14px}
+.afi-card h3{font-size:14px;margin:0 0 8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.afi-card .sub,#tab-stado .sub,#dk-s .sub{font-size:11.5px;color:var(--txt2);font-weight:400}
+.cnt{background:var(--pri);color:#fff;border-radius:10px;padding:1px 8px;font-size:12px}.cnt.r{background:var(--red)}.cnt.a{background:var(--amber)}.cnt.g{background:#777}
+table.afi-t{border-collapse:collapse;width:100%;font-size:12.5px}
+table.afi-t th{background:var(--pri);color:#fff;font-size:10.5px;text-transform:uppercase;padding:6px 7px;text-align:right;white-space:nowrap}
+table.afi-t th:first-child,table.afi-t td.t{text-align:left}
+table.afi-t td{padding:5px 7px;border-bottom:1px solid #E6EAE6;text-align:right;font-family:var(--mono);white-space:nowrap}
+table.afi-t td.t{font-family:var(--font)}
+table.afi-t td.st{white-space:normal;min-width:110px}#tab-stado .afi-t .tag{white-space:normal;display:inline-block;line-height:1.3}
+table.afi-t td.b{font-weight:700;color:var(--red)}
+table.afi-t td.fresh{color:var(--red);font-weight:700}
+.afi-t .up,.afi-t .dn{color:var(--red);font-weight:700}.afi-t .ok,.afi-kpi .ok{color:var(--pri-l);font-weight:700}.afi-kpi .dn{color:var(--red);font-weight:700}
+.afi-nr{font-weight:700;color:var(--pri);text-decoration:underline;cursor:pointer}
+#tab-stado .tag{font:600 11px var(--font);padding:1px 7px;border-radius:9px;background:#eee;color:#444;white-space:nowrap}
+#tab-stado .tag.c{background:#E3F2FD;color:var(--blue)}#tab-stado .tag.n{background:var(--amber-bg);color:var(--amber)}#tab-stado .tag.w{background:var(--red-bg);color:var(--red)}
+.afi-bar{display:inline-block;height:9px;background:var(--red);border-radius:2px;vertical-align:middle;margin-left:6px}
+.afi-note{background:#FFF8E1;border-left:4px solid var(--amber);padding:7px 11px;font-size:12px;margin-top:8px;line-height:1.5}
+.afi-pusto{padding:16px;color:var(--txt2);font-size:13px;text-align:center}
+.afi-filtry{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.afi-filtry .lbl{font:700 10.5px var(--font);color:var(--txt2);text-transform:uppercase;margin:0 2px 0 8px}
+.afi-kpi{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.afi-kpi .k{flex:1;min-width:150px;background:#fff;border:1px solid var(--brd);border-radius:8px;padding:9px 12px}
+.afi-kpi .k b{display:block;font:700 21px var(--mono);color:var(--pri)}
+.afi-kpi .k span{font-size:10.5px;color:var(--txt2);text-transform:uppercase;font-weight:600}
+.afi-kpi .k em{font-style:normal;font-size:12px}
+.afi-svg{width:100%;height:auto;display:block}
+.afi-leg{display:flex;gap:14px;font-size:12px;margin:6px 0 0 4px;flex-wrap:wrap}
+.afi-leg i{display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.afi-szukaj{display:flex;gap:8px;align-items:center}.afi-szukaj label{font-weight:700;font-size:13px}.afi-szukaj input{width:120px;font:700 16px var(--mono);padding:6px 8px}
+.afi-dane{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 16px}
+.afi-dane div{border-bottom:1px solid #EEF1EE;padding:4px 0}.afi-dane span{display:block;font-size:10.5px;color:var(--txt2);text-transform:uppercase;font-weight:600}.afi-dane b{font-size:14px}.afi-dane small{font-weight:400;color:var(--txt2)}
+.afi-map .pill{display:inline-block;border:1px solid var(--pri);color:var(--pri);border-radius:12px;padding:2px 9px;font-size:12px;font-weight:600;margin:2px 3px 2px 0;background:#fff}
+.afi-map .pill a{cursor:pointer;color:var(--red);margin-left:4px}
+.afi-sel{font-size:12px;padding:3px;max-width:260px}
+.afi-progi label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px solid #EEF1EE}
+.afi-progi input{width:70px;text-align:right}
+.afi-info{background:#E3F2FD;border:1px solid #90CAF9;border-radius:8px;padding:8px 12px;font-size:12px;line-height:1.5;margin:8px}
+#dk-s th.afi-th{background:#455A64}
+#dk-s td.afi-td{background:#F5F7F8;text-align:center;font-family:var(--mono)}
+.afi-real{display:inline-block;background:#ECEFF1;border:1px dashed #90A4AE;border-radius:4px;padding:1px 7px;font-weight:700;color:#37474F}
+.afi-diff{font:700 11.5px var(--mono);padding:1px 7px;border-radius:9px}.afi-diff.z{background:var(--pri-bg);color:var(--pri)}.afi-diff.p{background:var(--amber-bg);color:var(--amber)}.afi-diff.m{background:var(--red-bg);color:var(--red)}
+.cnt.b{background:#1565C0}
+.afi-cond{border:2px solid #90CAF9}
+table.afi-t tr.afi-dbl td{background:#FFEBEE}
+.afi-pg{font:700 11px var(--font);text-transform:uppercase;color:var(--pri);margin:10px 0 2px}
+.afi-lc{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.afi-lc .lc{background:#fff;border:1px solid var(--brd);border-radius:8px;padding:8px 12px;min-width:150px;flex:1;cursor:pointer}
+.afi-lc .lc b{display:block;font:700 22px var(--mono);color:var(--pri)}.afi-lc .lc span{font-size:10.5px;font-weight:700;color:var(--txt2);text-transform:uppercase}.afi-lc .lc em{font-size:11px;color:var(--txt2)}
+.afi-lc .lc.on{border:2px solid var(--pri);background:var(--pri-bg)}.afi-lc .lc.w b{color:var(--red)}.afi-lc .lc.a b{color:var(--amber)}
+.afi-cena{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px;flex-wrap:wrap}.afi-cena input{padding:4px 6px;font-size:13px;width:auto!important;min-width:0}.afi-cena input[type=date]{width:150px!important}.afi-cv{font-family:var(--mono);color:var(--pri)}
+.afi-chist{font-size:12px;margin:-4px 0 10px;color:var(--txt2)}.afi-chist .pill{display:inline-block;border:1px solid var(--brd);border-radius:12px;padding:1px 8px;margin:2px;background:#fff}.afi-chist a{cursor:pointer;color:var(--red);margin-left:3px}
+.afi-kpi .k b.dn{color:var(--red)}
+@media(max-width:560px){.afi-lc .lc{min-width:44%}.afi-cena{margin-left:0}}
+@media(max-width:900px){.afi-row{flex-direction:column}.afi-row>div,.afi-row>.card{width:100%}}
+@media(max-width:560px){.afi-kpi .k{min-width:44%}.afi-kpi .k b{font-size:18px}.afi-fresh{font-size:11.5px}}
+
 /* ===== Wóz paszowy (układ dnia) ===== */
 .woz-gora{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
 .dzien-tyt{font:700 20px var(--font);color:var(--pri);margin-right:4px}
@@ -224,6 +290,7 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
   <div class="card"><div class="ch">Sekcja 4 — Koszt na sztukę wg kategorii pasz</div><div class="tw" id="kos-s4"></div></div>
 </section>
 <section class="tp" id="tab-woz"><div id="woz-w"></div></section>
+<section class="tp" id="tab-stado"><div id="afi-w"></div></section>
 <section class="tp" id="tab-uzytkownicy"><div id="uz-w"></div></section>
 <section class="tp" id="tab-raporty">
   <div style="display:flex;background:var(--card);border:1px solid var(--brd);border-radius:var(--radius);margin-bottom:8px;overflow-x:auto">
@@ -316,15 +383,15 @@ let cR=null;try{localStorage.removeItem('ohz_passes')}catch(e){}
 const ROLE_ORDER=['tworca','zootechnik','prezes','magazynier','paszowoz'];
 const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
 const ROLE_KOL={tworca:'#24493A',zootechnik:'#C0773A',prezes:'#3D6FA3',magazynier:'#00838F',paszowoz:'#7A5BA6'};
-const TAB_ORDER=['mleko','surowce','dawki','woz','awaryjne','cielaki','koszty','planowanie','raporty','harmonogram','obecnosc','nasienie','kalendarz','uzytkownicy'];
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',woz:'Wóz paszowy',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz',uzytkownicy:'Użytkownicy'};
+const TAB_ORDER=['mleko','surowce','dawki','woz','stado','awaryjne','cielaki','koszty','planowanie','raporty','harmonogram','obecnosc','nasienie','kalendarz','uzytkownicy'];
+const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',woz:'Wóz paszowy',stado:'Stado (AfiFarm)',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz',uzytkownicy:'Użytkownicy'};
 const POZIOMY=['brak','podgląd','wpis','pełny'];
-const POZ_ZAKL={mleko:[0,1,3],surowce:[0,1,3],dawki:[0,1,3],woz:[0,1,2,3],awaryjne:[0,1,3],cielaki:[0,1,3],koszty:[0,1,3],planowanie:[0,1,3],raporty:[0,1,3],harmonogram:[0,1,3],obecnosc:[0,1,3],nasienie:[0,1,3],kalendarz:[0,1,3]};
+const POZ_ZAKL={mleko:[0,1,3],surowce:[0,1,3],dawki:[0,1,3],woz:[0,1,2,3],stado:[0,1,3],awaryjne:[0,1,3],cielaki:[0,1,3],koszty:[0,1,3],planowanie:[0,1,3],raporty:[0,1,3],harmonogram:[0,1,3],obecnosc:[0,1,3],nasienie:[0,1,3],kalendarz:[0,1,3]};
 const DEF_UPR={
-  zootechnik:{mleko:3,surowce:3,dawki:3,woz:3,awaryjne:3,cielaki:3,koszty:3,planowanie:3,raporty:3,harmonogram:3,obecnosc:3,nasienie:3,kalendarz:3},
-  prezes:{mleko:1,surowce:1,dawki:1,woz:0,awaryjne:0,cielaki:1,koszty:1,planowanie:0,raporty:1,harmonogram:3,obecnosc:3,nasienie:1,kalendarz:1},
-  magazynier:{mleko:0,surowce:3,dawki:0,woz:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0},
-  paszowoz:{mleko:0,surowce:0,dawki:0,woz:2,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0}
+  zootechnik:{mleko:3,surowce:3,dawki:3,woz:3,stado:3,awaryjne:3,cielaki:3,koszty:3,planowanie:3,raporty:3,harmonogram:3,obecnosc:3,nasienie:3,kalendarz:3},
+  prezes:{mleko:1,surowce:1,dawki:1,woz:0,stado:1,awaryjne:0,cielaki:1,koszty:1,planowanie:0,raporty:1,harmonogram:3,obecnosc:3,nasienie:1,kalendarz:1},
+  magazynier:{mleko:0,surowce:3,dawki:0,woz:0,stado:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0},
+  paszowoz:{mleko:0,surowce:0,dawki:0,woz:2,stado:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0}
 };
 let UPR=LD('upr',null)||JSON.parse(JSON.stringify(DEF_UPR)),BLOK=LD('blok',{})||{},LASTL=LD('lastL',{})||{};
 function lvl(t){if(!cR)return 0;if(cR==='tworca')return 3;if(t==='uzytkownicy')return 0;const v=UPR?.[cR]?.[t];return v==null?(DEF_UPR[cR]?.[t]??0):+v}
@@ -394,7 +461,7 @@ function startCfg(){if(!fbDb||window._cfgOn)return;window._cfgOn=true;
 // Podgląd: zablokuj edycję w aktywnej zakładce (filtry daty/miesiąca w .fr zostają aktywne)
 function applyRO(){setTimeout(()=>{
   const ab=document.querySelector('.tab-btn.active');if(!ab)return;const t=ab.dataset.t;
-  if(t==='woz'||t==='uzytkownicy'||lvl(t)>=3)return;
+  if(t==='woz'||t==='stado'||t==='uzytkownicy'||lvl(t)>=3)return;
   const tp=$('#tab-'+t);if(!tp)return;
   tp.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.closest('.fr'))el.disabled=true});
   tp.querySelectorAll('button').forEach(el=>{if(el.classList.contains('tab-btn'))return;if(el.closest('.fr')&&!el.classList.contains('bpdf'))return;el.style.display='none'});
@@ -448,7 +515,7 @@ function importBackup(){
     }catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
 function bTabs(keep){const ts=TAB_ORDER.filter(t=>lvl(t)>0);_tabSig=TAB_ORDER.map(t=>lvl(t)).join('');const first=ts.includes(keep)?keep:ts[0];const b=$('#tbar');b.innerHTML=ts.map(t=>'<button class="tab-btn'+(t===first?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(first)$('#tab-'+first).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(first)oT(first);else $$('.tp').forEach(p=>p.classList.remove('active'))}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,koszty:rKoszty,planowanie:rPlan,woz:rWoz,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,uzytkownicy:rUz};if(m[t])m[t]();applyRO()}
+function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,koszty:rKoszty,planowanie:rPlan,woz:rWoz,stado:rStado,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,uzytkownicy:rUz};if(t==='dawki')afiStart();if(m[t])m[t]();applyRO()}
 // ===== CLEAN PRINT DOCUMENTS (own window, fills A4) =====
 function printDoc(title,body,orient,extraCss){
   const css='@page{size:A4 '+orient+';margin:8mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
@@ -626,6 +693,7 @@ let fbDb=null,fbInitialLoaded=false,fbApplyingRemote=false;
 const fbTimers={},fbEditTs={};
 let fbAuth=null;
 try{firebase.initializeApp(firebaseConfig);fbDb=firebase.firestore();fbAuth=firebase.auth()}catch(e){console.warn('Firebase init failed',e)}
+let afiCfg=LD('afiCfg',{map:{},prog:{}});
 const MODULES={
   surowce:{get:()=>({sur,gtMap}),set:d=>{if(d.sur)sur=d.sur;if(d.gtMap)gtMap=d.gtMap},sv:()=>{SV('sur2',sur);SV('gtMap',gtMap)}},
   grupy:{get:()=>({gr,wozOrder,emergencyMode,grNormal,grEmergency}),set:d=>{if(d.gr)gr=d.gr;if(d.wozOrder)wozOrder=d.wozOrder;if(d.emergencyMode!==undefined)emergencyMode=d.emergencyMode;if(d.grNormal)grNormal=d.grNormal;if(d.grEmergency)grEmergency=d.grEmergency},sv:()=>{SV('gr2',gr);SV('wozOrder',wozOrder);SV('emergMode',emergencyMode);SV('grNormal',grNormal);SV('grEmerg',grEmergency)}},
@@ -634,6 +702,7 @@ const MODULES={
   nasienie:{get:()=>({nas}),set:d=>{if(d.nas)nas=d.nas},sv:()=>SV('nas2',nas)},
   kalendarz:{get:()=>({kal}),set:d=>{if(d.kal)kal=d.kal},sv:()=>SV('kal',kal)},
   cielaki:{get:()=>({ciData}),set:d=>{if(d.ciData)ciData=d.ciData},sv:()=>SV('ciData3',ciData)},
+  afi:{get:()=>({afiCfg}),set:d=>{if(d.afiCfg)afiCfg=d.afiCfg;if(AFI.krowy)afiPrzelicz()},sv:()=>SV('afiCfg',afiCfg)},
   wozy:{get:()=>({wozDni,wozPoj}),set:d=>{if(d.wozDni)wozDni=d.wozDni;if(d.wozPoj!=null)wozPoj=d.wozPoj},sv:()=>{SV('wozDni',wozDni);SV('wozPoj',wozPoj)}},
   logi:{get:()=>({hist,lastDed,wozLog,dawkiHist}),set:d=>{
     if(d.hist){Object.keys(d.hist).forEach(k=>{if(!hist[k])hist[k]=d.hist[k]})}
@@ -889,7 +958,9 @@ function rDk(){
 
   // Sectors - colored by group, with extra ingredients per sector
   const grpColors=['#E8F5E9','#FFF3E0','#E3F2FD','#FCE4EC','#F3E5F5','#E0F7FA','#FFF8E1','#EFEBE9','#F1F8E9','#E8EAF6'];
-  let sh='<table class="dt" style="min-width:auto"><thead><tr><th style="width:80px">Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th><th style="width:130px">Grupa techn.</th><th style="width:30px"></th></tr></thead><tbody>';
+  const AF=afiDawkiOn();
+  let sh=AF?'<div class="afi-info"><b>Sztuki</b> (pole do wpisania) – techniczne, sterują ilością TMR i kartami załadunku. <b>🔒 AfiFarm</b> – liczba zwierząt w sektorze wg AfiFarm (aktualizowana automatycznie), tylko do podglądu i statystyk – <u>nie zmienia TMR</u>. Przy grupach karmionych <b>2× dziennie</b> porównanie uwzględnia zadania: sztuki × 2, a kg TMR / krowę = kg na sektor × 2 ÷ krowy wg AfiFarm (cała doba).</div>':'';
+  sh+='<table class="dt" style="min-width:auto"><thead><tr><th style="width:80px">Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th>'+(AF?'<th class="afi-th">🔒 AfiFarm</th><th class="afi-th">Różnica</th><th class="afi-th">kg TMR / krowę realnie</th>':'')+'<th style="width:130px">Grupa techn.</th><th style="width:30px"></th></tr></thead><tbody>';
   gr.forEach((g,gi)=>{
     const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
     const bgColor=grpColors[gi%grpColors.length];
@@ -900,6 +971,7 @@ function rDk(){
       sh+='<tr style="background:'+bgColor+';'+(si===0?borderTop:'')+'"><td style="font-size:11px;font-weight:700;color:var(--pri)">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+' <button style="background:var(--pri);color:#fff;border:none;border-radius:3px;font-size:9px;padding:0 4px;cursor:pointer" onclick="addSekExtra('+gi+','+si+')" title="Dodaj surowiec do sektora">+</button></td>';
       sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=pf(this.value);sa();scheduleAutoSnap();rDk();rSur()"></td>';
       sh+='<td>'+r2(totKg,1)+'</td><td style="font-weight:700">'+r2(totKg*sk.sz,0)+'</td>';
+      if(AF){const zz=g.z||1,da=' data-afi-sek="'+escH(sk.n)+'" data-afi-z="'+zz+'" data-afi-sz="'+((+sk.sz||0)*zz)+'" data-afi-kg="'+(totKg*sk.sz*zz)+'"';sh+='<td class="afi-td"'+da+' data-afi-typ="n"></td><td class="afi-td"'+da+' data-afi-typ="r"></td><td class="afi-td"'+da+' data-afi-typ="k"></td>'}
       sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
       Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
       sh+='</select></td>';
@@ -910,7 +982,7 @@ function rDk(){
           const exS=gS(ex.s);const exName=exS?exS.nazwa:'?';
           sh+='<tr style="background:#E3F2FD"><td></td><td style="font-size:10px;color:var(--pri);padding-left:20px">↳ '+exName+'</td>';
           sh+='<td></td><td><input type="number" step="0.1" value="'+ex.kg+'" style="width:48px;font-size:10px" onchange="gr['+gi+'].se['+si+'].sk_extra['+ei+'].kg=pf(this.value);sa();rDk();rSur()"></td>';
-          sh+='<td>'+r2(ex.kg*sk.sz,0)+'</td><td></td>';
+          sh+='<td>'+r2(ex.kg*sk.sz,0)+'</td>'+(AF?'<td></td><td></td><td></td>':'')+'<td></td>';
           sh+='<td><button class="btn bs bd" style="padding:0 3px;font-size:8px" onclick="gr['+gi+'].se['+si+'].sk_extra.splice('+ei+',1);sa();rDk();rSur()">✕</button></td></tr>';
         });
       }
@@ -918,7 +990,7 @@ function rDk(){
   });
   sh+='</tbody></table>';
   sh+='<div class="fr"><button class="btn bs bo" onclick="addSek()">+ Sektor</button><button class="btn bs bp" onclick="addGrp()">+ Nowa grupa</button></div>';
-  $('#dk-s').innerHTML=sh;sa();
+  $('#dk-s').innerHTML=sh;sa();afiWypelnijDawki();
 }
 function uDk(gi,sid,el){const g=gr[gi],v=pf(el.value);let item=g.sk.find(x=>x.s===sid);if(item)item.kg=v;else if(v>0)g.sk.push({s:sid,kg:v});sa();rDk();rSur();scheduleAutoSnap()}
 function addDkS(){
@@ -2015,6 +2087,556 @@ function rDek(){
 function pDek(){
   const od=$('#dk-od').value,ddo=$('#dk-do').value;
   prn('Dekadówka — zużycie pasz '+od+' → '+ddo,$('#dek-w').innerHTML);
+}
+
+// ===================================================================
+// ===== ZAKŁADKA: STADO (AfiFarm) — dane z agenta na fermie =====
+// Agent wysyła surowe dane: afi/meta, afi/krowy, afi_dni/RRRR-MM-DD.
+// Wszystkie obliczenia (alarmy, statystyki sektorów) liczy aplikacja.
+// Dni są cache'owane w IndexedDB — pobieramy tylko nowe.
+// ===================================================================
+const AFI={meta:null,krowy:null,dni:{},start:false,idb:null,v:'dzis',okres:90,filtr:'razem',pokaz:'sektory',krowa:'',C:null,wszGrupy:false};
+const AFI_KOD={30010:'Ruja',30011:'Inseminacja',30016:'Zasuszenie',30017:'Wycielenie',30239:'Badanie ciąży: cielna',30240:'Badanie wet. (po insem.: niecielna)',30003:'Wybrakowanie',32590:'Zmiana grupy',30002:'Wejście / urodzenie',30141:'Wejście (status)',30015:'Ronienie (?)'};
+const AFI_KOL=['#2E7D32','#81C784','#EF6C00','#FFB74D','#1565C0','#64B5F6','#AD1457','#F06292','#6A1B9A','#00897B','#5D4037','#9E9D24'];
+const afiIso=n=>new Date(Date.UTC(1899,11,30)+n*864e5).toISOString().slice(0,10);
+const afiNum=iso=>Math.round((Date.parse(iso+'T00:00:00Z')-Date.UTC(1899,11,30))/864e5);
+const afiPl=n=>{const p=afiIso(n).split('-');return p[2]+'.'+p[1]+'.'+p[0]};
+const afiPlK=n=>{const p=afiIso(n).split('-');return p[2]+'.'+p[1]};
+const afiF=(v,d=1)=>v==null||isNaN(v)?'—':(+v).toFixed(d).replace('.',',');
+const afiSr=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+const afiMed=a=>{if(!a.length)return null;const b=[...a].sort((x,y)=>x-y),m=b.length>>1;return b.length%2?b[m]:(b[m-1]+b[m])/2};
+function afiProg(){return Object.assign({ruja:40,spadek:20,vwp:40,ped:3,cond:15,bezRui:60,pdOd:30,pdDo:40,zasDni:60,ciaza:280,zasOkno:14,wycOkno:21},afiCfg.prog||{})}
+
+// ---------- IndexedDB (pamięć podręczna dni) ----------
+function afiIdbOpen(){return new Promise(res=>{try{const r=indexedDB.open('ohz_afi',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>{AFI.idb=r.result;res(true)};r.onerror=()=>res(false)}catch(e){res(false)}})}
+function afiIdbPut(k,v){if(!AFI.idb)return;try{AFI.idb.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}
+function afiIdbDel(k){if(!AFI.idb)return;try{AFI.idb.transaction('kv','readwrite').objectStore('kv').delete(k)}catch(e){}}
+function afiIdbClear(){return new Promise(res=>{if(!AFI.idb)return res();try{const t=AFI.idb.transaction('kv','readwrite');t.objectStore('kv').clear();t.oncomplete=()=>res();t.onerror=()=>res()}catch(e){res()}})}
+function afiIdbAll(){return new Promise(res=>{if(!AFI.idb)return res({});try{const out={};const rq=AFI.idb.transaction('kv').objectStore('kv').openCursor();rq.onsuccess=e=>{const c=e.target.result;if(c){out[c.key]=c.value;c.continue()}else res(out)};rq.onerror=()=>res(out)}catch(e){res({})}})}
+
+// ---------- Ładowanie danych ----------
+function afiStart(){
+  if(AFI.start||!cR||!(lvl('stado')>0||lvl('dawki')>0))return;
+  AFI.start=true;
+  afiIdbOpen().then(()=>afiIdbAll()).then(all=>{
+    Object.entries(all).forEach(([k,v])=>{try{const o=JSON.parse(v);if(k==='meta')AFI.meta=o;else if(k==='krowy')AFI.krowy=o;else if(k.slice(0,2)==='d:')AFI.dni[k.slice(2)]=o}catch(e){}});
+    afiPrzytnij();afiPrzelicz();afiOdswiez();
+    if(!fbDb)return;
+    fbDb.collection('afi').doc('meta').onSnapshot(d=>{
+      if(!d.exists||!d.data().j)return;
+      try{AFI.meta=JSON.parse(d.data().j);afiIdbPut('meta',d.data().j)}catch(e){console.warn('afi meta',e);return}
+      afiPobierzDni().then(()=>{afiPrzelicz();afiOdswiez()});
+    },e=>console.warn('afi meta',e));
+    fbDb.collection('afi').doc('krowy').onSnapshot(d=>{
+      if(!d.exists||!d.data().j)return;
+      try{AFI.krowy=JSON.parse(d.data().j);afiIdbPut('krowy',d.data().j)}catch(e){console.warn('afi krowy',e);return}
+      afiPrzelicz();afiOdswiez();
+    },e=>console.warn('afi krowy',e));
+  });
+}
+function afiPobierzDni(){
+  if(!fbDb||!AFI.meta)return Promise.resolve();
+  const D=AFI.meta.d,kl=Object.keys(AFI.dni).sort();
+  let od=D-400;
+  // po pełnym eksporcie (nowy znacznik) pobierz całość jeszcze raz; inaczej tylko ostatnie dni
+  const pelnyTs=LD('afiPelnyTs','');
+  if(!(AFI.meta.pelny&&AFI.meta.ts!==pelnyTs)&&kl.length)od=Math.max(od,afiNum(kl[kl.length-1])-4);
+  return fbDb.collection('afi_dni').where(firebase.firestore.FieldPath.documentId(),'>=',afiIso(od)).get().then(q=>{
+    q.forEach(doc=>{try{const j=doc.data().j;AFI.dni[doc.id]=JSON.parse(j);afiIdbPut('d:'+doc.id,j)}catch(e){}});
+    if(AFI.meta.pelny)SV('afiPelnyTs',AFI.meta.ts);
+    afiPrzytnij();
+  }).catch(e=>console.warn('afi dni',e));
+}
+function afiPrzytnij(){if(!AFI.meta)return;const gr0=afiIso(AFI.meta.d-420);Object.keys(AFI.dni).forEach(k=>{if(k<gr0){delete AFI.dni[k];afiIdbDel('d:'+k)}})}
+function afiOdswiez(){const ab=document.querySelector('.tab-btn.active');if(!ab)return;if(ab.dataset.t==='stado')rStado();else if(ab.dataset.t==='dawki')afiWypelnijDawki()}
+
+// ---------- Obliczenia pomocnicze ----------
+function afiPrzelicz(){
+  const C={dni:Object.keys(AFI.dni).sort()};C.nums=C.dni.map(afiNum);
+  C.lakt={};C.dni.forEach(iso=>{const c=AFI.dni[iso].c||{};for(const id in c){const l=c[id][3];if(l!=null)C.lakt[id]=l}});
+  C.D=AFI.meta?AFI.meta.d:(C.nums.length?C.nums[C.nums.length-1]:0);
+  const wcz=C.nums.filter(n=>n<C.D);C.Y=wcz.length?wcz[wcz.length-1]:C.D-1;
+  C.kodSek={};Object.entries(afiCfg.map||{}).forEach(([sek,kody])=>(kody||[]).forEach(k=>C.kodSek[k]=sek));
+  C.sekDawka={};(gr||[]).forEach(g=>(g.se||[]).forEach(s=>C.sekDawka[s.n]=g.nazwa));
+  AFI.C=C;
+}
+const afiK=id=>AFI.krowy?.k?.[id];
+const afiRow=(id,n)=>AFI.dni[afiIso(n)]?.c?.[id];
+function afiGrupaNa(k,n){if(!k||!k.g)return null;let g=null;for(const x of k.g){if(x[0]<=n)g=x[1];else break}return g}
+function afiOstWyc(k,n){let r=null;(k?.c||[]).forEach(d=>{if(d<=n)r=d});return r}
+function afiDIM(k,n){const w=afiOstWyc(k,n);return w==null?null:n-w}
+function afiStan(k,n){
+  const w=afiOstWyc(k,n)??-1;
+  const ins=(k?.i||[]).filter(x=>x[0]>w&&x[0]<=n),ost=ins.length?ins[ins.length-1]:null;
+  const ciel=!!(ost&&(k?.p||[]).some(x=>x[1]===30239&&x[0]>=ost[0]&&x[0]<=n));
+  const zas=(k?.z||[]).some(z=>z>w&&z<=n);
+  // badanie (30240) co najmniej 25 dni po ostatniej inseminacji, bez wyniku "cielna" = krowa pusta
+  const pusta=!!(ost&&!ciel&&(k?.e||[]).some(e=>e[1]===30240&&e[0]>=ost[0]+25&&e[0]<=n));
+  return {w:w<0?null:w,ins,ost,ciel,zas,pusta};
+}
+function afiLakt(id){return AFI.C?.lakt?.[id]??null}
+function afiFiltrOk(id){const l=afiLakt(id);if(AFI.filtr==='pierw')return l===1;if(AFI.filtr==='wielo')return l!=null&&l>=2;return true}
+function afiNazwaGrupy(kod){const n=AFI.meta?.grupy?.[kod];return n?n:('grupa '+kod)}
+function afiKrotkoGrupa(kod){return kod==null?'—':String(kod).slice(-3)}
+function afiSektorKrowy(id,n){const k=afiK(id),g=afiGrupaNa(k,n);if(g==null)return null;return AFI.C.kodSek[g]||null}
+function afiEtykietaKrowy(id,n){const k=afiK(id),g=afiGrupaNa(k,n);if(g==null)return '—';return AFI.C.kodSek[g]||('gr. '+afiKrotkoGrupa(g))}
+function afiSektory(){const out=[];(gr||[]).forEach(g=>(g.se||[]).forEach(s=>out.push({g:g.nazwa,s:s.n,sz:s.sz})));return out}
+// liczba aktywnych zwierząt w sektorze teraz (wg przypisanych grup AfiFarm)
+function afiRealne(sek){
+  const kody=afiCfg.map?.[sek];if(!kody||!kody.length||!AFI.krowy)return null;
+  const D=AFI.C.D;let n=0;for(const id in AFI.krowy.k){const k=AFI.krowy.k[id];if(k.a!==1)continue;if(kody.includes(afiGrupaNa(k,D)))n++}return n;
+}
+function afiLicznikGrup(){const D=AFI.C.D,cnt={};if(!AFI.krowy)return cnt;for(const id in AFI.krowy.k){const k=AFI.krowy.k[id];if(k.a!==1)continue;const g=afiGrupaNa(k,D);if(g!=null)cnt[g]=(cnt[g]||0)+1}return cnt}
+
+// ---------- Alarmy ----------
+function afiAlarmy(){
+  const C=AFI.C,D=C.D,Y=C.Y,pr=afiProg(),ruja=[],spadek=[],ped=[],cond=[];
+  const ids=new Set([...Object.keys(AFI.dni[afiIso(D)]?.c||{}),...Object.keys(AFI.dni[afiIso(Y)]?.c||{})]);
+  ids.forEach(id=>{
+    const k=afiK(id);if(k&&k.a===0)return;
+    const st=afiStan(k,D),dim=afiDIM(k,D),lakt=afiLakt(id),sek=afiEtykietaKrowy(id,D);
+    // --- ruja: aktywność wczoraj lub dziś vs średnia z 10 poprzednich dni (tylko odczyty > 0)
+    let best=null;
+    [Y,D].forEach(X=>{const a=afiRow(id,X)?.[1];if(!(a>0))return;const b=[];for(let n=X-10;n<X;n++){const v=afiRow(id,n)?.[1];if(v>0)b.push(v)}if(b.length<4)return;const sr=afiSr(b),wz=(a/sr-1)*100;if(wz>=pr.ruja&&(!best||wz>best.wz))best={X,a,sr,wz}});
+    if(best&&!st.zas){
+      const dIns=st.ost?D-st.ost[0]:null;let tag,cls='';
+      if(st.ciel){tag='cielna – sprawdź';cls='c'}
+      else if(dim!=null&&dim<pr.vwp){tag='przed okresem spoczynku'}
+      else if(dIns!=null&&dIns<=2){tag='zainseminowana '+(dIns===0?'dziś':dIns===1?'wczoraj':'2 dni temu');cls='c'}
+      else if(dIns!=null&&dIns<=2){tag='zainseminowana '+(dIns===0?'dziś':dIns===1?'wczoraj':'2 dni temu');cls='c'}
+      else if(dIns!=null&&dIns<18){tag='za wcześnie po insem.'}
+      else if(dIns!=null&&dIns<=24){tag='powtórka ('+dIns+' dni)';cls='n'}
+      else{tag='do inseminacji';cls='n'}
+      ruja.push({id,sek,lakt,dim,aY:afiRow(id,Y)?.[1],aD:afiRow(id,D)?.[1],sr:best.sr,wz:best.wz,dIns,tag,cls,dzis:best.X===D});
+    }
+    // --- spadek mleka: wczoraj vs średnia z 7 poprzednich dni
+    const b=[];for(let n=Y-7;n<Y;n++){const v=afiRow(id,n)?.[0];if(v>0)b.push(v)}
+    if(b.length>=4&&!st.zas){
+      const sr=afiSr(b),m=afiRow(id,Y)?.[0];
+      if(!(m>0)){if(sr>5000)spadek.push({id,sek,dim,m:null,sr,sp:100,brak:true})}
+      else{const sp=(1-m/sr)*100;if(sp>=pr.spadek){const pv=afiRow(id,Y-1)?.[0];const przes=pv>sr*1.3&&Math.abs((m+pv)/2-sr)/sr<=0.15;spadek.push({id,sek,dim,m,sr,sp,przes})}}
+    }
+    // --- przewodność: wczoraj vs własna średnia z 7 poprzednich dni (możliwe mastitis)
+    const bc=[];for(let n=Y-7;n<Y;n++){const v=afiRow(id,n)?.[2];if(v>0)bc.push(v)}
+    const cY=afiRow(id,Y)?.[2];
+    if(bc.length>=4&&cY>0&&!st.zas){const sr=afiSr(bc),wz=(cY/sr-1)*100;if(wz>=pr.cond){const mY=afiRow(id,Y)?.[0],mz=mY>0&&b.length?(mY/afiSr(b)-1)*100:null;cond.push({id,sek,dim,c:cY,sr,wz,mz,dbl:mz!=null&&mz<=-10})}}
+    // --- pedometr: dojona wczoraj, a brak odczytu aktywności przez >= N dni
+    if(afiRow(id,Y)?.[0]>0){let n=0;for(let x=Y;x>Y-31;x--){const r=afiRow(id,x);if(!r)break;if(r[1]>0)break;n++}if(n>=pr.ped)ped.push({id,sek,t:k?.t,n})}
+  });
+  ruja.sort((a,b)=>b.wz-a.wz);spadek.sort((a,b)=>(a.przes?1:0)-(b.przes?1:0)||b.sp-a.sp);ped.sort((a,b)=>b.n-a.n||(+a.id)-(+b.id));
+  cond.sort((a,b)=>(b.dbl-a.dbl)||(b.wz-a.wz));const cs=new Set(cond.map(c=>c.id));spadek.forEach(r=>r.c=cs.has(r.id));
+  return {ruja,spadek,ped,cond};
+}
+
+// ---------- Wykres SVG (bez bibliotek) ----------
+function afiWykres(o){
+  // o: {x:[dni], ser:[{n,c,v:[],dash,w}], prawa:{n,c,v:[]}, znaczniki:[{n,t,c}], h, jedn, jednP}
+  const cw=($('#afi-w')?.clientWidth||1000)-34,W=Math.max(340,Math.min(1000,cw)),H=Math.round((o.h||300)*(W<600?.85:1)),L=44,R=o.prawa?44:12,T=22,B=28,x=o.x;if(!x.length)return '';
+  const vals=[];o.ser.forEach(s=>s.v.forEach(v=>{if(v!=null)vals.push(v)}));if(!vals.length)return '<div class="afi-pusto">Brak danych w wybranym okresie.</div>';
+  const nice=(a,b,n)=>{const r=(b-a)||Math.abs(b)||1,raw=r/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,st=(f<1.5?1:f<3?2:f<7?5:10)*p;return {a:Math.floor(a/st+1e-9)*st,b:Math.ceil(b/st-1e-9)*st,st}};
+  const fT=(v,st)=>(st<1?v.toFixed(st<0.1?2:1):String(Math.round(v))).replace('.',',');
+  let y0=Math.min(...vals),y1=Math.max(...vals);const pad=(y1-y0)*.08||Math.abs(y1)*.05||1;const ns=nice(y0-pad,y1+pad,5);y0=ns.a;y1=ns.b;
+  const X=i=>L+(W-L-R)*(x.length===1?.5:i/(x.length-1)),Y=v=>T+(H-T-B)*(1-(v-y0)/(y1-y0));
+  let h='<svg viewBox="0 0 '+W+' '+H+'" class="afi-svg" preserveAspectRatio="xMidYMid meet">';
+  for(let i=0;i<50;i++){const v=y0+i*ns.st;if(v>y1+ns.st/2)break;h+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="#E3E8E3"/><text x="'+(L-6)+'" y="'+(Y(v)+4)+'" font-size="11" text-anchor="end" fill="#5F6B5F">'+fT(v,ns.st)+'</text>'}
+  if(o.jedn)h+='<text x="'+(L+4)+'" y="'+(T-8)+'" font-size="11" fill="#5F6B5F">'+o.jedn+'</text>';
+  const co=Math.max(1,Math.round(x.length/(W<600?4:8)));for(let i=0;i<x.length;i+=co)h+='<text x="'+X(i)+'" y="'+(H-10)+'" font-size="11" text-anchor="middle" fill="#5F6B5F">'+afiPlK(x[i])+'</text>';
+  let pr=null;
+  if(o.prawa){const pv=o.prawa.v.filter(v=>v!=null);if(pv.length){const mn=Math.min(...pv),mx=Math.max(...pv),ps=nice(o.prawa.zero===false?mn-(mx-mn)*.1:0,mx+(mx-mn)*.12+(mx===mn?1:0),5),p0=ps.a,p1=ps.b;pr=v=>T+(H-T-B)*(1-(v-p0)/(p1-p0));
+    for(let i=0;i<50;i++){const v=p0+i*ps.st;if(v>p1+ps.st/2)break;h+='<text x="'+(W-R+6)+'" y="'+(pr(v)+4)+'" font-size="11" fill="'+o.prawa.c+'">'+fT(v,ps.st)+'</text>'}
+    if(o.jednP)h+='<text x="'+(W-R-4)+'" y="'+(T-8)+'" font-size="11" text-anchor="end" fill="'+o.prawa.c+'">'+o.jednP+'</text>'}}
+  const idx={};x.forEach((n,i)=>idx[n]=i);
+  (o.znaczniki||[]).forEach((z,zi)=>{const i=idx[z.n];if(i==null)return;const c=z.c||'#7B1FA2',xx=X(i);h+='<line x1="'+xx+'" x2="'+xx+'" y1="'+T+'" y2="'+(H-B)+'" stroke="'+c+'" stroke-dasharray="5 4" stroke-width="1.4"/>';
+    if(z.t){const yy=T+2+(zi%3)*17,tw=z.t.length*6.2+14;const lx=xx+tw+4>W-R?xx-tw-4:xx+4;h+='<rect x="'+lx+'" y="'+yy+'" width="'+tw+'" height="15" rx="3" fill="#fff" fill-opacity=".9" stroke="'+c+'" stroke-opacity=".3"/><text x="'+(lx+6)+'" y="'+(yy+11)+'" font-size="10.5" fill="'+c+'" font-weight="700">'+escH(z.t)+'</text>'}});
+  const linia=(v,c,sc,dash,w)=>{let d='',on=false;v.forEach((y,i)=>{if(y==null){on=false;return}d+=(on?'L':'M')+X(i).toFixed(1)+','+sc(y).toFixed(1);on=true});return d?'<path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="'+(w||2.2)+'"'+(dash?' stroke-dasharray="6 4"':'')+' stroke-linejoin="round"/>':''};
+  if(o.prawa&&pr)h+=linia(o.prawa.v,o.prawa.c,pr,false,1.6);
+  o.ser.forEach(s=>{h+=linia(s.v,s.c,Y,s.dash,s.w);if(s.pkt)s.v.forEach((y,i)=>{if(y!=null)h+='<circle cx="'+X(i)+'" cy="'+Y(y)+'" r="2.2" fill="'+s.c+'"/>'})});
+  return h+'</svg>';
+}
+
+// ---------- Główny widok ----------
+function rStado(){
+  afiStart();
+  const el=$('#afi-w');if(!el)return;
+  const pelny=lvl('stado')>=3;
+  if(AFI.v==='ust'&&!pelny)AFI.v='dzis';
+  let h='<div class="afi-gora"><div class="chips">';
+  [['dzis','Dziś – alarmy'],['mleko','Mleko sektorów'],['rozrod','Rozród'],['ekon','Ekonomia'],['krowa','Krowa']].concat(pelny?[['ust','⚙ Ustawienia']]:[]).forEach(([k,t])=>h+='<button class="chip'+(AFI.v===k?' on':'')+'" onclick="AFI.v=\''+k+'\';rStado()">'+t+'</button>');
+  h+='</div>'+afiSwiezosc()+'</div>';
+  if(!AFI.meta||!AFI.krowy||!Object.keys(AFI.dni).length){
+    h+='<div class="card afi-pusto"><b>Brak danych z AfiFarm.</b><br>Agent na komputerze w oborze nie został jeszcze zainstalowany albo nie wysłał danych'+(AFI.start?'':' (ładowanie…)')+'.'+(pelny?'<br><br>Awaryjnie możesz wczytać plik .json zapisany przez agenta: <button class="btn bs bo" onclick="AFI.v=\'ust\';rStado()">⚙ Ustawienia → Wczytaj plik</button>':'')+'</div>';
+    if(AFI.v==='ust'&&pelny)h+=afiUstawieniaHTML();
+    el.innerHTML=h;return;
+  }
+  if(!AFI.C)afiPrzelicz();
+  if(AFI.v==='dzis')h+=afiDzisHTML();
+  else if(AFI.v==='mleko')h+=afiMlekoHTML();
+  else if(AFI.v==='krowa')h+=afiKrowaHTML();
+  else if(AFI.v==='rozrod')h+=afiRozrodHTML();
+  else if(AFI.v==='ekon')h+=afiEkonHTML();
+  else if(AFI.v==='ust')h+=afiUstawieniaHTML();
+  el.innerHTML=h;
+  if(AFI.v==='krowa'){const i=$('#afi-nr');if(i&&!AFI.krowa)i.focus()}
+}
+function afiSwiezosc(){
+  if(!AFI.meta)return '';
+  const ts=AFI.meta.ts||'',t=Date.parse(ts.replace(' ','T')),stare=!isNaN(t)&&Date.now()-t>26*3600e3;
+  const dz=AFI.C?AFI.C.Y:null,ile=dz!=null?Object.values(AFI.dni[afiIso(dz)]?.c||{}).filter(r=>r[0]>0).length:0;
+  return '<div class="afi-fresh'+(stare?' stare':'')+'"><span class="dot"></span><b>Dane z AfiFarm:</b> '+escH(ts)+(stare?' — <b>NIEAKTUALNE, sprawdź agenta na komputerze w oborze</b>':'')+(dz!=null?' · pełny dzień: '+afiPlK(dz)+' · '+ile+' krów dojonych':'')+'</div>';
+}
+
+// ----- Dziś -----
+function afiDzisHTML(){
+  const A=afiAlarmy(),pr=afiProg(),Y=AFI.C.Y,D=AFI.C.D;
+  const kr=id=>'<a class="afi-nr" onclick="AFI.v=\'krowa\';AFI.krowa=\''+id+'\';rStado()">'+id+'</a>';
+  let h='<div class="afi-row"><div style="flex:1.35;min-width:0">';
+  h+='<div class="card afi-card"><h3>🔥 Podejrzenie rui <span class="cnt r">'+A.ruja.length+'</span> <span class="sub">aktywność ≥ '+pr.ruja+'% ponad własną średnią z 10 dni</span></h3>';
+  if(A.ruja.length){
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Dzień lakt.</th><th>Akt. '+afiPlK(Y)+'</th><th>Akt. dziś*</th><th>Śr. 10 dni</th><th>Wzrost</th><th>Ost. insem.</th><th>Status</th></tr>';
+    A.ruja.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td>'+(r.lakt??'—')+'</td><td>'+(r.dim??'—')+'</td><td'+(r.dzis?'':' class="b"')+'>'+(r.aY||'—')+'</td><td'+(r.dzis?' class="b"':'')+'>'+(r.aD||'—')+'</td><td>'+afiF(r.sr,0)+'</td><td class="up">+'+Math.round(r.wz)+'%<span class="afi-bar" style="width:'+Math.min(60,Math.round(r.wz*.6))+'px"></span></td><td class="t">'+(r.dIns==null?'—':r.dIns===0?'dziś':r.dIns===1?'wczoraj':r.dIns+' dni temu')+'</td><td class="t st"><span class="tag '+r.cls+'">'+r.tag+'</span></td></tr>'});
+    h+='</table></div><div class="afi-note">* dziś = tylko po porannym doju (dzień niepełny). <b>do inseminacji</b> – ruja w dobrym czasie; <b>powtórka</b> – 18–24 dni po inseminacji (krowa najpewniej nie zaszła); <b>cielna – sprawdź</b> – alarm u krowy z dodatnim badaniem ciąży.</div>';
+  } else h+='<div class="afi-pusto">Brak krów z podwyższoną aktywnością.</div>';
+  h+='</div>';
+  h+='<div class="card afi-card afi-cond"><h3>💧 Przewodność – możliwe mastitis <span class="cnt b">'+A.cond.length+'</span> <span class="sub">'+afiPlK(Y)+' ≥ '+pr.cond+'% ponad własną średnią z 7 dni</span></h3>';
+  if(A.cond.length){
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Dzień l.</th><th>Przewodność '+afiPlK(Y)+'</th><th>Śr. 7 dni</th><th>Wzrost</th><th>Mleko vs śr. 7 dni</th><th>Sygnał</th></tr>';
+    A.cond.forEach(r=>{h+='<tr'+(r.dbl?' class="afi-dbl"':'')+'><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td'+(r.dim!=null&&r.dim<30?' class="fresh"':'')+'>'+(r.dim??'—')+'</td><td>'+r.c+'</td><td>'+afiF(r.sr,0)+'</td><td class="up">+'+Math.round(r.wz)+'%</td><td class="'+(r.mz!=null&&r.mz<=-10?'dn':'')+'">'+(r.mz==null?'—':(r.mz>=0?'+':'−')+Math.abs(Math.round(r.mz))+'%')+'</td><td class="t st">'+(r.dbl?'<span class="tag w">mleko ↓ + przewodność ↑</span>':'<span class="tag c">tylko przewodność</span>')+'</td></tr>'});
+    h+='</table></div><div class="afi-note">Na górze krowy z <b>podwójnym sygnałem</b> (mleko spadło o ≥ 10% i przewodność wzrosła) – największe prawdopodobieństwo mastitis. Takie krowy mają też 💧 w liście „Spadek mleka”.</div>';
+  } else h+='<div class="afi-pusto">Brak krów z podwyższoną przewodnością.</div>';
+  h+='</div></div><div style="flex:1;min-width:0">';
+  h+='<div class="card afi-card"><h3>📉 Spadek mleka <span class="cnt a">'+A.spadek.length+'</span> <span class="sub">'+afiPlK(Y)+' ≥ '+pr.spadek+'% poniżej średniej z 7 dni</span></h3>';
+  if(A.spadek.length){
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Dzień l.</th><th>Wczoraj kg</th><th>Śr. 7 dni</th><th>Zmiana</th></tr>';
+    A.spadek.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+(r.c?' 💧':'')+'</td><td class="t">'+escH(r.sek)+'</td><td'+(r.dim!=null&&r.dim<30?' class="fresh"':'')+'>'+(r.dim??'—')+'</td><td>'+(r.brak?'<span class="tag w">brak doju</span>':afiF(r.m/1000))+'</td><td>'+afiF(r.sr/1000)+'</td><td class="dn">'+(r.brak?'—':'−'+Math.round(r.sp)+'%')+(r.przes?' <span class="tag" title="Dzień wcześniej krowa dała dużo więcej niż zwykle, a suma z dwóch dni jest normalna — doj prawdopodobnie zapisał się na zły dzień. Raczej nie choroba.">przesunięty doj?</span>':'')+'</td></tr>'});
+    h+='</table></div><div class="afi-note">Dzień laktacji na czerwono = świeżo wycielona (&lt; 30 dni) – spadek to częsty sygnał ketozy, przemieszczenia trawieńca lub zapalenia macicy.</div>';
+  } else h+='<div class="afi-pusto">Brak krów ze spadkiem mleka.</div>';
+  h+='</div>';
+  h+='<div class="card afi-card"><h3>📡 Pedometry do sprawdzenia <span class="cnt g">'+A.ped.length+'</span> <span class="sub">krowa dojona, brak odczytu aktywności ≥ '+pr.ped+' dni</span></h3>';
+  if(A.ped.length){
+    const pok=AFI.pedWsz?A.ped:A.ped.slice(0,8);
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Pedometr</th><th>Bez odczytu</th></tr>';
+    pok.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td>'+(r.t>0?r.t:'brak')+'</td><td>'+(r.n>=30?'30+':r.n)+' dni</td></tr>'});
+    h+='</table></div>';
+    if(A.ped.length>8)h+='<button class="btn bs bo" style="margin-top:6px" onclick="AFI.pedWsz=!AFI.pedWsz;rStado()">'+(AFI.pedWsz?'Zwiń':'Pokaż wszystkie ('+A.ped.length+')')+'</button>';
+  } else h+='<div class="afi-pusto">Wszystkie pedometry przesyłają odczyty.</div>';
+  h+='</div></div></div>';
+  return h;
+}
+
+// ----- Mleko sektorów -----
+function afiZmianyDawek(){
+  const sn=(dawkiHist||[]).filter(h=>/^\d{4}-\d{2}-\d{2}$/.test(h.date)).sort((a,b)=>a.ts-b.ts),out={},prev={};
+  sn.forEach(h=>{(h.gr||[]).forEach(g=>{const sig=JSON.stringify((g.sk||[]).filter(x=>+x.kg>0).map(x=>[x.s,+x.kg]).sort());if(prev[g.nazwa]!=null&&prev[g.nazwa]!==sig){const n=afiNum(h.date);(out[n]=out[n]||new Set()).add(g.nazwa)}prev[g.nazwa]=sig})});
+  return Object.entries(out).map(([n,s])=>({n:+n,t:'dawka '+[...s].join(', ')}));
+}
+function afiKluczSerii(id,n){
+  const k=afiK(id),g=afiGrupaNa(k,n);
+  const brakMapy=!Object.keys(afiCfg.map||{}).length;
+  if(brakMapy)return g==null?null:'gr. '+afiKrotkoGrupa(g);
+  const sek=g==null?null:AFI.C.kodSek[g];if(!sek)return null;
+  return AFI.pokaz==='dawki'?(AFI.C.sekDawka[sek]||sek):sek;
+}
+function afiMlekoHTML(){
+  const C=AFI.C,Y=C.Y,okres=AFI.okres,x=[];for(let n=Y-okres+1;n<=Y;n++)if(AFI.dni[afiIso(n)])x.push(n);
+  const brakMapy=!Object.keys(afiCfg.map||{}).length;
+  let h='<div class="afi-filtry"><span class="lbl">Krowy</span>';
+  [['razem','Razem'],['pierw','Pierwiastki'],['wielo','Wieloródki']].forEach(([k,t])=>h+='<button class="chip'+(AFI.filtr===k?' on':'')+'" onclick="AFI.filtr=\''+k+'\';rStado()">'+t+'</button>');
+  h+='<span class="lbl">Pokaż</span>';[['sektory','Sektory'],['dawki','Dawki (łącznie)']].forEach(([k,t])=>h+='<button class="chip'+(AFI.pokaz===k?' on':'')+'" onclick="AFI.pokaz=\''+k+'\';rStado()">'+t+'</button>');
+  h+='<span class="lbl">Okres</span>';[[30,'30 dni'],[90,'90 dni'],[180,'180 dni'],[365,'rok']].forEach(([k,t])=>h+='<button class="chip'+(AFI.okres===k?' on':'')+'" onclick="AFI.okres='+k+';rStado()">'+t+'</button>');
+  h+='</div>';
+  if(brakMapy)h+='<div class="afi-note" style="margin-bottom:10px">Sektory nie są jeszcze przypisane do grup AfiFarm – wykres pokazuje grupy AfiFarm. Przypisanie: <b>⚙ Ustawienia</b>.</div>';
+  // serie dzienne
+  const sumy={},stado=[];
+  x.forEach((n,i)=>{const c=AFI.dni[afiIso(n)].c||{};let s=0,l=0;for(const id in c){const m=c[id][0];if(!(m>0))continue;if(!afiFiltrOk(id))continue;s+=m;l++;const key=afiKluczSerii(id,n);if(key){const o=(sumy[key]=sumy[key]||{s:new Array(x.length).fill(0),l:new Array(x.length).fill(0)});o.s[i]+=m;o.l[i]+=1}}stado.push(l?s/l/1000:null)});
+  const sred7=v=>v.map((_,i)=>{const w=v.slice(Math.max(0,i-6),i+1).filter(z=>z!=null);return w.length?afiSr(w):null});
+  const kolejn=brakMapy?Object.keys(sumy).sort():(AFI.pokaz==='dawki'?[...new Set(afiSektory().map(s=>s.g))]:afiSektory().map(s=>s.s)).filter(k=>sumy[k]);
+  const ser=kolejn.map((k,i)=>({n:k,c:AFI_KOL[i%AFI_KOL.length],v:sred7(sumy[k].s.map((s,j)=>sumy[k].l[j]?s/sumy[k].l[j]/1000:null))}));
+  ser.push({n:'Stado',c:'#455A64',v:sred7(stado),dash:true,w:2});
+  const zn=afiZmianyDawek().filter(z=>z.n>=x[0]&&z.n<=x[x.length-1]);
+  // KPI
+  const kpi=afiKpi();
+  h+='<div class="afi-kpi"><div class="k"><span>Krowy dojone ('+afiPlK(Y)+')</span><b>'+kpi.n+'</b><em class="sub">'+kpi.np+' pierwiastek · '+kpi.nw+' wieloródek</em></div>';
+  h+='<div class="k"><span>Średnio kg / krowę</span><b>'+afiF(kpi.sr)+'</b><em class="'+(kpi.zm>=0?'ok':'dn')+'">'+(kpi.zm==null?'':(kpi.zm>=0?'+':'−')+afiF(Math.abs(kpi.zm))+' vs śr. 7 dni')+'</em></div>';
+  h+='<div class="k"><span>Mleko razem ('+afiPlK(Y)+')</span><b>'+(kpi.suma?Math.round(kpi.suma).toLocaleString('pl-PL'):'—')+'</b><em class="sub">kg</em></div>';
+  h+='<div class="k"><span>Śr. dzień laktacji</span><b>'+afiF(kpi.dim,0)+'</b><em class="sub">mediana '+afiF(kpi.dimMed,0)+'</em></div>';
+  h+='<div class="k"><span>Świeżo wycielone (&lt; 30 dni)</span><b>'+kpi.sw+'</b><em class="sub">śr. '+afiF(kpi.swKg)+' kg</em></div></div>';
+  h+='<div class="card afi-card"><h3>Mleko na krowę – '+(brakMapy?'grupy AfiFarm':AFI.pokaz==='dawki'?'dawki (sektory łącznie)':'sektory')+' <span class="sub">kg/dzień, średnia 7-dniowa'+(AFI.filtr==='pierw'?' · pierwiastki':AFI.filtr==='wielo'?' · wieloródki':'')+'</span></h3>';
+  h+=afiWykres({x,ser,znaczniki:zn,h:320,jedn:'kg'});
+  h+='<div class="afi-leg">'+ser.map(s=>'<span><i style="background:'+s.c+'"></i>'+escH(s.n)+'</span>').join('')+(zn.length?'<span><i style="background:#7B1FA2"></i>zmiana dawki (historia Dawek)</span>':'')+'</div></div>';
+  h+=afiStatyHTML();
+  return h;
+}
+function afiKpi(){
+  const C=AFI.C,Y=C.Y,c=AFI.dni[afiIso(Y)]?.c||{},o={n:0,np:0,nw:0,suma:0,sr:null,zm:null,dim:null,dimMed:null,sw:0,swKg:null};
+  const dims=[],sw=[];
+  for(const id in c){const m=c[id][0];if(!(m>0)||!afiFiltrOk(id))continue;o.n++;o.suma+=m/1000;const l=afiLakt(id);if(l===1)o.np++;else if(l>=2)o.nw++;const d=afiDIM(afiK(id),Y);if(d!=null){dims.push(d);if(d<30)sw.push(m/1000)}}
+  if(o.n)o.sr=o.suma/o.n;o.dim=afiSr(dims);o.dimMed=afiMed(dims);o.sw=sw.length;o.swKg=afiSr(sw);
+  const pop=[];for(let n=Y-7;n<Y;n++){const cc=AFI.dni[afiIso(n)]?.c;if(!cc)continue;let s=0,l=0;for(const id in cc){const m=cc[id][0];if(m>0&&afiFiltrOk(id)){s+=m;l++}}if(l)pop.push(s/l/1000)}
+  if(o.sr!=null&&pop.length)o.zm=o.sr-afiSr(pop);
+  return o;
+}
+function afiStatyHTML(){
+  const C=AFI.C,D=C.D,Y=C.Y,brakMapy=!Object.keys(afiCfg.map||{}).length;
+  // skład grup teraz: klucz = sektor / dawka / grupa AfiFarm
+  const kl=id=>{const g=afiGrupaNa(afiK(id),D);if(g==null)return null;if(brakMapy)return 'gr. '+afiKrotkoGrupa(g);const s=C.kodSek[g];if(!s)return null;return AFI.pokaz==='dawki'?(C.sekDawka[s]||s):s};
+  const B={};
+  for(const id in AFI.krowy.k){const k=AFI.krowy.k[id];if(k.a!==1)continue;if(!afiFiltrOk(id))continue;const key=kl(id);if(!key)continue;const b=(B[key]=B[key]||{ids:[]});b.ids.push(id)}
+  const sredniaDnia=(ids,n)=>{const v=[];ids.forEach(id=>{const m=afiRow(id,n)?.[0];if(m>0)v.push(m/1000)});return afiSr(v)};
+  const kolejn=brakMapy?Object.keys(B).sort():(AFI.pokaz==='dawki'?[...new Set(afiSektory().map(s=>s.g))]:afiSektory().map(s=>s.s)).filter(k=>B[k]);
+  let h='<div class="card afi-card"><h3>Statystyki '+(brakMapy?'grup AfiFarm':AFI.pokaz==='dawki'?'dawek':'sektorów')+' – stan na '+afiPl(D)+' <span class="sub">'+(AFI.filtr==='pierw'?'pierwiastki':AFI.filtr==='wielo'?'wieloródki':'razem')+' · mleko: '+afiPlK(Y)+'</span></h3><div class="tw"><table class="afi-t">';
+  h+='<tr><th>'+(brakMapy?'Grupa':AFI.pokaz==='dawki'?'Dawka':'Sektor')+'</th>'+(brakMapy?'':'<th>'+(AFI.pokaz==='dawki'?'Sektory':'Grupa AfiFarm')+'</th>')+(brakMapy||AFI.pokaz==='dawki'?'':'<th>Dawka</th>')+'<th>Zwierząt</th><th>Pierwiastki</th><th>Śr. lakt.</th><th>Śr. dzień l.</th><th>Dzień l. min–max</th><th>&lt; 60 dni</th><th>&gt; 250 dni</th><th>Cielne</th><th>Kg/krowę</th><th>Zmiana 7 dni</th></tr>';
+  kolejn.forEach(key=>{
+    const ids=B[key].ids,n=ids.length,dims=[],lak=[];let p=0,ciel=0,z60=0,z250=0;
+    ids.forEach(id=>{const k=afiK(id),l=afiLakt(id);if(l!=null){lak.push(l);if(l===1)p++}const d=afiDIM(k,D);if(d!=null&&!afiStan(k,D).zas){dims.push(d);if(d<60)z60++;if(d>250)z250++}if(afiStan(k,D).ciel)ciel++});
+    const kg=sredniaDnia(ids,Y),pop=[];for(let x=Y-7;x<Y;x++){const v=sredniaDnia(ids,x);if(v!=null)pop.push(v)}
+    const zm=kg!=null&&pop.length?kg-afiSr(pop):null;
+    let opis='';if(!brakMapy){if(AFI.pokaz==='dawki')opis=afiSektory().filter(s=>s.g===key).map(s=>s.s).join(', ');else opis=(afiCfg.map[key]||[]).map(afiKrotkoGrupa).join(', ')}
+    h+='<tr><td class="t"><b>'+escH(key)+'</b></td>'+(brakMapy?'':'<td class="t">'+escH(opis)+'</td>')+(brakMapy||AFI.pokaz==='dawki'?'':'<td class="t"><span class="tag">'+escH(C.sekDawka[key]||'')+'</span></td>');
+    h+='<td>'+n+'</td><td>'+(lak.length?Math.round(p/n*100)+'%':'—')+'</td><td>'+afiF(afiSr(lak))+'</td><td>'+afiF(afiSr(dims),0)+'</td><td>'+(dims.length?Math.min(...dims)+'–'+Math.max(...dims):'—')+'</td><td>'+(dims.length?z60:'—')+'</td><td>'+(dims.length?z250:'—')+'</td><td>'+Math.round(ciel/n*100)+'%</td><td>'+afiF(kg)+'</td><td class="'+(zm==null?'':zm>=0?'ok':'dn')+'">'+(zm==null?'—':(zm>=0?'+':'−')+afiF(Math.abs(zm)))+'</td></tr>';
+  });
+  h+='</table></div>';
+  if(!brakMapy){const cnt=afiLicznikGrup(),wolne=Object.keys(cnt).filter(g=>!C.kodSek[g]).sort();if(wolne.length)h+='<div class="afi-note">Grupy AfiFarm bez przypisanego sektora (nie liczone wyżej): '+wolne.map(g=>'<b>'+afiKrotkoGrupa(g)+'</b> ('+cnt[g]+')').join(', ')+'.</div>'}
+  return h+'</div>';
+}
+
+// ----- Krowa -----
+function afiKrowaHTML(){
+  let h='<div class="card afi-card"><div class="afi-szukaj"><label>Numer krowy</label><input id="afi-nr" inputmode="numeric" value="'+escH(AFI.krowa)+'" onkeydown="if(event.key===\'Enter\'){AFI.krowa=this.value.trim();rStado()}"><button class="btn bp" onclick="AFI.krowa=$(\'#afi-nr\').value.trim();rStado()">Pokaż</button></div></div>';
+  const id=AFI.krowa;if(!id)return h+'<div class="afi-pusto">Wpisz numer krowy (taki jak w AfiFarm) albo kliknij numer w alarmach.</div>';
+  const k=afiK(id),C=AFI.C,D=C.D,Y=C.Y;
+  if(!k&&!afiRow(id,Y)&&!afiRow(id,D))return h+'<div class="card afi-pusto">Nie znaleziono krowy nr <b>'+escH(id)+'</b> w danych z AfiFarm.</div>';
+  const st=afiStan(k,D),dim=afiDIM(k,D),g=afiGrupaNa(k,D),lakt=afiLakt(id);
+  let stat=k&&k.a===0?'<span class="tag w">wybrakowana '+(k.w?afiPl(k.w[0]):'')+'</span>':st.zas?'<span class="tag">zasuszona</span>':st.ciel?'<span class="tag c">cielna</span>':st.ost?'<span class="tag n">po inseminacji ('+(D-st.ost[0])+' dni)</span>':(lakt>0?'<span class="tag n">nieinseminowana</span>':'');
+  h+='<div class="card afi-card"><h3 style="font-size:18px">Krowa '+escH(id)+' '+stat+'</h3><div class="afi-dane">';
+  const p=(t,v)=>'<div><span>'+t+'</span><b>'+v+'</b></div>';
+  h+=p('Kolczyk',escH(k?.r||'—'))+p('Sektor / grupa',escH(g==null?'—':(C.kodSek[g]||'—')+' · '+afiNazwaGrupy(g)))+p('Laktacja',lakt??'—')+p('Dzień laktacji',dim??'—')+p('Ostatnie wycielenie',st.w!=null?afiPl(st.w):'—')+p('Inseminacje w laktacji',st.ins.length?st.ins.map(x=>afiPlK(x[0])+(x[1]>0?' ('+x[1]+')':'')).join(', '):'—')+p('Pedometr',k?.t>0?k.t:'—')+((st.ciel||st.zas)&&st.ost?p('Przewidywane wycielenie',afiPl(st.ost[0]+afiProg().ciaza)):'');
+  const m7=[],a10=[];for(let n=Y-7;n<Y;n++){const v=afiRow(id,n)?.[0];if(v>0)m7.push(v/1000)}for(let n=Y-10;n<Y;n++){const v=afiRow(id,n)?.[1];if(v>0)a10.push(v)}
+  h+=p('Mleko '+afiPlK(Y),afiF((afiRow(id,Y)?.[0]||0)/1000)+' kg <small>(śr. 7 dni '+afiF(afiSr(m7))+')</small>')+p('Aktywność '+afiPlK(Y),(afiRow(id,Y)?.[1]||'—')+' <small>(śr. 10 dni '+afiF(afiSr(a10),0)+')</small>');
+  h+='</div></div>';
+  // wykres 120 dni
+  const x=[];for(let n=Y-119;n<=D;n++)if(AFI.dni[afiIso(n)])x.push(n);
+  const mv=x.map(n=>{const v=afiRow(id,n)?.[0];return v>0&&n<D?v/1000:null}),av=x.map(n=>{const v=afiRow(id,n)?.[1];return v>0?v:null});
+  const zn=[],kolZ={30017:'#2E7D32',30011:'#C62828',30239:'#1565C0',30016:'#8D6E63',32590:'#9E9E9E'},krt={30017:'wycielenie',30011:'insem.',30239:'cielna',30016:'zasuszenie',32590:'grupa'};
+  (k?.e||[]).forEach(e=>{if(kolZ[e[1]]&&e[0]>=x[0]&&e[0]<=x[x.length-1])zn.push({n:e[0],t:krt[e[1]],c:kolZ[e[1]]})});
+  h+='<div class="card afi-card"><h3>Mleko i aktywność – ostatnie 120 dni</h3>'+afiWykres({x,ser:[{n:'Mleko',c:'#1B5E20',v:mv,w:2.2,pkt:x.length<45}],prawa:{n:'Aktywność',c:'#EF6C00',v:av},znaczniki:zn,h:300,jedn:'kg',jednP:'akt.'});
+  h+='<div class="afi-leg"><span><i style="background:#1B5E20"></i>mleko kg/dzień</span><span><i style="background:#EF6C00"></i>aktywność</span><span><i style="background:#C62828"></i>inseminacja</span><span><i style="background:#2E7D32"></i>wycielenie</span><span><i style="background:#1565C0"></i>cielna</span></div></div>';
+  // zdarzenia
+  const ev=[...(k?.e||[])].sort((a,b)=>b[0]-a[0]);
+  if(ev.length){h+='<div class="card afi-card"><h3>Zdarzenia (AfiFarm)</h3><div class="tw"><table class="afi-t"><tr><th>Data</th><th>Zdarzenie</th><th>Szczegóły</th></tr>';
+    ev.forEach(e=>{let det='';if(e[1]===30011){const i=(k.i||[]).find(x=>x[0]===e[0]);if(i&&i[1]>0)det='buhaj '+i[1]}if(e[1]===32590){const gg=afiGrupaNa(k,e[0]);if(gg)det='→ '+afiNazwaGrupy(gg)}
+      h+='<tr><td class="t">'+afiPl(e[0])+'</td><td class="t">'+escH(AFI_KOD[e[1]]||('kod '+e[1]))+'</td><td class="t">'+escH(det)+'</td></tr>'});
+    h+='</table></div></div>'}
+  return h;
+}
+
+// ----- Ustawienia -----
+function afiUstawieniaHTML(){
+  const cnt=AFI.krowy?afiLicznikGrup():{},gr0=AFI.meta?.grupy||{},pr=afiProg();
+  const kody=[...new Set([...Object.keys(gr0).map(Number),...Object.keys(cnt).map(Number)])].sort((a,b)=>a-b);
+  const zajete={};Object.entries(afiCfg.map||{}).forEach(([s,kk])=>(kk||[]).forEach(k=>zajete[k]=s));
+  let h='<div class="card afi-card"><h3>Przypisanie sektorów do grup AfiFarm</h3><p class="sub" style="margin-bottom:8px">Każdy sektor z zakładki Dawki dostaje jedną lub kilka grup z AfiFarm. Na tej podstawie liczone są sztuki realne, wykresy i statystyki sektorów. W nawiasie – liczba zwierząt w grupie teraz.</p>';
+  if(!kody.length)h+='<div class="afi-pusto">Lista grup pojawi się po pierwszej wysyłce agenta.</div>';
+  else{
+    h+='<div class="tw"><table class="afi-t afi-map"><tr><th>Dawka</th><th>Sektor</th><th style="text-align:left">Grupy z AfiFarm</th><th>Zwierząt teraz</th></tr>';
+    afiSektory().forEach((s,i)=>{
+      const moje=(afiCfg.map?.[s.s]||[]);let suma=0;moje.forEach(k=>suma+=cnt[k]||0);
+      h+='<tr><td class="t">'+escH(s.g)+'</td><td class="t"><b>'+escH(s.s)+'</b></td><td class="t">';
+      moje.forEach(k=>h+='<span class="pill">'+escH(afiNazwaGrupy(k))+' ('+(cnt[k]||0)+') <a onclick="afiMapUsun(\''+escH(s.s).replace(/'/g,"\\'")+'\','+k+')">✕</a></span>');
+      h+='<select class="afi-sel" onchange="if(this.value)afiMapDodaj(\''+escH(s.s).replace(/'/g,"\\'")+'\',+this.value)"><option value="">+ dodaj grupę…</option>';
+      kody.filter(k=>!moje.includes(k)&&(AFI.wszGrupy||cnt[k]>0)).forEach(k=>h+='<option value="'+k+'">'+escH(afiNazwaGrupy(k))+' ('+(cnt[k]||0)+')'+(zajete[k]?' – teraz: '+escH(zajete[k]):'')+'</option>');
+      h+='</select></td><td>'+(moje.length?suma:'—')+'</td></tr>';
+    });
+    h+='</table></div><label class="sub" style="display:inline-flex;gap:6px;align-items:center;margin-top:6px"><input type="checkbox" '+(AFI.wszGrupy?'checked':'')+' onchange="AFI.wszGrupy=this.checked;rStado()"> pokaż też puste grupy</label>';
+    const wolne=Object.keys(cnt).filter(k=>!zajete[k]).sort();
+    if(wolne.length)h+='<div class="afi-note">Grupy z krowami, które nie są przypisane do żadnego sektora: '+wolne.map(k=>'<b>'+escH(afiNazwaGrupy(k))+'</b> ('+cnt[k]+')').join(', ')+'</div>';
+  }
+  h+='</div>';
+  h+='<div class="afi-row"><div class="card afi-card" style="flex:1"><h3>Progi alarmów</h3><div class="afi-progi">';
+  const pole=(k,t,j)=>'<label>'+t+'<span><input type="number" value="'+pr[k]+'" onchange="afiProgZmien(\''+k+'\',this.value)"> '+j+'</span></label>';
+  h+='<div class="afi-pg">Alarmy</div>'+pole('ruja','Ruja – wzrost aktywności ponad średnią z 10 dni','%')+pole('spadek','Spadek mleka – poniżej średniej z 7 dni','%')+pole('cond','Przewodność – wzrost ponad średnią z 7 dni','%')+pole('ped','Pedometr – brak odczytu co najmniej','dni');
+  h+='<div class="afi-pg">Rozród</div>'+pole('vwp','Okres spoczynku po wycieleniu (VWP)','dni')+pole('bezRui','„Bez rui” – brak rui/inseminacji po','dni')+pole('pdOd','Badanie ciąży – od','dni po insem.')+pole('pdDo','Badanie ciąży – do','dni po insem.')+pole('ciaza','Długość ciąży','dni')+pole('zasDni','Zasuszenie przed wycieleniem','dni')+pole('zasOkno','Lista „do zasuszenia” – na ile dni naprzód','dni')+pole('wycOkno','Lista „do wycielenia” – na ile dni naprzód','dni');
+  h+='</div></div>';
+  // kontrola danych
+  const m=AFI.meta,kl=Object.keys(AFI.dni).sort();
+  h+='<div class="card afi-card" style="flex:1"><h3>Kontrola danych</h3>';
+  if(m){
+    const hs=(m.stado||[]).slice(-1)[0];const kl2={};for(const g in cnt){const t=String(g).slice(0,2);kl2[t]=(kl2[t]||0)+cnt[g]}
+    h+='<table class="afi-t"><tr><td class="t">Ostatnia wysyłka agenta</td><td>'+escH(m.ts||'—')+'</td></tr><tr><td class="t">Wersja agenta / komputer</td><td>'+escH((m.v||'?')+' / '+(m.komp||'?'))+'</td></tr><tr><td class="t">Dni w pamięci urządzenia</td><td>'+kl.length+(kl.length?' ('+kl[0]+' … '+kl[kl.length-1]+')':'')+'</td></tr>';
+    if(hs)h+='<tr><td class="t">AfiFarm – status dojne / zasuszone / jałówki ('+afiPlK(hs[0])+')</td><td>'+(hs[3]??'—')+' / '+(hs[4]??'—')+' / '+(hs[5]??'—')+'</td></tr>';
+    h+='<tr><td class="t">Aplikacja – zwierzęta w grupach 1xx / 2xx / 3xx</td><td>'+(kl2['11']||0)+' / '+(kl2['12']||0)+' / '+(kl2['13']||0)+'</td></tr></table>';
+    h+='<div class="afi-note">Obie linie powinny być zbliżone. Duża różnica = daj znać, sprawdzimy rozpoznawanie aktywnych zwierząt.</div>';
+  } else h+='<div class="afi-pusto">Brak danych.</div>';
+  h+='<div class="fr" style="margin-top:8px"><label class="btn bs bo" style="cursor:pointer">📂 Wczytaj plik z agenta (.json)<input type="file" accept=".json,application/json" style="display:none" onchange="afiWczytajPlik(this)"></label><button class="btn bs bo" onclick="afiWyczysc()">🔄 Pobierz dane od nowa</button></div>';
+  h+='</div></div>';
+  return h;
+}
+function afiMapDodaj(sek,kod){afiCfg.map=afiCfg.map||{};Object.keys(afiCfg.map).forEach(s=>{afiCfg.map[s]=(afiCfg.map[s]||[]).filter(k=>k!==kod);if(!afiCfg.map[s].length)delete afiCfg.map[s]});(afiCfg.map[sek]=afiCfg.map[sek]||[]).push(kod);afiCfg.map[sek].sort((a,b)=>a-b);saM('afi');afiPrzelicz();rStado()}
+function afiMapUsun(sek,kod){if(!afiCfg.map?.[sek])return;afiCfg.map[sek]=afiCfg.map[sek].filter(k=>k!==kod);if(!afiCfg.map[sek].length)delete afiCfg.map[sek];saM('afi');afiPrzelicz();rStado()}
+function afiProgZmien(k,v){const n=pf(v);if(isNaN(n)||n<0)return;afiCfg.prog=Object.assign(afiProg(),{[k]:n});saM('afi');toast('Zapisano')}
+function afiWyczysc(){afiIdbClear().then(()=>{AFI.dni={};if(AFI.meta)afiIdbPut('meta',JSON.stringify(AFI.meta));if(AFI.krowy)afiIdbPut('krowy',JSON.stringify(AFI.krowy));return afiPobierzDni()}).then(()=>{afiPrzelicz();rStado();toast('Pobrano dane')})}
+function afiWczytajPlik(inp){
+  const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{
+    let o;try{o=JSON.parse(rd.result)}catch(e){toast('To nie jest plik agenta (błędny JSON)');return}
+    if(!o||!o.ohz_afi||!o.meta||!o.krowy||!o.dni){toast('To nie jest plik agenta AfiFarm');return}
+    AFI.meta=o.meta;AFI.krowy=o.krowy;afiIdbPut('meta',JSON.stringify(o.meta));afiIdbPut('krowy',JSON.stringify(o.krowy));
+    Object.entries(o.dni).forEach(([iso,d])=>{AFI.dni[iso]=d;afiIdbPut('d:'+iso,JSON.stringify(d))});
+    afiPrzytnij();afiPrzelicz();rStado();
+    if(fbDb&&lvl('stado')>=3){
+      // wyślij do Firebase, żeby inni też widzieli (paczki po 400 dokumentów)
+      const wpisy=Object.entries(o.dni).map(([iso,d])=>[fbDb.collection('afi_dni').doc(iso),{j:JSON.stringify(d),d:d.d}]);
+      wpisy.push([fbDb.collection('afi').doc('krowy'),{j:JSON.stringify(o.krowy)}],[fbDb.collection('afi').doc('meta'),{j:JSON.stringify(o.meta)}]);
+      const paczki=[];for(let i=0;i<wpisy.length;i+=400)paczki.push(wpisy.slice(i,i+400));
+      paczki.reduce((p,pk)=>p.then(()=>{const b=fbDb.batch();pk.forEach(([ref,v])=>b.set(ref,v));return b.commit()}),Promise.resolve())
+        .then(()=>toast('Wczytano plik i wysłano do chmury ('+Object.keys(o.dni).length+' dni)')).catch(e=>{console.warn(e);toast('Wczytano lokalnie; wysyłka do chmury nie powiodła się')});
+    } else toast('Wczytano plik ('+Object.keys(o.dni).length+' dni)');
+  };
+  rd.readAsText(f);inp.value='';
+}
+
+// ---------- ROZRÓD: listy robocze ----------
+function afiRozrod(){
+  const C=AFI.C,D=C.D,pr=afiProg(),rujaIds=new Set(afiAlarmy().ruja.map(r=>r.id));
+  const L={ins:[],bez:[],pd:[],zas:[],wyc:[],pow:[]};
+  for(const id in AFI.krowy.k){
+    const k=AFI.krowy.k[id];if(k.a!==1)continue;
+    const st=afiStan(k,D),jal=st.w==null,dim=jal?null:afiDIM(k,D),lakt=jal?0:afiLakt(id),sek=afiEtykietaKrowy(id,D);
+    const ost=st.ost,dIns=ost?D-ost[0]:null,cielna=st.ciel||(!jal&&st.zas&&!!ost);
+    const pdPo=!!(ost&&(k.p||[]).some(p=>p[1]===30239&&p[0]>=ost[0]));
+    const wyc=cielna&&ost?ost[0]+pr.ciaza:null;
+    const rujaPo=(k.e||[]).some(e=>e[1]===30010&&e[0]>(st.w??-1));
+    const b={id,sek,lakt,dim,dIns,ost,nIns:st.ins.length,ruja:rujaIds.has(id),jal,pusta:st.pusta};
+    if(!jal&&!cielna&&!st.zas&&dim!=null&&dim>=pr.vwp&&(!st.ins.length||st.pusta))L.ins.push(b);
+    if(!jal&&!cielna&&!st.zas&&dim!=null&&dim>=pr.bezRui&&!st.ins.length&&!rujaPo)L.bez.push(b);
+    if(ost&&!pdPo&&!st.pusta&&!st.zas&&dIns>=pr.pdOd&&dIns<=120)L.pd.push(Object.assign({},b,{zal:dIns>pr.pdDo}));
+    if(!jal&&cielna&&!st.zas&&wyc!=null){const zd=wyc-pr.zasDni;if(zd-D<=pr.zasOkno)L.zas.push(Object.assign({},b,{wyc,zd,za:zd-D}))}
+    if(cielna&&wyc!=null){const za=wyc-D;if(za<=pr.wycOkno&&za>=-14)L.wyc.push(Object.assign({},b,{wyc,za}))}
+    if(!jal&&!cielna&&!st.zas&&st.ins.length>=3)L.pow.push(b);
+  }
+  L.ins.sort((a,b)=>b.dim-a.dim);L.bez.sort((a,b)=>b.dim-a.dim);L.pd.sort((a,b)=>b.dIns-a.dIns);L.zas.sort((a,b)=>a.za-b.za);L.wyc.sort((a,b)=>a.za-b.za);L.pow.sort((a,b)=>b.nIns-a.nIns||b.dim-a.dim);
+  return L;
+}
+const AFI_RL=[['ins','Do inseminacji','po okresie spoczynku: bez inseminacji albo puste po badaniu',''],['bez','Bez rui po VWP','brak rui i inseminacji','w'],['pd','Do badania ciąży','dni po inseminacji','a'],['zas','Do zasuszenia','w najbliższych dniach',''],['wyc','Do wycielenia','w najbliższych dniach',''],['pow','Powtarzające','≥ 3 inseminacje, niecielne','w']];
+function afiRozrodTabela(key,L,druk){
+  const pr=afiProg(),D=AFI.C.D;
+  const kr=id=>druk?'<b>'+id+'</b>':'<a class="afi-nr" onclick="AFI.v=\'krowa\';AFI.krowa=\''+id+'\';rStado()">'+id+'</a>';
+  const sek=r=>escH(r.jal?'jałówka · '+r.sek:r.sek),lk=r=>r.jal?'—':(r.lakt??'—'),ins=r=>r.ost?afiPlK(r.ost[0])+' ('+r.dIns+' dni)':'—';
+  const tag=(t,c)=>druk?t:'<span class="tag '+(c||'')+'">'+t+'</span>';
+  let th='',rows='';const lst=L[key];
+  if(key==='ins'){th='<th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Dzień lakt.</th><th>Insem. w lakt.</th><th>Uwagi</th>';
+    lst.forEach(r=>rows+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+sek(r)+'</td><td>'+lk(r)+'</td><td>'+r.dim+'</td><td>'+r.nIns+'</td><td class="t">'+(r.ruja?tag('ruja teraz 🔥','w'):'')+(r.pusta?' '+tag('pusta po badaniu','a'):'')+'</td></tr>')}
+  if(key==='bez'){th='<th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Dzień lakt.</th><th>Uwagi</th>';
+    lst.forEach(r=>rows+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+sek(r)+'</td><td>'+lk(r)+'</td><td>'+r.dim+'</td><td class="t">'+(r.ruja?tag('ruja teraz 🔥','w'):tag('do kontroli weterynaryjnej'))+'</td></tr>')}
+  if(key==='pd'){th='<th>Krowa</th><th>Sektor</th><th>Inseminacja</th><th>Dni po insem.</th><th>Buhaj</th><th>Status</th>';
+    lst.forEach(r=>rows+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+sek(r)+'</td><td>'+afiPl(r.ost[0])+'</td><td>'+r.dIns+'</td><td>'+(r.ost[1]>0?r.ost[1]:'—')+'</td><td class="t">'+(r.zal?tag('zaległe (> '+pr.pdDo+' dni)','w'):tag('w terminie','n'))+'</td></tr>')}
+  if(key==='zas'){th='<th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Dzień lakt.</th><th>Przewid. wycielenie</th><th>Zasuszenie</th><th>Status</th>';
+    lst.forEach(r=>rows+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+sek(r)+'</td><td>'+lk(r)+'</td><td>'+(r.dim??'—')+'</td><td>'+afiPl(r.wyc)+'</td><td>'+afiPl(r.zd)+'</td><td class="t">'+(r.za<0?tag('spóźnione '+(-r.za)+' dni','w'):r.za===0?tag('dziś','n'):tag('za '+r.za+' dni','n'))+'</td></tr>')}
+  if(key==='wyc'){th='<th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Inseminacja</th><th>Przewid. wycielenie</th><th>Status</th>';
+    lst.forEach(r=>rows+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+sek(r)+'</td><td>'+lk(r)+'</td><td>'+afiPl(r.ost[0])+(r.ost[1]>0?' ('+r.ost[1]+')':'')+'</td><td>'+afiPl(r.wyc)+'</td><td class="t">'+(r.za<0?tag('po terminie '+(-r.za)+' dni','w'):r.za===0?tag('dziś','w'):tag('za '+r.za+' dni','c'))+'</td></tr>')}
+  if(key==='pow'){th='<th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Dzień lakt.</th><th>Insem. w lakt.</th><th>Ostatnia insem.</th><th>Uwagi</th>';
+    lst.forEach(r=>rows+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+sek(r)+'</td><td>'+lk(r)+'</td><td>'+r.dim+'</td><td>'+r.nIns+'</td><td>'+ins(r)+'</td><td class="t">'+(r.ruja?tag('ruja teraz 🔥','w'):'')+'</td></tr>')}
+  if(!lst.length)return druk?'<p>Brak zwierząt na liście.</p>':'<div class="afi-pusto">Brak zwierząt na tej liście.</div>';
+  return (druk?'<table>':'<div class="tw"><table class="afi-t">')+'<tr>'+th+'</tr>'+rows+'</table>'+(druk?'':'</div>');
+}
+function afiRozrodHTML(){
+  const L=afiRozrod(),pr=afiProg(),key=AFI.rl||'ins',opis={ins:'po okresie spoczynku ('+pr.vwp+' dni), bez inseminacji i bez potwierdzonej ciąży',bez:'ponad '+pr.bezRui+' dni po wycieleniu bez rui i inseminacji',pd:pr.pdOd+'–'+pr.pdDo+' dni po inseminacji (zaległe do 120 dni), bez dodatniego badania',zas:'przewidywane zasuszenie ('+pr.zasDni+' dni przed wycieleniem) w ciągu '+pr.zasOkno+' dni lub spóźnione',wyc:'przewidywane wycielenie w ciągu '+pr.wycOkno+' dni (krowy i jałówki)',pow:'co najmniej 3 inseminacje w tej laktacji, bez potwierdzonej ciąży'};
+  let h='<div class="afi-lc">';
+  AFI_RL.forEach(([k,t,o,c])=>{h+='<div class="lc'+(key===k?' on':'')+(c?' '+c:'')+'" onclick="AFI.rl=\''+k+'\';rStado()"><span>'+t+'</span><b>'+L[k].length+'</b><em>'+(k==='pd'?pr.pdOd+'–'+pr.pdDo+' '+o:k==='zas'?'w ciągu '+pr.zasOkno+' dni':k==='wyc'?'w ciągu '+pr.wycOkno+' dni':k==='bez'?'> '+pr.bezRui+' dni, '+o:o)+'</em></div>'});
+  h+='</div>';
+  const tyt=AFI_RL.find(x=>x[0]===key)[1];
+  h+='<div class="card afi-card"><h3>'+tyt+' <span class="cnt">'+L[key].length+'</span> <span class="sub">'+opis[key]+'</span><button class="btn bs bo" style="margin-left:auto" onclick="afiDrukujListe(\''+key+'\')">🖨 Drukuj listę</button></h3>'+afiRozrodTabela(key,L,false);
+  h+='<div class="afi-note">Przewidywane wycielenie = ostatnia inseminacja (potwierdzona badaniem ciąży lub zasuszeniem) + '+pr.ciaza+' dni. Progi zmienisz w <b>⚙ Ustawieniach</b>.</div></div>';
+  return h;
+}
+function afiDrukujListe(key){
+  const L=afiRozrod(),tyt=AFI_RL.find(x=>x[0]===key)[1];
+  printDoc('Rozród – '+tyt+' – '+afiPl(AFI.C.D),'<h1 style="font-size:18pt;margin:0 0 4mm">'+tyt+' <span style="font-weight:400;font-size:12pt">('+L[key].length+') · stan na '+afiPl(AFI.C.D)+' · OHZ Bobrowniki</span></h1>'+afiRozrodTabela(key,L,true),'portrait','table{width:100%;border-collapse:collapse;font-size:12pt}th,td{border:1px solid #333;padding:5px 7px;text-align:left}th{font-size:10pt;text-transform:uppercase}');
+}
+
+// ---------- EKONOMIA: koszt paszy na litr, dochód ponad koszt paszy ----------
+const AFI_KG_L=1.03;
+function afiCenaMleka(n){const iso=afiIso(n);let c=null;[...(afiCfg.cena||[])].sort((a,b)=>a.od<b.od?-1:1).forEach(x=>{if(x.od<=iso)c=+x.c});return c}
+function afiDawkiNa(iso){
+  if(iso>=isoToday())return gr;
+  let best=null;(dawkiHist||[]).forEach(h=>{if(h.date&&h.date<=iso&&(!best||h.date>best.date||(h.date===best.date&&h.ts>best.ts)))best=h});
+  return best?best.gr:gr;
+}
+function afiKlasaSektora(sek){const k=afiCfg.map?.[sek];if(!k||!k.length)return 'inne';if(k.some(c=>Math.floor(c/100)===11))return 'dojne';if(k.some(c=>Math.floor(c/100)===12))return 'zas';return 'inne'}
+function afiKosztDnia(n){
+  const iso=afiIso(n),G=afiDawkiNa(iso),ceny=(hist&&hist[iso]&&hist[iso].prices)||null;
+  const cena=sid=>{const v=ceny&&ceny[sid]!=null?ceny[sid]:(gS(sid)?gS(sid).cena_t:0);return (+v||0)/1000};
+  const out=[];
+  (G||[]).forEach(g=>{const z=g.z||1;let zlSzt=0;(g.sk||[]).forEach(x=>{if(+x.kg>0)zlSzt+=x.kg*cena(x.s)});
+    (g.se||[]).forEach(s=>{let zl=zlSzt*s.sz*z;(s.sk_extra||[]).forEach(e=>{if(+e.kg>0)zl+=e.kg*s.sz*z*cena(e.s)});out.push({g:g.nazwa,s:s.n,zl,sz:s.sz*z,kl:afiKlasaSektora(s.n)})})});
+  return out;
+}
+function afiEkonDzien(n){
+  const c=AFI.dni[afiIso(n)]?.c;if(!c)return null;
+  let kg=0,kr=0;for(const id in c){const m=c[id][0];if(m>0){kg+=m/1000;kr++}}
+  if(!kr)return null;
+  const K=afiKosztDnia(n),kDoj=K.filter(x=>x.kl==='dojne').reduce((a,x)=>a+x.zl,0),kAll=K.reduce((a,x)=>a+x.zl,0),l=kg/AFI_KG_L,cena=afiCenaMleka(n);
+  return {n,l,kr,kDoj,kAll,kL:kDoj/l,kLs:kAll/l,cena,iofc:cena!=null?(l*cena-kDoj)/kr:null,iofcS:cena!=null?l*cena-kDoj:null,K};
+}
+function afiEkonHTML(){
+  const C=AFI.C,Y=C.Y,pelny=lvl('stado')>=3;
+  if(!Object.values(afiCfg.map||{}).some(k=>k.some(c=>Math.floor(c/100)===11)))return '<div class="card afi-pusto">Ekonomia potrzebuje przypisania sektorów krów dojnych do grup AfiFarm – <b>⚙ Ustawienia</b>.</div>';
+  const x=[];for(let n=Y-AFI.okres+1;n<=Y;n++)if(AFI.dni[afiIso(n)])x.push(n);
+  const E=x.map(afiEkonDzien),e=E[E.length-1];
+  const cena=afiCenaMleka(Y);
+  let h='<div class="afi-filtry"><span class="lbl">Okres</span>';
+  [[30,'30 dni'],[90,'90 dni'],[180,'180 dni'],[365,'rok']].forEach(([k,t])=>h+='<button class="chip'+(AFI.okres===k?' on':'')+'" onclick="AFI.okres='+k+';rStado()">'+t+'</button>');
+  h+='<span class="afi-cena"><b>Cena mleka</b> '+(cena!=null?'<b class="afi-cv">'+afiF(cena,2)+' zł/l</b>':'<span class="tag w">nie wpisano</span>');
+  if(pelny)h+=' · od <input type="date" id="afi-c-od" value="'+isoToday().slice(0,8)+'01"> <input id="afi-c-v" inputmode="decimal" placeholder="zł/l" style="width:70px"> <button class="btn bs bp" onclick="afiCenaZapisz()">Zapisz</button>';
+  h+='</span></div>';
+  if((afiCfg.cena||[]).length)h+='<div class="afi-chist">Historia cen: '+[...afiCfg.cena].sort((a,b)=>a.od<b.od?1:-1).map(c=>'<span class="pill">od '+afiPl(afiNum(c.od))+': <b>'+afiF(+c.c,2)+' zł/l</b>'+(pelny?' <a onclick="afiCenaUsun(\''+c.od+'\')">✕</a>':'')+'</span>').join(' ')+'</div>';
+  if(!e)return h+'<div class="card afi-pusto">Brak danych o mleku za '+afiPl(Y)+'.</div>';
+  const pop=E.slice(-31,-1).filter(Boolean),srKL=afiSr(pop.map(z=>z.kL)),zm=srKL!=null?e.kL-srKL:null;
+  h+='<div class="afi-kpi"><div class="k"><span>Koszt paszy krów dojnych ('+afiPlK(Y)+')</span><b>'+Math.round(e.kDoj).toLocaleString('pl-PL')+' zł</b><em class="sub">'+afiF(e.kDoj/e.kr,2)+' zł / krowę</em></div>';
+  h+='<div class="k"><span>Mleko ('+afiPlK(Y)+')</span><b>'+Math.round(e.l).toLocaleString('pl-PL')+' l</b><em class="sub">'+afiF(e.l/e.kr)+' l / krowę · '+e.kr+' krów</em></div>';
+  h+='<div class="k"><span>Koszt paszy na litr</span><b class="dn">'+afiF(e.kL,2)+' zł</b><em class="'+(zm==null?'sub':zm<=0?'ok':'dn')+'">'+(zm==null?'':(zm<=0?'−':'+')+afiF(Math.abs(zm),2)+' vs śr. 30 dni')+'</em></div>';
+  h+='<div class="k"><span>Dochód ponad koszt paszy</span><b>'+(e.iofc!=null?afiF(e.iofc,2)+' zł':'—')+'</b><em class="sub">na krowę dojną / dzień</em></div>';
+  h+='<div class="k"><span>Dochód ponad paszę – stado</span><b>'+(e.iofcS!=null?Math.round(e.iofcS).toLocaleString('pl-PL')+' zł':'—')+'</b><em class="sub">'+(e.iofcS!=null?'dziennie · '+Math.round(e.iofcS*30).toLocaleString('pl-PL')+' zł / 30 dni':'wpisz cenę mleka')+'</em></div></div>';
+  const zn=afiZmianyDawek().filter(z=>z.n>=x[0]&&z.n<=x[x.length-1]);
+  const iofcV=E.map(z=>z&&z.iofc!=null?z.iofc:null);
+  h+='<div class="card afi-card"><h3>Koszt paszy na litr i dochód ponad koszt paszy – dzień po dniu</h3>'+afiWykres({x,ser:[{n:'koszt',c:'#C62828',v:E.map(z=>z?z.kL:null),w:2.3}],prawa:iofcV.some(v=>v!=null)?{c:'#1565C0',v:iofcV,zero:false}:null,znaczniki:zn,h:300,jedn:'koszt zł / litr',jednP:'dochód zł / krowę / dzień'});
+  h+='<div class="afi-leg"><span><i style="background:#C62828"></i>koszt paszy zł / litr</span>'+(iofcV.some(v=>v!=null)?'<span><i style="background:#1565C0"></i>dochód ponad koszt paszy zł / krowę / dzień</span>':'')+(zn.length?'<span><i style="background:#7B1FA2"></i>zmiana dawki</span>':'')+'</div></div>';
+  // tabela dawek (dojne)
+  const D={},c=AFI.dni[afiIso(Y)].c;
+  e.K.filter(z=>z.kl==='dojne').forEach(z=>{const d=(D[z.g]=D[z.g]||{s:[],zl:0,kr:0,l:0});d.s.push(z.s);d.zl+=z.zl});
+  for(const id in c){const m=c[id][0];if(!(m>0))continue;const s=afiSektorKrowy(id,Y);if(!s)continue;const g=C.sekDawka[s];if(D[g]){D[g].kr++;D[g].l+=m/1000/AFI_KG_L}}
+  h+='<div class="afi-row"><div class="card afi-card" style="flex:1.4"><h3>Dawki krów dojnych – '+afiPl(Y)+' <span class="sub">krowy dojone wg AfiFarm · koszt wg dawek i cen surowców z tego dnia</span></h3><div class="tw"><table class="afi-t"><tr><th>Dawka</th><th>Sektory</th><th>Krów</th><th>Mleko l/krowę</th><th>Koszt paszy zł/krowę</th><th>Koszt zł/litr</th><th>Dochód ponad paszę zł/krowę</th></tr>';
+  Object.entries(D).forEach(([g,d])=>{const kk=d.kr?d.zl/d.kr:null,kl=d.l?d.zl/d.l:null,lk=d.kr?d.l/d.kr:null,io=cena!=null&&d.kr?lk*cena-kk:null;
+    h+='<tr><td class="t"><b>'+escH(g)+'</b></td><td class="t">'+escH(d.s.join(', '))+'</td><td>'+d.kr+'</td><td>'+afiF(lk)+'</td><td>'+afiF(kk,2)+'</td><td'+(kl!=null&&kl>e.kL*1.2?' class="dn"':'')+'>'+afiF(kl,2)+'</td><td class="'+(io==null?'':io>=0?'ok':'dn')+'">'+afiF(io,2)+'</td></tr>'});
+  h+='</table></div></div>';
+  // pozostale grupy
+  const zas=e.K.filter(z=>z.kl==='zas'),inne=e.K.filter(z=>z.kl==='inne');
+  const realZ=zas.reduce((a,z)=>a+(afiRealne(z.s)||0),0);
+  h+='<div class="card afi-card" style="flex:1"><h3>Pozostałe grupy (bez mleka)</h3><table class="afi-t"><tr><th>Grupa</th><th>Sztuk</th><th>zł/dzień</th></tr>';
+  h+='<tr><td class="t">Zasuszone / porodówka</td><td>'+realZ+'</td><td>'+Math.round(zas.reduce((a,z)=>a+z.zl,0)).toLocaleString('pl-PL')+'</td></tr>';
+  h+='<tr><td class="t">Jałówki i pozostałe <span class="sub">(sztuki techniczne)</span></td><td>'+inne.reduce((a,z)=>a+z.sz,0)+'</td><td>'+Math.round(inne.reduce((a,z)=>a+z.zl,0)).toLocaleString('pl-PL')+'</td></tr>';
+  h+='<tr><td class="t"><b>Koszt paszy całego stada na litr</b></td><td></td><td class="dn"><b>'+afiF(e.kLs,2)+' zł</b></td></tr></table>';
+  h+='<div class="afi-note"><b>Krowy dojne</b>: koszt dawek sektorów krów dojnych ÷ litry mleka. <b>Całe stado</b>: wszystkie dawki (z zasuszonymi i jałówkami) ÷ litry. Litry = kg z AfiFarm ÷ 1,03. Koszt = to, co zadano (sztuki techniczne × zadania) wg historii dawek; dawki awaryjne nie są uwzględniane.</div></div></div>';
+  return h;
+}
+function afiCenaZapisz(){
+  const od=$('#afi-c-od').value,c=pf($('#afi-c-v').value);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(od)||isNaN(c)||c<=0||c>20){toast('Podaj datę i cenę w zł/l, np. 2,30');return}
+  afiCfg.cena=(afiCfg.cena||[]).filter(x=>x.od!==od);afiCfg.cena.push({od,c:Math.round(c*1000)/1000});saM('afi');rStado();toast('Zapisano cenę mleka');
+}
+function afiCenaUsun(od){if(!confirm('Usunąć cenę od '+od+'?'))return;afiCfg.cena=(afiCfg.cena||[]).filter(x=>x.od!==od);saM('afi');rStado()}
+
+// ---------- Dawki: sztuki realne z AfiFarm ----------
+function afiDawkiOn(){return Object.keys(afiCfg.map||{}).length>0}
+function afiWypelnijDawki(){
+  if(!afiDawkiOn())return;
+  if(AFI.krowy&&!AFI.C)afiPrzelicz();
+  document.querySelectorAll('#dk-s td[data-afi-sek]').forEach(td=>{
+    const sek=td.dataset.afiSek,typ=td.dataset.afiTyp,sz=+td.dataset.afiSz,kg=+td.dataset.afiKg;
+    const n=AFI.krowy&&AFI.C?afiRealne(sek):null,kody=afiCfg.map?.[sek];
+    if(typ==='n')td.innerHTML=!kody?'<span class="afi-real">🔒 —</span><div class="sub">nie przypisano</div>':(n==null?'<span class="afi-real">🔒 …</span>':'<span class="afi-real">🔒 '+n+'</span><div class="sub">gr. '+kody.map(afiKrotkoGrupa).join(', ')+'</div>');
+    else if(typ==='r'){if(n==null||!kody){td.innerHTML='—';return}const z=+td.dataset.afiZ||1,d=n-sz;td.innerHTML='<span class="afi-diff '+(d===0?'z':Math.abs(d)<=3?'p':'m')+'">'+(d===0?'zgodne':(d>0?'+':'−')+Math.abs(d))+'</span>'+(z>1?'<div class="sub">'+(sz/z)+' szt × '+z+' zadania = '+sz+'</div>':'')}
+    else if(typ==='k')td.innerHTML=n>0&&kody&&kg>0?afiF(kg/n):'—';
+  });
 }
 
 (function(){

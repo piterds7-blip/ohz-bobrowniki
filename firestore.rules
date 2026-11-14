@@ -40,6 +40,21 @@ service cloud.firestore {
       allow read, write: if dokument != 'config' && zalogowany() && niezablokowany();
     }
 
+    // Dane z AfiFarm: wysyła je tylko agent na komputerze w oborze (osobne konto),
+    // aplikacja tylko je czyta
+    function agent() {
+      return request.auth != null
+        && request.auth.token.email == 'agent@ohz-bobrowniki.app';
+    }
+    match /afi/{dokument} {
+      allow read: if zalogowany() && niezablokowany();
+      allow write: if agent();
+    }
+    match /afi_dni/{dzien} {
+      allow read: if zalogowany() && niezablokowany();
+      allow write: if agent();
+    }
+
     // Wszystko inne zablokowane
   }
 }
