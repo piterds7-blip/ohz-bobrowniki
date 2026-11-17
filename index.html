@@ -27,9 +27,19 @@ body{font-family:var(--font);background:var(--bg);color:var(--txt);line-height:1
 .app-header h1{font-size:16px;font-weight:700;flex:1}
 .app-header .ub{font-size:11px;background:rgba(255,255,255,.2);padding:3px 8px;border-radius:10px}
 .blo{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;padding:4px 10px;border-radius:6px;font:600 11px var(--font);cursor:pointer}
+@media(max-width:600px){.app-header{flex-wrap:wrap;row-gap:6px}.app-header h1{font-size:15px}#hdr-extra{display:inline-flex;flex-wrap:wrap;gap:2px}}
 .tab-bar{display:flex;background:var(--card);border-bottom:1px solid var(--brd);overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:44px;z-index:99}.tab-bar::-webkit-scrollbar{display:none}
 .tab-btn{flex-shrink:0;padding:9px 12px;border:none;background:none;font:600 11px var(--font);color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
 .tab-btn.active{color:var(--pri);border-bottom-color:var(--pri);background:var(--pri-bg)}
+.tab-wiecej{margin-left:auto;color:var(--txt2)}
+.tab-menu{position:fixed;z-index:300;background:var(--card);border:1px solid var(--brd);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding:4px;display:flex;flex-direction:column;min-width:180px}
+.tab-menu button{border:0;background:none;text-align:left;padding:10px 12px;font:600 13px var(--font);color:var(--txt);border-radius:6px;cursor:pointer}
+.tab-menu button:hover{background:var(--pri-bg);color:var(--pri)}
+.tab-menu-opis{font:700 10px var(--font);text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);padding:6px 12px 2px}
+.rap-kat{display:flex;flex-wrap:wrap;gap:6px 18px;background:var(--card);border:1px solid var(--brd);border-radius:var(--radius);margin-bottom:10px;padding:6px 10px}
+.rap-grupa{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+.rap-gl{font:800 11px var(--font);text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);margin-right:6px}
+.dzis-tyt{margin:0;font-size:18px;color:var(--pri)}
 .tp{display:none;padding:10px}.tp.active{display:block}
 .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--brd);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
 .ch{padding:8px 12px;font:700 13px var(--font);color:var(--pri);border-bottom:1px solid var(--brd);background:var(--pri-bg);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
@@ -209,6 +219,57 @@ table.afi-t tr.afi-dbl td{background:#FFEBEE}
 .kurs-dod{margin:2px 10px 8px;border:1px solid #CBD5E6;background:#F4F6FB;border-radius:8px;padding:5px 9px;font-size:12.5px;display:grid;gap:3px}
 .kurs-dod .tyt{font-weight:700;font-size:11px;color:#3A5688;text-transform:uppercase}
 .upusc{margin:6px 10px 10px;border:2px dashed var(--brd);border-radius:8px;padding:7px;text-align:center;color:var(--txt2);font-size:12px}
+.wk-akcje{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+@media(max-width:600px){.zad-tyt{flex-wrap:wrap}.zad-tyt small{flex-basis:100%}.wk-akcje{margin-left:0}}
+.nd-panel{background:var(--card);border:2px solid #CDB894;border-radius:10px;padding:10px 14px;margin-bottom:14px}
+.nd-gora{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap}
+.nd-tyt{font-weight:800;font-size:17px;color:#6B4E00}
+.nd-licz{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nd-licz>span{padding:5px 10px;border-radius:8px;background:#F3EFE6;font-size:13px}
+.nd-licz>span.zost{background:#FFF1CC;color:#6B4E00}
+.nd-lista{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ndk{display:flex;align-items:center;gap:8px;min-height:48px;padding:5px 8px 5px 10px;border:2px solid #C49A4A;border-radius:12px;background:#fff;cursor:grab}
+.ndk.uzyte{border-style:dashed;border-color:#D8C8A8;background:#FAF7F0;cursor:default}
+.ndk .uchwyt{color:#C49A4A;letter-spacing:-2px}
+.ndk-t{display:flex;flex-direction:column;line-height:1.3}.ndk-t small{font-size:12px;color:var(--txt2)}.ndk-t .wpole{width:66px}
+.ndk-p{display:flex;gap:4px;align-items:center}
+.wk-pasek-num{position:sticky;top:6px;z-index:20;background:var(--pri);color:#fff;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap;box-shadow:0 6px 18px rgba(20,40,30,.25);font-size:13px}
+.wk-pasek-num .btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff}
+.wk-pasek-num .wk-gotowe{background:#fff;color:var(--pri)}
+.wk-plan{display:flex;align-items:center;gap:6px;font-size:12.5px}
+.wk-pn-btn{margin-left:auto;display:flex;gap:6px}
+.wk-szcz{margin-bottom:14px}.wk-szcz>.kurs{border:2px solid var(--pri-l)}
+.wk-braki{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px;font-size:12.5px;color:var(--txt2)}
+.wk-brak{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--amber);background:var(--amber-bg);color:var(--txt);border-radius:16px;padding:5px 10px;font:600 12.5px var(--font);cursor:pointer}
+.wk-brak i{width:9px;height:9px;border-radius:50%;display:inline-block}.wk-brak small{color:var(--txt2);font-weight:500}
+.wk-karty{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:12px;align-items:start;margin-bottom:14px}
+.wk-karta{position:relative;background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:0 12px 10px;display:flex;flex-direction:column;gap:6px;cursor:pointer;overflow:hidden}
+.wk-karta:hover{border-color:var(--pri-l)}
+.wk-karta.otw{border:2px solid var(--pri)}
+.wk-karta.zrobiony{background:#F4F8F4}
+.wk-karta.cel-ok{outline:3px dashed var(--pri);outline-offset:-3px}
+.wk-pas{height:5px;margin:0 -12px}
+.wk-nag{display:flex;align-items:center;gap:9px;padding-top:6px}
+.wk-nag .uchwyt{cursor:grab;color:var(--txt2);letter-spacing:-2px}
+.wk-nr{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--pri);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+.wk-nr.brak{background:transparent;border:2px dashed #9AA39D;color:var(--txt2)}
+.wk-karta.num .wk-nr{width:44px;height:44px;font-size:23px}
+.wk-tyt{display:flex;flex-direction:column;min-width:0;line-height:1.2}.wk-tyt b{font-size:16px}.wk-tyt span{font-size:12px;color:var(--txt2)}
+.wk-kg{margin-left:auto;font-size:17px;white-space:nowrap}
+.wanna.wk-mini{height:12px;border-radius:6px}
+.wk-l{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;border-radius:6px;padding:1px 4px;margin:0 -4px}
+.wk-l[draggable=true]{cursor:grab}.wk-l[draggable=true]:hover{background:var(--pri-bg)}
+.wk-l small{color:var(--txt2)}.wk-l b{white-space:nowrap}
+.wk-l-nd{background:#FBE3C4;color:#6B3A00}
+.wk-uch{font-style:normal;color:#9AA39D;font-size:12px;letter-spacing:-2px;margin-right:5px}
+.wk-stopka{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--txt2);flex-wrap:wrap;min-height:30px}
+.wk-proc{font-weight:700;border-radius:10px;padding:1px 8px;color:#fff;background:#90A4AE}.wk-proc.ok{background:#2E7D32}.wk-proc.mn{background:#B8860B}.wk-proc.wi{background:#C62828}
+.wk-zrob{color:#2E7D32;font-weight:700}
+.wk-plus{margin-left:auto}
+.wk-nowy{border:2px dashed var(--brd);border-radius:10px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--txt2);font-size:12px}
+.wk-nowy.cel-ok{border-color:var(--pri);background:var(--pri-bg)}
+.wk-poj{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;flex-wrap:wrap}.wk-poj label{font-weight:600}.wk-poj input{width:100px}.wk-poj small{color:var(--txt2)}
+.wk-wyb-gr{display:flex;align-items:center;gap:6px;font:700 12px var(--font);color:var(--txt2);margin-top:6px}.wk-wyb-gr i{width:10px;height:10px;border-radius:50%;display:inline-block}
 .nowy-kurs{border:2px dashed var(--brd);border-radius:10px;padding:16px;text-align:center;color:var(--txt2);margin-bottom:12px;font-size:13px}
 .wybor-woz{display:grid;gap:6px;max-height:60vh;overflow:auto}
 .wybor-woz label{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--brd);border-radius:8px;padding:8px;cursor:pointer}
@@ -247,9 +308,10 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
 <div id="app">
 <header class="app-header"><span style="font-size:22px">🐄</span><h1>OHZ Bobrowniki</h1><span class="ub" id="syncb" style="background:rgba(255,193,7,.3)">⏳</span><button class="blo" onclick="forceRefresh()" title="Odśwież dane" style="font-size:16px;padding:2px 6px">⟳</button><span id="hdr-extra"></span><span class="ub" id="urb"></span><button class="blo" onclick="doLogout()">Wyloguj</button></header>
 <nav class="tab-bar" id="tbar"></nav>
+<section class="tp" id="tab-dzis"><div id="dzis-w"></div></section>
 <section class="tp" id="tab-mleko"><div class="fr"><div class="fg"><label>Rok</label><input type="number" id="ml-y" value="2026" min="2020" max="2035" onchange="rMl()"></div><div class="fg"><label>Miesiąc</label><select id="ml-m"></select></div><div class="fg"><label>Widok</label><select id="ml-v"><option value="o">Odstawa</option><option value="p">Produkcja</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('mleko')">📄 PDF</button></div></div><div class="card"><div class="tw" id="ml-w"></div></div></section>
 <section class="tp" id="tab-surowce"><div class="card"><div class="ch"><span>Surowce — stany magazynowe</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addSur()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('surowce')">📄 PDF</button></div></div><div class="tw" id="sur-w"></div></div></section>
-<section class="tp" id="tab-dawki"><div class="card"><div class="ch"><span>Dawki TMR — kg świeżej masy / szt. / dobę</span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addDkS()">+ Surowiec</button><button class="btn bs bpdf" onclick="pT('dawki')">📄 PDF</button></div></div><div class="tw" id="dk-w"></div></div><div class="card"><div class="ch">Sektory — podział sztuk</div><div class="tw" id="dk-s"></div></div></section>
+<section class="tp" id="tab-dawki"><div class="card"><div class="ch"><span>Dawki TMR — kg świeżej masy / szt. / dobę</span><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn bs bp" onclick="drukujReceptury()" title="Wozy wg planu policzone z dawek – gdy w danym dniu nie gospodarujesz niedojadami">🖨 Oblicz i drukuj wszystkie receptury</button><button class="btn bs bo" onclick="addDkS()">+ Surowiec</button><button class="btn bs bpdf" onclick="pT('dawki')">📄 PDF</button></div></div><div class="tw" id="dk-w"></div></div><div class="card"><div class="ch">Sektory — podział sztuk</div><div class="tw" id="dk-s"></div></div></section>
 <section class="tp" id="tab-awaryjne">
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;padding:12px">
@@ -261,16 +323,9 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
       <button class="btn bo" onclick="emergCopy()">📋 Kopiuj z dawek normalnych</button>
       <button class="btn bo" onclick="addDkS()">+ Surowiec</button>
       <button class="btn bs bpdf" onclick="emergExportPdf()">📄 PDF</button>
+      <button class="btn bp" onclick="drukujReceptury('awaryjne')">🖨 Oblicz i drukuj wszystkie receptury</button>
     </div>
     <div class="tw" id="emerg-table"></div>
-  </div>
-</section>
-<section class="tp" id="tab-planowanie">
-  <div class="card"><div class="ch"><span>Planowanie kolejności wozów paszowych</span></div>
-  <p style="padding:0 12px 6px;font-size:12px;color:var(--txt2)">Ustaw kolejność wozów przez przeciąganie lub strzałki. Ta kolejność służy do przycisku <b>⚡ Ułóż wozy wg planu</b> w zakładce „Wóz paszowy” – każdy kolejny wóz tej samej grupy trafia do 2. zadania (po południu).</p>
-  <div style="padding:0 12px 8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label style="font-size:13px;font-weight:600">Pojemność wozu paszowego (kg):</label><input id="woz-poj" inputmode="decimal" style="width:110px" onchange="wozPoj=pf(this.value);SV('wozPoj',wozPoj);saM('wozy');toast('Zapisano pojemność')"><span style="font-size:11px;color:var(--txt2)">0 = nie pokazuj linii pojemności</span></div>
-  <div id="plan-list"></div>
-  <div style="padding:12px"><button class="btn bo" onclick="planAutoGen()">🔄 Generuj automatycznie z dawek</button></div>
   </div>
 </section>
 <section class="tp" id="tab-cielaki">
@@ -283,31 +338,23 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
 </section>
 <section class="tp" id="tab-harmonogram"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="hr-m" onchange="rSch('hr')"></select></div><div class="fg"><label>Rok</label><input type="number" id="hr-y" value="2026" min="2024" max="2030" onchange="rSch('hr')"></div><div class="fg"><label>Grupa</label><select id="hr-g" onchange="rSch('hr')"><option value="obsluga">Obsługa</option><option value="dojarze">Dojarze</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('hr')">📄</button></div></div><div class="card"><div class="ch"><span>Harmonogram pracy</span><button class="btn bs bo" onclick="addPr('hr')">+ Pracownik</button></div><div class="tw" id="hr-w"></div></div></section>
 <section class="tp" id="tab-obecnosc"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="ob-m" onchange="rSch('ob')"></select></div><div class="fg"><label>Rok</label><input type="number" id="ob-y" value="2026" min="2024" max="2030" onchange="rSch('ob')"></div><div class="fg"><label>Grupa</label><select id="ob-g" onchange="rSch('ob')"><option value="dojarze">Dojarze</option><option value="obsluga">Obsługa</option><option value="biuro">Biuro</option></select></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pSch('ob')">📄</button></div></div><div class="card"><div class="ch"><span>Lista obecności</span><button class="btn bs bo" onclick="addPr('ob')">+ Pracownik</button></div><div class="tw" id="ob-w"></div></div></section>
-<section class="tp" id="tab-koszty">
-  <div class="card"><div class="ch"><span>Sekcja 1 — Dawki i koszt na sztukę/dzień</span><button class="btn bs bpdf" onclick="pKoszty()">📄 PDF</button></div><div class="tw" id="kos-s1"></div></div>
-  <div class="card"><div class="ch">Sekcja 2 — Zużycie surowców wg kategorii (dzienne/miesięczne)</div><div class="tw" id="kos-s2"></div></div>
-  <div class="card"><div class="ch">Sekcja 3 — Koszt wg grup żywieniowych</div><div class="tw" id="kos-s3"></div></div>
-  <div class="card"><div class="ch">Sekcja 4 — Koszt na sztukę wg kategorii pasz</div><div class="tw" id="kos-s4"></div></div>
-</section>
 <section class="tp" id="tab-woz"><div id="woz-w"></div></section>
 <section class="tp" id="tab-stado"><div id="afi-w"></div></section>
 <section class="tp" id="tab-uzytkownicy"><div id="uz-w"></div></section>
 <section class="tp" id="tab-raporty">
-  <div style="display:flex;background:var(--card);border:1px solid var(--brd);border-radius:var(--radius);margin-bottom:8px;overflow-x:auto">
-    <button class="tab-btn active" onclick="switchRap(this,'rap-woz')">Wóz</button>
-    <button class="tab-btn" onclick="switchRap(this,'rap-nied')">Niedojady</button>
-    <button class="tab-btn" onclick="switchRap(this,'rap-zuzycie')">Zużycie surowców</button>
-    <button class="tab-btn" onclick="switchRap(this,'rap-dawki')">Dawki (historia)</button>
-    <button class="tab-btn" onclick="switchRap(this,'rap-dek')">Dekadówki</button>
+  <div class="rap-kat">
+    <div class="rap-grupa"><span class="rap-gl">💰 Koszty</span>
+      <button class="tab-btn active" onclick="switchRap(this,'rap-koszty')">Koszty żywienia</button></div>
+    <div class="rap-grupa"><span class="rap-gl">🌾 Pasze</span>
+      <button class="tab-btn" onclick="switchRap(this,'rap-zuzycie')">Zużycie surowców</button>
+      <button class="tab-btn" onclick="switchRap(this,'rap-dawki')">Dawki (historia)</button></div>
   </div>
-  <div id="rap-woz" class="rap-sub">
-    <div class="fr"><div class="fg"><label>Data</label><input type="date" id="wr-date" onchange="rWozRap()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pWozRap()">📄 PDF</button></div></div>
-    <div class="card"><div class="ch">Dziennik wozów paszowych</div><div class="tw" id="wr-table"></div></div>
-  </div>
-  <div id="rap-nied" class="rap-sub" style="display:none">
-    <div class="fr"><div class="fg"><label>Od</label><input type="date" id="rn-od" onchange="rNied()"></div><div class="fg"><label>Do</label><input type="date" id="rn-do" onchange="rNied()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="prn('Niedojady — '+$('#rn-od').value+' → '+$('#rn-do').value,$('#rn-table').innerHTML)">📄</button></div></div>
-    <div class="card"><div class="ch">Raport niedojadów</div><div class="tw" id="rn-table"></div></div>
-  </div>
+  <div id="rap-koszty" class="rap-sub">
+  <div class="card"><div class="ch"><span>Sekcja 1 — Dawki i koszt na sztukę/dzień</span><button class="btn bs bpdf" onclick="pKoszty()">📄 PDF</button></div><div class="tw" id="kos-s1"></div></div>
+  <div class="card"><div class="ch">Sekcja 2 — Zużycie surowców wg kategorii (dzienne/miesięczne)</div><div class="tw" id="kos-s2"></div></div>
+  <div class="card"><div class="ch">Sekcja 3 — Koszt wg grup żywieniowych</div><div class="tw" id="kos-s3"></div></div>
+  <div class="card"><div class="ch">Sekcja 4 — Koszt na sztukę wg kategorii pasz</div><div class="tw" id="kos-s4"></div></div>
+</div>
   <div id="rap-zuzycie" class="rap-sub" style="display:none">
     <div class="fr" style="flex-wrap:wrap;gap:4px">
       <div style="display:flex;gap:3px;flex-wrap:wrap"><button class="btn bs bo" onclick="setZuzPeriod('month')">Bież. miesiąc</button><button class="btn bs bo" onclick="setZuzPeriod('prev')">Poprz. miesiąc</button><button class="btn bs bo" onclick="setZuzPeriod('7d')">7 dni</button><button class="btn bs bo" onclick="setZuzPeriod('30d')">30 dni</button><button class="btn bs bo" onclick="setZuzPeriod('year')">Bież. rok</button></div>
@@ -323,17 +370,7 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
   <div id="rap-dawki" class="rap-sub" style="display:none">
     <div class="card"><div class="ch"><span>Historia zmian receptur</span><button class="btn bs bo" onclick="snapDawki()">📸 Zapisz snapshot teraz</button></div><div id="rd-list"></div></div>
   </div>
-  <div id="rap-dek" class="rap-sub" style="display:none">
-    <div class="fr">
-      <div class="fg" style="flex:0"><label>Dekada</label><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="setDek(1)">I</button><button class="btn bs bo" onclick="setDek(2)">II</button><button class="btn bs bo" onclick="setDek(3)">III</button></div></div>
-      <div class="fg"><label>Od</label><input type="date" id="dk-od" onchange="rDek()"></div>
-      <div class="fg"><label>Do</label><input type="date" id="dk-do" onchange="rDek()"></div>
-      <div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pDek()">📄 PDF</button></div>
-    </div>
-    <div class="card"><div class="ch">Dekadówka — zużycie pasz na grupy technologiczne</div><div class="tw" id="dek-w"></div></div>
-    <div class="card"><div class="ch"><span>Zapisy historyczne</span><button class="btn bs bo" onclick="if(confirm('Odliczyć zużycie dla dzisiaj?'))runDailyDeduction(new Date(),true)">Wymuś odliczenie</button></div><div class="tw" id="dek-hist"></div></div>
-  </div>
-</section>
+  </section>
 <section class="tp" id="tab-nasienie"><div class="card"><div class="ch"><span>Zakup nasienia — <select id="nas-y" onchange="rNas()" style="font:700 13px var(--font);border:none;background:transparent;color:var(--pri)"><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option></select></span><div style="display:flex;gap:4px"><button class="btn bs bo" onclick="addNas()">+ Dodaj</button><button class="btn bs bpdf" onclick="pT('nasienie')">📄 PDF</button></div></div><div class="tw" id="nas-w"></div></div></section>
 <section class="tp" id="tab-kalendarz"><div class="fr"><div class="fg"><label>Miesiąc</label><select id="kal-m" onchange="rKal()"></select></div><div class="fg"><label>Rok</label><input type="number" id="kal-y" value="2026" min="2024" max="2030" onchange="rKal()"></div><div class="fg" style="flex:0"><label>&nbsp;</label><button class="btn bpdf" onclick="pT('kalendarz')">📄 PDF</button></div></div><div id="kal-w"></div></section>
 </div>
@@ -383,15 +420,17 @@ let cR=null;try{localStorage.removeItem('ohz_passes')}catch(e){}
 const ROLE_ORDER=['tworca','zootechnik','prezes','magazynier','paszowoz'];
 const RL={tworca:'Twórca',zootechnik:'Zootechnik',prezes:'Prezes',magazynier:'Magazynier',paszowoz:'Wóz paszowy'};
 const ROLE_KOL={tworca:'#24493A',zootechnik:'#C0773A',prezes:'#3D6FA3',magazynier:'#00838F',paszowoz:'#7A5BA6'};
-const TAB_ORDER=['mleko','surowce','dawki','woz','stado','awaryjne','cielaki','koszty','planowanie','raporty','harmonogram','obecnosc','nasienie','kalendarz','uzytkownicy'];
-const TL={mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',woz:'Wóz paszowy',stado:'Stado (AfiFarm)',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz',uzytkownicy:'Użytkownicy'};
+const TAB_ORDER=['dzis','dawki','surowce','stado','woz','awaryjne','mleko','raporty','kalendarz','cielaki','harmonogram','obecnosc','nasienie','uzytkownicy'];
+// zakładki rzadko używane – schowane pod przyciskiem „Więcej”
+const TAB_WIECEJ=['cielaki','harmonogram','obecnosc','nasienie'];
+const TL={dzis:'Dziś',mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',woz:'Wóz paszowy',stado:'Stado (AfiFarm)',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz',uzytkownicy:'Użytkownicy'};
 const POZIOMY=['brak','podgląd','wpis','pełny'];
-const POZ_ZAKL={mleko:[0,1,3],surowce:[0,1,3],dawki:[0,1,3],woz:[0,1,2,3],stado:[0,1,3],awaryjne:[0,1,3],cielaki:[0,1,3],koszty:[0,1,3],planowanie:[0,1,3],raporty:[0,1,3],harmonogram:[0,1,3],obecnosc:[0,1,3],nasienie:[0,1,3],kalendarz:[0,1,3]};
+const POZ_ZAKL={dzis:[0,1,3],mleko:[0,1,3],surowce:[0,1,3],dawki:[0,1,3],woz:[0,1,2,3],stado:[0,1,3],awaryjne:[0,1,3],cielaki:[0,1,3],koszty:[0,1,3],planowanie:[0,1,3],raporty:[0,1,3],harmonogram:[0,1,3],obecnosc:[0,1,3],nasienie:[0,1,3],kalendarz:[0,1,3]};
 const DEF_UPR={
-  zootechnik:{mleko:3,surowce:3,dawki:3,woz:3,stado:3,awaryjne:3,cielaki:3,koszty:3,planowanie:3,raporty:3,harmonogram:3,obecnosc:3,nasienie:3,kalendarz:3},
-  prezes:{mleko:1,surowce:1,dawki:1,woz:0,stado:1,awaryjne:0,cielaki:1,koszty:1,planowanie:0,raporty:1,harmonogram:3,obecnosc:3,nasienie:1,kalendarz:1},
-  magazynier:{mleko:0,surowce:3,dawki:0,woz:0,stado:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0},
-  paszowoz:{mleko:0,surowce:0,dawki:0,woz:2,stado:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0}
+  zootechnik:{dzis:3,mleko:3,surowce:3,dawki:3,woz:3,stado:3,awaryjne:3,cielaki:3,koszty:3,planowanie:3,raporty:3,harmonogram:3,obecnosc:3,nasienie:3,kalendarz:3},
+  prezes:{dzis:1,mleko:1,surowce:1,dawki:1,woz:0,stado:1,awaryjne:0,cielaki:1,koszty:1,planowanie:0,raporty:1,harmonogram:3,obecnosc:3,nasienie:1,kalendarz:1},
+  magazynier:{dzis:0,mleko:0,surowce:3,dawki:0,woz:0,stado:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0},
+  paszowoz:{dzis:0,mleko:0,surowce:0,dawki:0,woz:2,stado:0,awaryjne:0,cielaki:0,koszty:0,planowanie:0,raporty:0,harmonogram:0,obecnosc:0,nasienie:0,kalendarz:0}
 };
 let UPR=LD('upr',null)||JSON.parse(JSON.stringify(DEF_UPR)),BLOK=LD('blok',{})||{},LASTL=LD('lastL',{})||{};
 function lvl(t){if(!cR)return 0;if(cR==='tworca')return 3;if(t==='uzytkownicy')return 0;const v=UPR?.[cR]?.[t];return v==null?(DEF_UPR[cR]?.[t]??0):+v}
@@ -434,7 +473,7 @@ function zmienHaslo(){
     .catch(e=>alert(e&&(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'||e.code==='auth/invalid-login-credentials')?'Obecne hasło jest nieprawidłowe':'Nie udało się zmienić hasła: '+(e&&e.code||e)));
 }
 function doLogout(){localStorage.removeItem('ohz_sess');if(fbAuth)fbAuth.signOut().finally(()=>location.reload());else location.reload()}
-function goTab(t){const b=document.querySelector('.tab-btn[data-t="'+t+'"]');if(b)b.click()}
+function goTab(t){if(lvl(t)>0||t==='uzytkownicy')pokazTab(t)}
 function showApp(){
   $('#login-screen').style.display='none';$('#app').style.display='block';
   $('#urb').textContent=RL[cR]||cR;
@@ -454,13 +493,13 @@ function startCfg(){if(!fbDb||window._cfgOn)return;window._cfgOn=true;
     if(!cR)return;
     if(cR!=='tworca'&&BLOK[cR]){alert('Dostęp dla tej roli został zablokowany przez twórcę');doLogout();return}
     const sig=TAB_ORDER.map(t=>lvl(t)).join('');
-    const ab=document.querySelector('.tab-btn.active'),cur=ab?ab.dataset.t:null;
+    const ab=aktTab(),cur=ab?ab.dataset.t:null;
     if(sig!==_tabSig){bTabs(cur)}
     else if(cur==='uzytkownicy'&&!document.activeElement?.closest?.('#uz-w'))rUz();
   },e=>console.warn('config',e))}
 // Podgląd: zablokuj edycję w aktywnej zakładce (filtry daty/miesiąca w .fr zostają aktywne)
 function applyRO(){setTimeout(()=>{
-  const ab=document.querySelector('.tab-btn.active');if(!ab)return;const t=ab.dataset.t;
+  const ab=aktTab();if(!ab)return;const t=ab.dataset.t;
   if(t==='woz'||t==='stado'||t==='uzytkownicy'||lvl(t)>=3)return;
   const tp=$('#tab-'+t);if(!tp)return;
   tp.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.closest('.fr'))el.disabled=true});
@@ -511,11 +550,50 @@ function importBackup(){
         Object.entries(d).forEach(([mod,mdata])=>{if(MODULES[mod])MODULES[mod].set(mdata)});
       }
       Object.keys(MODULES).forEach(mod=>pushModule(mod,true));
-      toast('Kopia przywrócona');const ab=document.querySelector('.tab-btn.active');if(ab)oT(ab.dataset.t);
+      toast('Kopia przywrócona');const ab=aktTab();if(ab)oT(ab.dataset.t);
     }catch(e){toast('Błąd pliku: '+e.message)}};r.readAsText(f)};inp.click();
 }
-function bTabs(keep){const ts=TAB_ORDER.filter(t=>lvl(t)>0);_tabSig=TAB_ORDER.map(t=>lvl(t)).join('');const first=ts.includes(keep)?keep:ts[0];const b=$('#tbar');b.innerHTML=ts.map(t=>'<button class="tab-btn'+(t===first?' active':'')+'" data-t="'+t+'">'+TL[t]+'</button>').join('');$$('.tp').forEach(p=>p.classList.remove('active'));if(first)$('#tab-'+first).classList.add('active');b.querySelectorAll('.tab-btn').forEach(bt=>bt.addEventListener('click',()=>{b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));$$('.tp').forEach(p=>p.classList.remove('active'));bt.classList.add('active');$('#tab-'+bt.dataset.t).classList.add('active');oT(bt.dataset.t)}));if(first)oT(first);else $$('.tp').forEach(p=>p.classList.remove('active'))}
-function oT(t){const m={mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,koszty:rKoszty,planowanie:rPlan,woz:rWoz,stado:rStado,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,uzytkownicy:rUz};if(t==='dawki')afiStart();if(m[t])m[t]();applyRO()}
+function bTabs(keep){
+  const ts=TAB_ORDER.filter(t=>lvl(t)>0);_tabSig=TAB_ORDER.map(t=>lvl(t)).join('');
+  const glowne=ts.filter(t=>!TAB_WIECEJ.includes(t)),wiecej=ts.filter(t=>TAB_WIECEJ.includes(t));
+  const first=ts.includes(keep)?keep:glowne[0]||ts[0];
+  const b=$('#tbar');
+  b.innerHTML=glowne.map(t=>'<button class="tab-btn" data-t="'+t+'">'+TL[t]+'</button>').join('')+
+    (wiecej.length?'<button class="tab-btn tab-wiecej" id="tab-wiecej" onclick="tabMenu(event)">Więcej ▾</button>':'');
+  b.querySelectorAll('.tab-btn[data-t]').forEach(bt=>bt.addEventListener('click',()=>pokazTab(bt.dataset.t)));
+  if(first)pokazTab(first);else $$('.tp').forEach(p=>p.classList.remove('active'));
+}
+// otwiera zakładkę (także schowaną w „Więcej”)
+let TAB_AKT=null;
+function aktTab(){return TAB_AKT?{dataset:{t:TAB_AKT}}:null}
+function pokazTab(t){
+  TAB_AKT=t;const b=$('#tbar');tabMenuZamknij();
+  b.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  const bt=b.querySelector('.tab-btn[data-t="'+t+'"]'),w=$('#tab-wiecej');
+  if(bt)bt.classList.add('active');
+  if(w){const ukr=TAB_WIECEJ.includes(t);w.classList.toggle('active',ukr);w.textContent=ukr?TL[t]+' ▾':'Więcej ▾'}
+  $$('.tp').forEach(p=>p.classList.remove('active'));const sec=$('#tab-'+t);if(sec)sec.classList.add('active');
+  oT(t);
+}
+function tabMenu(e){
+  e.stopPropagation();if($('#tab-menu')){tabMenuZamknij();return}
+  const r=e.currentTarget.getBoundingClientRect(),m=document.createElement('div');m.id='tab-menu';m.className='tab-menu';
+  m.innerHTML='<div class="tab-menu-opis">Rzadziej używane</div>'+TAB_ORDER.filter(t=>TAB_WIECEJ.includes(t)&&lvl(t)>0).map(t=>'<button onclick="pokazTab(\''+t+'\')">'+TL[t]+'</button>').join('');
+  m.style.top=(r.bottom+4)+'px';m.style.left=Math.max(8,Math.min(r.left,innerWidth-200))+'px';
+  document.body.appendChild(m);setTimeout(()=>document.addEventListener('click',tabMenuZamknij,{once:true}),0);
+}
+function tabMenuZamknij(){const m=$('#tab-menu');if(m)m.remove()}
+function oT(t){const m={dzis:rDzis,mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,woz:rWoz,stado:rStado,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,uzytkownicy:rUz};if(t==='dawki')afiStart();if(m[t])m[t]();applyRO()}
+// ===== ZAKŁADKA DZIŚ: alarmy z AfiFarm =====
+function rDzis(){
+  afiStart();const el=$('#dzis-w');if(!el)return;
+  let h='<div class="afi-gora"><h2 class="dzis-tyt">'+dzienTygPL(isoToday()).replace(/^./,c=>c.toUpperCase())+', '+new Date().toLocaleDateString('pl-PL')+'</h2>'+afiSwiezosc()+'</div>';
+  if(!AFI.meta||!AFI.krowy||!Object.keys(AFI.dni).length){el.innerHTML=h+'<div class="card afi-pusto"><b>Brak danych z AfiFarm'+(AFI.start?'':' (ładowanie…)')+'.</b><br>Alarmy pojawią się po wysyłce agenta z komputera w oborze.</div>';return}
+  if(!AFI.C)afiPrzelicz();
+  el.innerHTML=h+afiDzisHTML();
+}
+// numer krowy w alarmach i listach: otwiera kartę krowy w zakładce Stado
+function afiPokazKrowe(id){AFI.v='krowa';AFI.krowa=String(id);const a=aktTab();if(a&&a.dataset.t==='stado')rStado();else goTab('stado')}
 // ===== CLEAN PRINT DOCUMENTS (own window, fills A4) =====
 function printDoc(title,body,orient,extraCss){
   const css='@page{size:A4 '+orient+';margin:8mm}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
@@ -762,7 +840,7 @@ function startListeners(){
         const d=doc.data();
         if(fbEditTs[mod]&&Date.now()-fbEditTs[mod]<5000){loaded++;done();return}
         const ok=Object.keys(d).some(k=>k!=='_ts'&&d[k]!=null);
-        if(ok){fbApplyingRemote=true;handler.set(d);handler.sv();fbApplyingRemote=false;const ab=document.querySelector('.tab-btn.active');if(ab)oT(ab.dataset.t)}
+        if(ok){fbApplyingRemote=true;handler.set(d);handler.sv();fbApplyingRemote=false;const ab=aktTab();if(ab)oT(ab.dataset.t)}
       }
       loaded++;done();
     },err=>{console.warn(mod,err);loaded++;done()});
@@ -770,7 +848,7 @@ function startListeners(){
 }
 function forceRefresh(){
   if(!fbDb){toast('Offline');return}setSyncBadge('saving');
-  Promise.all(Object.entries(MODULES).map(([mod,h])=>fbDb.collection('ohz_data').doc(mod).get().then(doc=>{if(doc.exists){fbApplyingRemote=true;h.set(doc.data());h.sv();fbApplyingRemote=false}}))).then(()=>{setSyncBadge('ok');const ab=document.querySelector('.tab-btn.active');if(ab)oT(ab.dataset.t);toast('Odświeżono')}).catch(()=>setSyncBadge('offline'));
+  Promise.all(Object.entries(MODULES).map(([mod,h])=>fbDb.collection('ohz_data').doc(mod).get().then(doc=>{if(doc.exists){fbApplyingRemote=true;h.set(doc.data());h.sv();fbApplyingRemote=false}}))).then(()=>{setSyncBadge('ok');const ab=aktTab();if(ab)oT(ab.dataset.t);toast('Odświeżono')}).catch(()=>setSyncBadge('offline'));
 }
 
 function gS(id){return sur.find(s=>s.id===id)}
@@ -1345,7 +1423,7 @@ function emergToggle(){
   SV('emergMode',emergencyMode);SV('grNormal',grNormal);SV('grEmerg',grEmergency);
   sa(true);rEmerg();updateEmergBanner();
   // Also refresh Dawki tab if visible
-  const ab=document.querySelector('.tab-btn.active');if(ab&&ab.dataset.t==='dawki')rDk();
+  const ab=aktTab();if(ab&&ab.dataset.t==='dawki')rDk();
   toast(emergencyMode?'🔴 Dawki awaryjne AKTYWNE':'🟢 Powrót do dawek normalnych');
 }
 function emergExportPdf(){
@@ -1500,7 +1578,7 @@ function planAutoGen(){
 // Wóz = receptura (grupa żywieniowa) + sektory, na które go rozwozimy. Ilości liczą się na żywo z zakładki Dawki.
 let wozDni=LD('wozDni',{});      // {data:{kursy:[{id,z,gid,rz:[{sid,kg}],nd:[{nid,src,kg}],done}],nied:[{id,src,kg}],uwagi}}
 let wozPoj=LD('wozPoj',0);       // pojemność wozu w kg (0 = nie pokazuj)
-const WZ={data:null};
+const WZ={data:null,otw:null,num:false,numLista:[]};
 const GR_KOL=['#2E7D32','#C0773A','#3D6FA3','#7A5BA6','#B8860B','#00838F','#AD1457','#5D4037','#455A64','#827717'];
 const KAT_ODC={obj:['#4E7A3A','#6B9550','#8DB070'],tres:['#B07A0B','#C99A2E','#DDB95A'],dod:['#3D6FA3','#5A88B8','#7FA3CB']};
 const escH=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1513,7 +1591,10 @@ function recKg(g){return g?g.sk.reduce((a,x)=>a+(+x.kg||0),0):0}
 function planSek(k){const o=sekBy(k);return o?recKg(o.g)*(+o.s.sz||0):0}           // kg na jeden wóz
 function dzienW(d){return wozDni[d]||(wozDni[d]={kursy:[],nied:[],uwagi:''})}
 function kursyZ(d,z){return (wozDni[d]?.kursy||[]).filter(k=>k.z===z)}
-function nrKursu(d,id){return [...kursyZ(d,1),...kursyZ(d,2)].findIndex(k=>k.id===id)+1}
+function kursyD(d){return wozDni[d]?.kursy||[]}
+function nrKursu(d,id){return kursyD(d).findIndex(k=>k.id===id)+1}
+// 1. lub 2. zadanie (rano / po południu) – kolejny wóz tej samej grupy idzie do 2. zadania
+function zDla(d,gid,pomin){return gid&&kursyD(d).some(k=>k.gid===gid&&k!==pomin)?2:1}
 function kgRz(r){return r.kg!=null&&r.kg!==''?+r.kg:planSek(r.sid)}
 function extrasK(k){const out=[];k.rz.forEach(r=>{const o=sekBy(r.sid);if(o&&o.s.sk_extra)o.s.sk_extra.forEach(ex=>{if(ex.kg>0)out.push({sid:r.sid,sek:o.s.n,s:ex.s,kg:ex.kg*(+o.s.sz||0)})})});return out}
 function masaK(k){const tot=k.rz.reduce((a,r)=>a+kgRz(r),0),nd=(k.nd||[]).reduce((a,x)=>a+(+x.kg||0),0),ex=extrasK(k).reduce((a,x)=>a+x.kg,0);return{tot,nd,sw:Math.max(0,tot-nd),ex,razem:tot+ex}}
@@ -1529,58 +1610,146 @@ function zapW(){
 function dzienTygPL(d){return ['niedziela','poniedziałek','wtorek','środa','czwartek','piątek','sobota'][new Date(d+'T12:00').getDay()]}
 function ulozWozy(cicho){
   const data=WZ.data,d=dzienW(data);
-  if(!cicho&&d.kursy.length&&!confirm('Zastąpić obecny układ wozów na '+data+' układem z „Planowania wozów”?'))return;
+  if(!cicho&&d.kursy.length&&!confirm('Zastąpić obecny układ wozów na '+data+' układem z planu?'))return;
+  // plan = kolejność zapisana przyciskiem „Kolejność wozów”; bez planu – każda grupa tyle razy, ile ma zadań
+  let plan=(wozOrder||[]).filter(gid=>gr.some(g=>g.id===gid));
+  if(!plan.length){plan=[];gr.forEach(g=>{for(let z=0;z<(g.z||1);z++)plan.push(g.id)})}
   const cnt={};d.kursy=[];
-  wozOrder.forEach(gid=>{const g=gr.find(x=>x.id===gid);if(!g)return;cnt[gid]=(cnt[gid]||0)+1;
+  plan.forEach(gid=>{const g=gr.find(x=>x.id===gid);if(!g)return;cnt[gid]=(cnt[gid]||0)+1;
     d.kursy.push({id:uid(),z:Math.min(2,cnt[gid]),gid,rz:g.se.map(s=>({sid:sekKey(g,s),kg:null})),nd:[],done:null})});
-  zapW();rWoz();if(!cicho)toast('Ułożono '+d.kursy.length+' wozów wg planu');
+  WZ.otw=null;zapW();rWoz();if(!cicho)toast('Ułożono '+d.kursy.length+' wozów wg planu');
+}
+// kopiuje wozy (receptury, sektory, wpisane kg) z poprzedniego dnia – bez niedojadów i oznaczeń „zrobiony”
+function powielWozy(){
+  const data=WZ.data,t=new Date(data+'T12:00');t.setDate(t.getDate()-1);const wcz=isoDate(t),src=kursyD(wcz);
+  if(!src.length){toast('Wczoraj ('+wcz+') nie było wozów do powielenia');return}
+  const d=dzienW(data);if(d.kursy.length&&!confirm('Zastąpić obecne wozy kopią z '+wcz+'?'))return;
+  d.kursy=src.map(k=>({id:uid(),z:k.z,gid:k.gid,rz:k.rz.map(r=>({sid:r.sid,kg:r.kg})),nd:[],done:null}));
+  WZ.otw=null;zapW();rWoz();toast('Powielono '+d.kursy.length+' wozów z '+wcz);
 }
 function wozZmienDate(n){const t=new Date(WZ.data+'T12:00');t.setDate(t.getDate()+n);WZ.data=isoDate(t);rWoz()}
 
 function rWoz(){
   if(!WZ.data)WZ.data=isoToday();
   const L=lvl('woz'),F=L>=3,W=L>=2,data=WZ.data,showTime=cR!=='paszowoz';
-  if(W&&data===isoToday()&&!(wozDni[data]?.kursy||[]).length&&wozOrder.length&&(fbInitialLoaded||!fbDb))ulozWozy(true);
-  const d=wozDni[data]||{kursy:[],nied:[],uwagi:''};
-  // --- boczny panel: sektory ---
-  const chipy=gr.map(g=>{
-    if(!g.se.length)return'';const kol=grKol(g.id);
-    return '<div class="grupa-et"><i style="background:'+kol+'"></i>'+escH(g.nazwa)+' <span style="font-weight:500;color:var(--txt2)">· '+(g.z||1)+'×/dobę · '+fK1(recKg(g))+' kg/szt</span></div>'+
-      g.se.map(s=>{const k=sekKey(g,s),plan=planSek(k)*(g.z||1),przyp=d.kursy.reduce((a,x)=>a+x.rz.filter(r=>r.sid===k).reduce((b,r)=>b+kgRz(r),0),0),p=plan>0?Math.min(100,przyp/plan*100):0;
-        return '<div class="chip'+(p>=97?' pelny':'')+'" style="border-left-color:'+kol+'"'+(F?' draggable="true" ondragstart="wDrag(event,\'sek\',\''+escH(k)+'\')" onclick="wTapSek(\''+escH(k)+'\')"':'')+'>'+
-          (F?'<span class="uchwyt">⋮⋮</span>':'<span></span>')+'<span class="n">'+escH(s.n)+'</span><span class="s">'+s.sz+' szt</span>'+
-          '<span class="post"><span class="post-bar"><i style="width:'+p+'%"></i></span>'+fK(przyp)+' / '+fK(plan)+' kg</span></div>'}).join('')}).join('');
-  // --- boczny panel: niedojady ---
-  const nd=(d.nied||[]).map(n=>{const rozd=ndRozdane(data,n.id),reszta=(+n.kg||0)-rozd;
-    return '<div class="chip nd"'+(W?' draggable="true" ondragstart="wDrag(event,\'nd\',\''+n.id+'\')" onclick="wTapNd(\''+n.id+'\',event)"':'')+'>'+
-      (W?'<span class="uchwyt">⋮⋮</span>':'<span></span>')+'<span class="n">♻ '+escH(ndSrcName(n.src)||'niedojady')+'</span>'+
-      '<span class="s">'+(W?'<input class="wpole" inputmode="decimal" value="'+(n.kg||0)+'" onclick="event.stopPropagation()" onchange="wNdKg(\''+n.id+'\',this.value)">':fK(n.kg))+' kg</span>'+
-      '<span class="post">'+(rozd>0?'domieszano '+fK(rozd)+' kg · ':'')+(reszta>0.5?'<b>'+fK(reszta)+' kg</b> do rozdania':'rozdane w całości')+
-      (W?' <button class="wx" onclick="event.stopPropagation();wNdUsun(\''+n.id+'\')">✕</button>':'')+'</span></div>'}).join('');
-  // --- kursy ---
-  const kol=z=>{const lista=kursyZ(data,z);
-    return '<div><div class="zad-tyt">'+z+'. zadanie <small>'+(z===1?'rano':'po południu')+' · '+lista.length+' '+(lista.length===1?'wóz':lista.length>=2&&lista.length<=4?'wozy':'wozów')+'</small></div>'+
-      lista.map(k=>kursHTML(data,k,F,W,showTime)).join('')+
-      (F?'<div class="nowy-kurs" ondragover="wOver(event)" ondragleave="wLeave(event)" ondrop="wDrop(event,\'nowy\','+z+')">Upuść tu sektor, aby utworzyć nowy wóz<br><button class="btn bs bo" style="margin-top:6px" onclick="wNowy('+z+')">+ Pusty wóz</button></div>':'')+'</div>'};
-  const leg='<div class="legenda"><span><i style="background:'+KAT_ODC.obj[0]+'"></i>objętościowe</span><span><i style="background:'+KAT_ODC.tres[0]+'"></i>treściwe</span><span><i style="background:'+KAT_ODC.dod[0]+'"></i>dodatki</span><span><i class="hnd"></i>niedojady</span><span><i class="hex"></i>dodać na sektor</span><span>· liczby w wozie = kolejność załadunku</span></div>';
-  const doneN=d.kursy.filter(k=>k.done).length;
+  if(W&&data===isoToday()&&!kursyD(data).length&&(fbInitialLoaded||!fbDb))ulozWozy(true);
+  const d=wozDni[data]||{kursy:[],nied:[],uwagi:''},lista=d.kursy;
+  if(WZ.otw&&!lista.some(k=>k.id===WZ.otw))WZ.otw=null;
+  if(WZ.num&&!F)WZ.num=false;
+  // --- niedojady: panel na górze ---
+  let zebr=0,wsyp=0;
+  const ndHTML=(d.nied||[]).map(n=>{const rozd=ndRozdane(data,n.id),reszta=Math.max(0,(+n.kg||0)-rozd);zebr+=+n.kg||0;wsyp+=Math.min(rozd,+n.kg||0);
+    const wolny=reszta>0.5,wozy=[...new Set(lista.filter(k=>(k.nd||[]).some(x=>x.nid===n.id)).map(k=>nrKursu(data,k.id)))];
+    return '<div class="ndk'+(wolny?'':' uzyte')+'"'+(W&&wolny?' draggable="true" ondragstart="wDrag(event,\'nd\',\''+n.id+'\')"':'')+'>'+
+      (W&&wolny?'<span class="uchwyt">⋮⋮</span>':'')+
+      '<div class="ndk-t"><span><b>'+escH(ndSrcName(n.src)||'niedojady')+'</b> '+(W?'<input class="wpole" inputmode="decimal" value="'+(n.kg||0)+'" onchange="wNdKg(\''+n.id+'\',this.value)">':'<b>'+fK(n.kg)+'</b>')+' kg</span>'+
+      '<small>'+(wolny?'do wsypania '+fK(reszta)+' kg':'wsypane w całości')+(wozy.length?' · '+(wozy.length===1?'wóz ':'wozy ')+wozy.join(', '):'')+'</small></div>'+
+      (W?'<span class="ndk-p">'+(wolny?'<button class="btn bs bo" onclick="wTapNd(\''+n.id+'\')">Do wozu…</button>':'')+'<button class="wx" title="Usuń wpis" onclick="wNdUsun(\''+n.id+'\')">✕</button></span>':'')+'</div>'}).join('');
+  const zost=Math.max(0,zebr-wsyp);
+  const ndPanel='<div class="nd-panel"><div class="nd-gora"><span class="nd-tyt">♻ Niedojady zebrane dziś rano</span>'+
+    '<span class="opis-b">przeciągnij na wóz albo „Do wozu…” – wsypuje się jako pierwsze i zastępuje część świeżej paszy</span>'+
+    '<span class="nd-licz">'+((d.nied||[]).length?'<span>Zebrano <b>'+fK(zebr)+'</b> kg</span><span>Wsypano <b>'+fK(wsyp)+'</b></span><span class="'+(zost>0.5?'zost':'')+'">Zostało <b>'+fK(zost)+'</b> kg</span>':'')+
+    (W?'<button class="btn bp" onclick="wNdNowy()">+ Wpisz niedojady</button>':'')+'</span></div>'+
+    ((d.nied||[]).length?'<div class="nd-lista">'+ndHTML+'</div>':'')+'</div>';
+  // --- sektory bez pełnej dawki w wozach ---
+  const braki=[];gr.forEach(g=>g.se.forEach(s=>{const k=sekKey(g,s),plan=planSek(k)*(g.z||1),przyp=lista.reduce((a,x)=>a+x.rz.filter(r=>r.sid===k).reduce((b,r)=>b+kgRz(r),0),0);
+    if(plan>0&&przyp<plan*0.97)braki.push('<button class="wk-brak"'+(F?' draggable="true" ondragstart="wDrag(event,\'sek\',\''+escH(k)+'\')" onclick="wTapSek(\''+escH(k)+'\')"':' disabled')+'><i style="background:'+grKol(g.id)+'"></i>'+escH(s.n)+' <small>'+fK(przyp)+' / '+fK(plan)+' kg</small></button>')}));
+  const doneN=lista.filter(k=>k.done).length,otw=WZ.otw?lista.find(k=>k.id===WZ.otw):null;
+  const pasekNum=WZ.num?'<div class="wk-pasek-num"><b>Kolejność wozów</b><span>Klikaj wozy w kolejności ładowania. Kliknięty numer znika, dalsze się przesuwają. Wozy bez numeru idą na koniec.</span>'+
+    '<label class="wk-plan"><input type="checkbox" id="wk-zapamietaj" checked> zapamiętaj jako plan na kolejne dni</label>'+
+    '<span class="wk-pn-btn"><button class="btn bs" onclick="WZ.numLista=[];rWoz()">Wyczyść</button><button class="btn bs" onclick="WZ.num=false;rWoz()">Anuluj</button><button class="btn bs wk-gotowe" onclick="wKolejnoscZapisz()">Gotowe</button></span></div>':'';
   let h='<div class="woz-gora"><span class="dzien-tyt">'+dzienTygPL(data).replace(/^./,c=>c.toUpperCase())+'</span>'+
-    '<div class="dzien-nav"><button class="btn bs bo" onclick="wozZmienDate(-1)">◀</button><input type="date" value="'+data+'" onchange="WZ.data=this.value||isoToday();rWoz()"><button class="btn bs bo" onclick="wozZmienDate(1)">▶</button></div>'+
-    (data!==isoToday()?'<button class="btn bs bo" onclick="WZ.data=isoToday();rWoz()">Dziś</button>':'')+
-    '<span class="woz-stat">'+doneN+' / '+d.kursy.length+' wozów zrobionych</span>'+
-    '<span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">'+(F?'<button class="btn bo" onclick="ulozWozy()">⚡ Ułóż wozy wg planu</button>':'')+
+    '<div class="dzien-nav"><button class="btn bs bo" onclick="wozZmienDate(-1)" aria-label="Poprzedni dzień">◀</button><input type="date" value="'+data+'" onchange="WZ.data=this.value||isoToday();WZ.otw=null;rWoz()"><button class="btn bs bo" onclick="wozZmienDate(1)" aria-label="Następny dzień">▶</button></div>'+
+    (data!==isoToday()?'<button class="btn bs bo" onclick="WZ.data=isoToday();WZ.otw=null;rWoz()">Dziś</button>':'')+
+    (lista.length?'<span class="woz-stat">'+doneN+' / '+lista.length+' zrobionych</span>':'')+
+    '<span class="wk-akcje">'+(F?'<button class="btn bo" onclick="powielWozy()">⧉ Powiel wozy z wczoraj</button><button class="btn bo" onclick="ulozWozy()">⚡ Ułóż wozy wg planu</button>'+(lista.length>1?'<button class="btn bo" onclick="WZ.num=true;WZ.numLista=[];WZ.otw=null;rWoz()">🔢 Kolejność wozów</button>':''):'')+
     '<button class="btn bp" onclick="drukujKarty()">🖨 Drukuj karty załadunku</button></span></div>'+
     (emergencyMode?'<div class="w-baner zly">⚠ DAWKI AWARYJNE — wozy liczą się z receptur awaryjnych</div>':'')+
-    (!d.kursy.length?'<div class="w-baner">Ten dzień nie ma jeszcze wozów.'+(F?' Kliknij <b>⚡ Ułóż wozy wg planu</b> (kolejność z zakładki „Planowanie wozów”) albo przeciągnij sektory na pole „nowy wóz”.':'')+'</div>':'')+
-    '<div class="woz-uklad"><aside class="boczny">'+
-      '<h3>Sektory</h3><div class="opis-b">'+(F?'Przeciągnij sektor na wóz albo stuknij, żeby wybrać wóz. ':'')+'Pasek: rozwiezione / plan na dobę.</div>'+(chipy||'<div class="opis-b">Brak sektorów – dodaj je w zakładce Dawki.</div>')+
-      '<h3 style="margin-top:14px">♻ Niedojady'+(W?' <button class="btn bs bo" style="margin-left:auto" onclick="wNdNowy()">+ Wpisz</button>':'')+'</h3><div class="opis-b">Resztki zebrane rano. Przeciągnij na wóz – zastąpią część świeżej paszy i pojawią się jako pierwszy wiersz karty.</div>'+nd+
-    '</aside><section>'+leg+'<div class="kursy-kol">'+kol(1)+(kursyZ(data,2).length||gr.some(g=>(g.z||1)>=2)?kol(2):'')+'</div>'+
-    '<div class="card" style="margin-top:4px"><div class="ch">Uwagi do dnia</div><div style="padding:8px 12px"><textarea rows="2" style="width:100%"'+(W?'':' disabled')+' onchange="dzienW(WZ.data).uwagi=this.value;zapW()">'+escH(d.uwagi||'')+'</textarea></div></div>'+
-    '</section></div>';
+    ndPanel+pasekNum+
+    (otw?'<div id="wk-szcz" class="wk-szcz">'+kursHTML(data,otw,F,W,showTime,true)+'</div>':'')+
+    '<div class="zad-tyt">Wozy na dzień <small>'+lista.length+' '+(lista.length===1?'wóz':lista.length>=2&&lista.length<=4?'wozy':'wozów')+' w kolejności ładowania'+(lista.length?' · kliknij wóz, żeby zobaczyć załadunek i wpisać kg'+(F?' · sektor można przeciągnąć do innego wozu':''):'')+'</small></div>'+
+    (!lista.length?'<div class="w-baner">Ten dzień nie ma jeszcze wozów.'+(F?' Kliknij <b>⚡ Ułóż wozy wg planu</b> albo <b>⧉ Powiel wozy z wczoraj</b>.':'')+'</div>':'')+
+    (braki.length&&!WZ.num?'<div class="wk-braki"><span>Sektory bez pełnej dawki w wozach'+(F?' – stuknij albo przeciągnij na wóz':'')+':</span>'+braki.join('')+'</div>':'')+
+    '<div class="wk-karty">'+lista.map(k=>kartaWozu(data,k,F,W)).join('')+
+      (F&&!WZ.num?'<div class="wk-nowy" ondragover="wOver(event)" ondragleave="wLeave(event)" ondrop="wDrop(event,\'nowy\')"><button class="btn bs bo" onclick="wNowy(null)">+ Nowy wóz</button><small>albo upuść tu sektor</small></div>':'')+'</div>'+
+    dodatkiDniaHTML(data)+
+    '<div class="card" style="margin-top:4px"><div class="ch">Uwagi do dnia</div><div style="padding:8px 12px"><textarea rows="2" style="width:100%"'+(W?'':' disabled')+' onchange="dzienW(WZ.data).uwagi=this.value;zapW()">'+escH(d.uwagi||'')+'</textarea>'+
+    (F?'<div class="wk-poj"><label for="woz-poj">Pojemność wozu paszowego</label><input id="woz-poj" inputmode="decimal" value="'+(wozPoj||'')+'" placeholder="0" onchange="wozPoj=pf(this.value);SV(\'wozPoj\',wozPoj);saM(\'wozy\');toast(\'Zapisano pojemność\');rWoz()"> kg <small>0 = nie pokazuj</small></div>':'')+
+    '</div></div>';
   $('#woz-w').innerHTML=h;
 }
-function kursHTML(data,k,F,W,showTime){
+// segmenty paska składu wozu (niedojady, składniki w kolejności załadunku, dodatki)
+function segmentyK(k,m,skala,etykiety){
+  const sk=skladK(k),cnt={obj:0,tres:0,dod:0};let nr=0;
+  const segNd=m.nd>0?'<div class="seg nd" style="width:'+(m.nd/skala*100)+'%" title="Niedojady – '+fK(m.nd)+' kg">'+(etykiety&&m.nd/skala>.04?'♻':'')+'</div>':'';
+  const segs=sk.map(x=>{const s=gS(x.s),kat=s?.kat||'obj',c=KAT_ODC[kat]||KAT_ODC.obj,col=c[cnt[kat]++%3],pr=x.kg/skala*100;nr++;
+    return '<div class="seg" style="width:'+pr+'%;background:'+col+'" title="'+nr+'. '+escH(s?.nazwa)+' – '+fK(x.kg)+' kg">'+(etykiety&&pr>3.2?nr:'')+'</div>'}).join('');
+  const segEx=m.ex>0?'<div class="seg ex" style="width:'+(m.ex/skala*100)+'%" title="Dodatki ręczne – '+fK1(m.ex)+' kg">'+(etykiety&&m.ex/skala>.04?'+':'')+'</div>':'';
+  return segNd+segs+segEx;
+}
+// mała karta wozu na liście dnia
+function kartaWozu(data,k,F,W){
+  const g=gr.find(x=>x.id===k.gid),m=masaK(k),nr=nrKursu(data,k.id),rk=recKg(g);
+  const gids=[...new Set(k.rz.map(r=>sekBy(r.sid)?.g.id).filter(Boolean))];
+  const tyt=gids.map(id=>gr.find(x=>x.id===id)?.nazwa).filter(Boolean).join(' + ')||(g?g.nazwa:'Pusty wóz');
+  const plan=k.rz.reduce((a,r)=>a+planSek(r.sid),0),p=plan>0?k.rz.reduce((a,r)=>a+kgRz(r),0)/plan*100:null;
+  const linie=(m.nd>0?'<div class="wk-l wk-l-nd"><span>♻ Niedojady <small>– wsypać jako pierwsze</small></span><b>'+fK(m.nd)+' kg</b></div>':'')+
+    k.rz.map(r=>{const o=sekBy(r.sid),kg=kgRz(r),n=rk>0?Math.round(kg/rk):null;
+      return '<div class="wk-l"'+(F&&!WZ.num?' draggable="true" ondragstart="event.stopPropagation();wDrag(event,\'rz\',\''+k.id+'~'+escH(r.sid)+'\')"':'')+'><span>'+(F&&!WZ.num?'<i class="wk-uch">⋮⋮</i>':'')+escH(o?.s.n||'(usunięty sektor)')+(n!=null?' <small>– na '+n+' szt.</small>':'')+'</span><b>'+fK(kg)+' kg</b></div>'}).join('');
+  const numer=WZ.num?((WZ.numLista||[]).indexOf(k.id)+1):nr;
+  const dt=k.done?new Date(k.done):null,hh=dt?String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0'):'';
+  const pk=p==null?'':Math.abs(p-100)<=3?'ok':p<100?'mn':'wi';
+  return '<div class="wk-karta'+(WZ.otw===k.id?' otw':'')+(WZ.num?' num':'')+(k.done?' zrobiony':'')+'" onclick="wOtworz(\''+k.id+'\',event)"'+
+    (W&&!WZ.num?' ondragover="wOver(event)" ondragleave="wLeave(event)" ondrop="wDrop(event,\'kurs\',\''+k.id+'\')"':'')+'>'+
+    '<div class="wk-pas" style="background:'+(g?grKol(g.id):'#B0B8B0')+'"></div>'+
+    '<div class="wk-nag">'+(F&&!WZ.num?'<span class="uchwyt" draggable="true" ondragstart="event.stopPropagation();wDrag(event,\'kurs\',\''+k.id+'\')" onclick="event.stopPropagation()" title="Przeciągnij, żeby zmienić kolejność">⋮⋮</span>':'')+
+      '<span class="wk-nr'+(WZ.num&&!numer?' brak':'')+'">'+(WZ.num&&!numer?'+':numer)+'</span>'+
+      '<div class="wk-tyt"><b>'+escH(tyt)+'</b><span>'+(!g?'bez receptury · ':g.nazwa!==tyt?'receptura '+escH(g.nazwa)+' · ':'')+(k.z===2?'2. zadanie · po południu':'1. zadanie · rano')+'</span></div>'+
+      '<b class="wk-kg">'+fK(m.razem)+' kg</b></div>'+
+    '<div class="wanna wk-mini'+(m.razem>0?'':' pusta')+'">'+segmentyK(k,m,Math.max(m.razem,1),false)+'</div>'+
+    (linie||'<div class="opis-b">Pusty – dodaj sektor</div>')+
+    '<div class="wk-stopka">'+(p!=null?'<span class="wk-proc '+pk+'">'+Math.round(p)+'% planu</span>':'')+
+      (m.ex>0?'<span>+ dodatki '+fK1(m.ex)+' kg</span>':'')+
+      (k.done?'<span class="wk-zrob">✓ zrobiony'+(cR!=='paszowoz'&&hh?' '+hh:'')+'</span>':'')+
+      (F&&!WZ.num?'<button class="btn bs bo wk-plus" onclick="event.stopPropagation();wSekWybor(\''+k.id+'\')">+ sektor</button>':'')+'</div></div>';
+}
+function wOtworz(id,e){
+  if(e&&e.target.closest('input,button,select,a'))return;
+  if(WZ.num){const l=WZ.numLista||(WZ.numLista=[]),i=l.indexOf(id);if(i>=0)l.splice(i,1);else l.push(id);rWoz();return}
+  WZ.otw=WZ.otw===id?null:id;rWoz();
+  if(WZ.otw)setTimeout(()=>{const el=$('#wk-szcz');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},30);
+}
+function wKolejnoscZapisz(){
+  const d=dzienW(WZ.data),l=(WZ.numLista||[]).map(id=>d.kursy.find(k=>k.id===id)).filter(Boolean);
+  d.kursy=[...l,...d.kursy.filter(k=>!l.includes(k))];
+  const cnt={};d.kursy.forEach(k=>{if(k.gid){cnt[k.gid]=(cnt[k.gid]||0)+1;k.z=Math.min(2,cnt[k.gid])}});
+  const plan=$('#wk-zapamietaj')?.checked;
+  if(plan){wozOrder=d.kursy.map(k=>k.gid).filter(Boolean);SV('wozOrder',wozOrder);saM('grupy',true)}
+  WZ.num=false;WZ.numLista=[];zapW();rWoz();toast('Zapisano kolejność wozów'+(plan?' – także jako plan na kolejne dni':''));
+}
+// wybór sektora dla wozu („+ sektor”)
+function wSekWybor(kid){
+  const k=wFind(kid);if(!k)return;
+  const lista=gr.map(g=>g.se.length?'<div class="wk-wyb-gr"><i style="background:'+grKol(g.id)+'"></i>'+escH(g.nazwa)+'</div>'+g.se.map(s=>{const key=sekKey(g,s),jest=k.rz.some(r=>r.sid===key);
+    return '<button class="btn bo"'+(jest?' disabled':'')+' onclick="clM();wDodajSek(\''+kid+'\',\''+escH(key)+'\')"><b>'+escH(s.n)+'</b> · '+s.sz+' szt · '+fK(planSek(key))+' kg'+(jest?' · już na tym wozie':'')+'</button>'}).join(''):'').join('');
+  opM('Dodaj sektor do Wozu '+nrKursu(WZ.data,kid),'<div class="wybor-woz">'+lista+'</div>','<button class="btn bo" onclick="clM()">Anuluj</button>');
+}
+// przeniesienie sektora z jednego wozu na drugi (przeciągnięcie wiersza)
+function wPrzeniesRz(z,sid,doK){
+  const a=wFind(z),b=wFind(doK);if(!a||!b||a===b)return;const r=a.rz.find(x=>x.sid===sid);if(!r)return;
+  if(b.rz.some(x=>x.sid===sid)){toast('Ten sektor jest już na tym wozie');return}
+  a.rz=a.rz.filter(x=>x!==r);b.rz.push(r);if(!b.gid)b.gid=sekBy(sid)?.g.id||'';zapW();rWoz();
+  toast((sekBy(sid)?.s.n||'Sektor')+' → Wóz '+nrKursu(WZ.data,doK));
+}
+// dodatki ręczne do odważenia (dosypki na sektory) – zbiorczo dla całego dnia
+function dodatkiDniaHTML(data){
+  const wiersze=[];kursyD(data).forEach(k=>{const nr=nrKursu(data,k.id);k.rz.forEach(r=>{const o=sekBy(r.sid);if(!o||!o.s.sk_extra)return;
+    o.s.sk_extra.forEach(ex=>{if(ex.kg>0)wiersze.push('<tr><td class="l">Wóz '+nr+'</td><td class="l">'+escH(o.s.n)+' <small style="color:var(--txt2)">'+escH(o.g.nazwa)+'</small></td><td class="l">'+escH(gS(ex.s)?.nazwa||'?')+'</td><td>'+String(ex.kg).replace('.',',')+'</td><td>'+(o.s.sz||0)+'</td><td><b>'+fK1(ex.kg*(+o.s.sz||0))+'</b></td></tr>')})})});
+  if(!wiersze.length)return '';
+  return '<div class="card" style="margin-top:4px"><div class="ch"><span>Dodatki ręczne – odważanie <small style="font-weight:500;color:var(--txt2)">dosypać przed wydaniem na sektor</small></span></div>'+
+    '<div class="tw"><table class="dt"><thead><tr><th class="l">Wóz</th><th class="l">Sektor</th><th class="l">Produkt</th><th>Dawka kg/szt</th><th>Szt</th><th>Masa produktu kg</th></tr></thead><tbody>'+wiersze.join('')+'</tbody></table></div></div>';
+}
+function kursHTML(data,k,F,W,showTime,zamknij){
   const g=gr.find(x=>x.id===k.gid),m=masaK(k),sk=skladK(k),ex=extrasK(k),skala=Math.max(m.razem,wozPoj||0,1),kolor=g?grKol(g.id):'#999';
   const cnt={obj:0,tres:0,dod:0};let nr=0;
   const segNd=m.nd>0?'<div class="seg nd" style="width:'+(m.nd/skala*100)+'%" title="Niedojady – '+fK(m.nd)+' kg">'+(m.nd/skala>.04?'♻':'')+'</div>':'';
@@ -1606,7 +1775,7 @@ function kursHTML(data,k,F,W,showTime){
       (F?'<select onchange="wRec(\''+k.id+'\',this.value)"><option value="">— receptura —</option>'+gr.map(x=>'<option value="'+x.id+'"'+(x.id===k.gid?' selected':'')+'>'+escH(x.nazwa)+'</option>').join('')+'</select>':'<b>'+escH(g?.nazwa||'bez receptury')+'</b>')+
       '<span class="prawo">'+(W?'<button class="btn bs '+(k.done?'bp':'bo')+'" onclick="wDone(\''+k.id+'\')">'+(k.done?'✓ Zrobiony'+(showTime?' '+hh:''):'Gotowe')+'</button>':(k.done?'<span class="ok">✓ zrobiony</span>':''))+
       (F?'<button class="wx b" title="W górę" onclick="wPrzesun(\''+k.id+'\',-1)">▲</button><button class="wx b" title="W dół" onclick="wPrzesun(\''+k.id+'\',1)">▼</button><button class="wx b" title="Przenieś do '+(k.z===1?2:1)+'. zadania" onclick="wZad(\''+k.id+'\')">⇄</button>':'')+
-      '<button class="wx b" title="Karta załadunku" onclick="drukujKarty(\''+k.id+'\')">🖨</button>'+(F?'<button class="wx" title="Usuń wóz" onclick="wUsun(\''+k.id+'\')">✕</button>':'')+'</span></div>'+
+      '<button class="wx b" title="Karta załadunku" onclick="drukujKarty(\''+k.id+'\')">🖨</button>'+(F?'<button class="wx" title="Usuń wóz" onclick="wUsun(\''+k.id+'\')">✕</button>':'')+(zamknij?'<button class="btn bs bo" onclick="WZ.otw=null;rWoz()">Zamknij</button>':'')+'</span></div>'+
     '<div class="wanna-wrap"><div class="wanna'+(m.razem>0?'':' pusta')+'"'+(przekr?' style="box-shadow:inset 0 0 0 2px var(--red)"':'')+'>'+segNd+segs+segEx+(wozPoj>0&&m.razem>wozPoj?'<div class="poj" style="left:'+(wozPoj/skala*100)+'%"></div>':'')+'</div>'+
       '<div class="wanna-opis"><span>Masa: <b>'+fK(m.razem)+' kg</b>'+(m.nd>0||m.ex>0?' (świeży TMR '+fK(m.sw)+(m.nd>0?' + ♻ '+fK(m.nd):'')+(m.ex>0?' + dodatki '+fK1(m.ex):'')+')':'')+'</span>'+
       '<span>'+(wozPoj>0?(przekr?'<b style="color:var(--red)">ponad pojemność o '+fK(m.razem-wozPoj)+' kg</b>':'pojemność '+fK(wozPoj)+' kg · '+Math.round(m.razem/wozPoj*100)+'%'):(g?fK1(recKg(g))+' kg/szt':'wybierz recepturę'))+'</span></div></div>'+
@@ -1619,8 +1788,8 @@ function wRec(id,gid){const k=wFind(id);if(!k)return;k.gid=gid;zapW();rWoz()}
 function wRzKg(id,sid,v){const k=wFind(id);if(!k)return;const r=k.rz.find(x=>x.sid===sid);if(!r)return;r.kg=String(v).trim()===''?null:pf(v);zapW();rWoz()}
 function wRzUsun(id,sid){const k=wFind(id);if(!k)return;k.rz=k.rz.filter(x=>x.sid!==sid);zapW();rWoz()}
 function wUsun(id){const d=dzienW(WZ.data),k=wFind(id);if(!k)return;if(!confirm('Usunąć Wóz '+nrKursu(WZ.data,id)+'?'))return;d.kursy=d.kursy.filter(x=>x.id!==id);zapW();rWoz()}
-function wNowy(z,gid,sid){const d=dzienW(WZ.data);const k={id:uid(),z,gid:gid||'',rz:sid?[{sid,kg:null}]:[],nd:[],done:null};
-  const lastIdx=d.kursy.map(x=>x.z).lastIndexOf(z);d.kursy.splice(lastIdx<0?d.kursy.length:lastIdx+1,0,k);zapW();rWoz();return k}
+function wNowy(z,gid,sid){const d=dzienW(WZ.data);gid=gid||'';const k={id:uid(),z:z||zDla(WZ.data,gid),gid,rz:sid?[{sid,kg:null}]:[],nd:[],done:null};
+  d.kursy.push(k);zapW();rWoz();return k}
 function wDodajSek(id,sid){const k=wFind(id),o=sekBy(sid);if(!k||!o)return;
   if(k.rz.some(r=>r.sid===sid)){toast(o.s.n+' jest już na tym wozie');return}
   if(!k.gid)k.gid=o.g.id;k.rz.push({sid,kg:null});zapW();rWoz();toast(o.s.n+' → Wóz '+nrKursu(WZ.data,id))}
@@ -1629,10 +1798,9 @@ function wDodajNd(id,nid){const d=dzienW(WZ.data),k=wFind(id),n=(d.nied||[]).fin
   k.nd=k.nd||[];k.nd.push({nid,src:n.src,kg:Math.round(reszta)});zapW();rWoz();toast('♻ '+Math.round(reszta)+' kg → Wóz '+nrKursu(WZ.data,id))}
 function wKNdKg(id,i,v){const k=wFind(id);if(!k||!k.nd[i])return;k.nd[i].kg=pf(v);zapW();rWoz()}
 function wKNdUsun(id,i){const k=wFind(id);if(!k)return;k.nd.splice(i,1);zapW();rWoz()}
-function wPrzesun(id,dir){const d=dzienW(WZ.data),k=wFind(id);const lista=kursyZ(WZ.data,k.z),i=lista.indexOf(k),j=i+dir;if(j<0||j>=lista.length)return;
-  const a=d.kursy.indexOf(k),b=d.kursy.indexOf(lista[j]);[d.kursy[a],d.kursy[b]]=[d.kursy[b],d.kursy[a]];zapW();rWoz()}
-function wZad(id){const k=wFind(id);if(!k)return;const d=dzienW(WZ.data);d.kursy=d.kursy.filter(x=>x!==k);k.z=k.z===1?2:1;
-  const lastIdx=d.kursy.map(x=>x.z).lastIndexOf(k.z);d.kursy.splice(lastIdx<0?d.kursy.length:lastIdx+1,0,k);zapW();rWoz()}
+function wPrzesun(id,dir){const d=dzienW(WZ.data),k=wFind(id);if(!k)return;const i=d.kursy.indexOf(k),j=i+dir;if(j<0||j>=d.kursy.length)return;
+  [d.kursy[i],d.kursy[j]]=[d.kursy[j],d.kursy[i]];zapW();rWoz()}
+function wZad(id){const k=wFind(id);if(!k)return;k.z=k.z===1?2:1;zapW();rWoz()}
 function wDone(id){const data=WZ.data,k=wFind(id);if(!k)return;const g=gr.find(x=>x.id===k.gid),nr=nrKursu(data,id);
   if(!wozLog[data])wozLog[data]=[];
   if(k.done){if(!confirm('Cofnąć oznaczenie „zrobiony” dla Wozu '+nr+'?'))return;k.done=null;wozLog[data]=wozLog[data].filter(e=>e.kid!==id)}
@@ -1651,39 +1819,68 @@ function wNdKg(id,v){const n=(dzienW(WZ.data).nied||[]).find(x=>x.id===id);if(!n
 function wNdUsun(id){const d=dzienW(WZ.data);if(ndRozdane(WZ.data,id)>0&&!confirm('Te niedojady są już domieszane do wozów – usunąć je też z wozów?'))return;
   d.nied=(d.nied||[]).filter(x=>x.id!==id);d.kursy.forEach(k=>{k.nd=(k.nd||[]).filter(x=>x.nid!==id)});zapW();rWoz()}
 // wybór wozu stuknięciem (telefon)
-function wWybor(tyt,fn,zNowym){const l=[...kursyZ(WZ.data,1),...kursyZ(WZ.data,2)];
+function wWybor(tyt,fn,zNowym){const l=kursyD(WZ.data);
   window._wFn=fn;
-  opM(tyt,'<div class="wybor-woz">'+l.map(k=>{const g=gr.find(x=>x.id===k.gid);return '<button class="btn bo" onclick="clM();_wFn(\''+k.id+'\')"><b>Wóz '+nrKursu(WZ.data,k.id)+'</b> · '+k.z+'. zad. · '+escH(g?.nazwa||'bez receptury')+' · '+fK(masaK(k).razem)+' kg</button>'}).join('')+
-    (zNowym?'<button class="btn bp" onclick="clM();_wFn(\'nowy1\')">+ Nowy wóz (1. zadanie)</button><button class="btn bp" onclick="clM();_wFn(\'nowy2\')">+ Nowy wóz (2. zadanie)</button>':'')+'</div>','<button class="btn bo" onclick="clM()">Anuluj</button>')}
-function wTapSek(sid){const o=sekBy(sid);if(!o)return;wWybor('Dodaj „'+o.s.n+'” do wozu',id=>{if(id==='nowy1'||id==='nowy2')wNowy(+id.slice(-1),o.g.id,sid);else wDodajSek(id,sid)},true)}
+  opM(tyt,'<div class="wybor-woz">'+l.map(k=>{const g=gr.find(x=>x.id===k.gid);return '<button class="btn bo" onclick="clM();_wFn(\''+k.id+'\')"><b>Wóz '+nrKursu(WZ.data,k.id)+'</b> · '+escH(g?.nazwa||'bez receptury')+' · '+fK(masaK(k).razem)+' kg</button>'}).join('')+
+    (zNowym?'<button class="btn bp" onclick="clM();_wFn(\'nowy\')">+ Nowy wóz</button>':'')+'</div>','<button class="btn bo" onclick="clM()">Anuluj</button>')}
+function wTapSek(sid){const o=sekBy(sid);if(!o)return;wWybor('Dodaj „'+o.s.n+'” do wozu',id=>{if(id==='nowy')wNowy(null,o.g.id,sid);else wDodajSek(id,sid)},true)}
 function wTapNd(nid,e){if(e&&e.target.tagName==='INPUT')return;wWybor('Domieszaj niedojady do wozu',id=>wDodajNd(id,nid),false)}
 // przeciąganie (komputer)
 function wDrag(e,typ,id){e.dataTransfer.setData('text/plain',typ+'::'+id);e.dataTransfer.effectAllowed='move'}
 function wOver(e){e.preventDefault();e.currentTarget.classList.add('cel-ok')}
 function wLeave(e){e.currentTarget.classList.remove('cel-ok')}
-function wDrop(e,cel,arg){e.preventDefault();e.currentTarget.classList.remove('cel-ok');
+function wDrop(e,cel,arg){e.preventDefault();e.stopPropagation();e.currentTarget.classList.remove('cel-ok');
   const v=e.dataTransfer.getData('text/plain');const i=v.indexOf('::');if(i<0)return;const typ=v.slice(0,i),id=v.slice(i+2);
   const F=lvl('woz')>=3;
-  if(cel==='nowy'){if(!F)return;if(typ==='sek'){const o=sekBy(id);wNowy(arg,o?o.g.id:'',id)}
-    else if(typ==='kurs'){const k=wFind(id);if(k&&k.z!==arg)wZad(id)}return}
+  if(cel==='nowy'){if(!F)return;
+    if(typ==='sek'){const o=sekBy(id);wNowy(null,o?o.g.id:'',id)}
+    else if(typ==='rz'){const j=id.indexOf('~'),sid=id.slice(j+1),o=sekBy(sid),k=wNowy(null,o?o.g.id:'');k.rz=[];wPrzeniesRz(id.slice(0,j),sid,k.id)}
+    return}
   if(typ==='sek'&&F)wDodajSek(arg,id);
+  else if(typ==='rz'&&F){const j=id.indexOf('~');wPrzeniesRz(id.slice(0,j),id.slice(j+1),arg)}
   else if(typ==='nd')wDodajNd(arg,id);
   else if(typ==='kurs'&&F&&id!==arg){const d=dzienW(WZ.data),k=wFind(id),t=wFind(arg);if(!k||!t)return;
-    d.kursy=d.kursy.filter(x=>x!==k);k.z=t.z;d.kursy.splice(d.kursy.indexOf(t),0,k);zapW();rWoz()}
+    d.kursy=d.kursy.filter(x=>x!==k);d.kursy.splice(d.kursy.indexOf(t),0,k);zapW();rWoz()}
 }
 // --- karty załadunku ---
+// Źródło kart: wozy dnia z zakładki „Wóz paszowy” albo (KARTY.wirt) wozy wyliczone prosto z dawek
+const KARTY={wirt:null,gr:null,tyt:''};
+function kartyNr(data,k){return (KARTY.wirt||kursyD(data)).indexOf(k)+1}
+// wykonuje fn na wskazanych recepturach (np. awaryjnych), potem przywraca bieżące
+function naRecepturach(grTmp,fn){if(!grTmp)return fn();const zap=gr;gr=grTmp;try{return fn()}finally{gr=zap}}
 function drukujKarty(kid){
-  const data=WZ.data,lista=[...kursyZ(data,1),...kursyZ(data,2)];
+  KARTY.wirt=null;KARTY.gr=null;KARTY.tyt='';
+  const data=WZ.data,lista=kursyD(data);
   if(!lista.length){toast('Brak wozów na ten dzień – ułóż wozy wg planu');return}
   if(kid){drukujKartyWybrane([kid]);return}
-  opM('Drukuj karty załadunku — '+data,
+  oknoKart(data,lista,'Drukuj karty załadunku — '+data);
+}
+// „Oblicz i drukuj wszystkie receptury” – wozy wg planu prosto z dawek, bez niedojadów (nie zmienia wozów dnia)
+function drukujReceptury(zrodlo){
+  let grTmp=null;
+  if(zrodlo==='awaryjne'&&!emergencyMode){if(!grEmergency||!grEmergency.length){toast('Brak dawek awaryjnych – najpierw je przygotuj');return}grTmp=grEmergency}
+  const data=isoToday();
+  const lista=naRecepturach(grTmp,()=>{
+    let plan=(wozOrder||[]).filter(gid=>gr.some(g=>g.id===gid));
+    if(!plan.length){plan=[];gr.forEach(g=>{for(let z=0;z<(g.z||1);z++)plan.push(g.id)})}
+    const cnt={};return plan.map(gid=>{const g=gr.find(x=>x.id===gid);cnt[gid]=(cnt[gid]||0)+1;
+      return {id:'r'+uid(),z:Math.min(2,cnt[gid]),gid,rz:g.se.map(s=>({sid:sekKey(g,s),kg:null})),nd:[],done:null}}).filter(k=>k.rz.length)});
+  if(!lista.length){toast('Brak sektorów w dawkach');return}
+  KARTY.wirt=lista;KARTY.gr=grTmp;
+  KARTY.tyt=(grTmp||emergencyMode?'DAWKI AWARYJNE · ':'')+'wyliczone z dawek, bez niedojadów';
+  naRecepturach(grTmp,()=>oknoKart(data,lista,'Oblicz i drukuj receptury — '+data,'Wozy wg planu, policzone prosto z '+(grTmp||emergencyMode?'<b>dawek awaryjnych</b>':'dawek')+' (bez niedojadów). Wozy w zakładce „Wóz paszowy” się nie zmieniają.'));
+}
+function oknoKart(data,lista,tyt,opis){
+  opM(tyt,(opis?'<div class="opis-b" style="margin-bottom:8px">'+opis+'</div>':'')+
     '<div style="display:flex;gap:6px;margin-bottom:8px"><button class="btn bs bo" onclick="$$(\'#wyb-woz input\').forEach(x=>x.checked=true)">Zaznacz wszystkie</button><button class="btn bs bo" onclick="$$(\'#wyb-woz input\').forEach(x=>x.checked=false)">Odznacz</button></div>'+
     '<div class="wybor-woz" id="wyb-woz">'+lista.map(k=>{const g=gr.find(x=>x.id===k.gid),m=masaK(k);
-      return '<label><input type="checkbox" value="'+k.id+'" checked><span><b>Wóz '+nrKursu(data,k.id)+'</b> · '+k.z+'. zadanie · '+escH(g?.nazwa||'bez receptury')+'<br><small>'+escH(k.rz.map(r=>sekBy(r.sid)?.s.n||'?').join(', ')||'brak sektorów')+' · '+fK(m.razem)+' kg</small></span></label>'}).join('')+'</div>',
+      return '<label><input type="checkbox" value="'+k.id+'" checked><span><b>Wóz '+kartyNr(data,k)+'</b> · '+escH(g?.nazwa||'bez receptury')+' · '+k.z+'. zadanie'+'<br><small>'+escH(k.rz.map(r=>sekBy(r.sid)?.s.n||'?').join(', ')||'brak sektorów')+' · '+fK(m.razem)+' kg</small></span></label>'}).join('')+'</div>',
     '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="const ids=$$(\'#wyb-woz input:checked\').map(x=>x.value);if(!ids.length){toast(\'Zaznacz co najmniej jeden wóz\');return}clM();drukujKartyWybrane(ids)">🖨 Drukuj</button>');
 }
-function drukujKartyWybrane(ids){
-  const data=WZ.data,d=wozDni[data]||{},lista=[...kursyZ(data,1),...kursyZ(data,2)].filter(k=>ids.includes(k.id));if(!lista.length)return;
+function drukujKartyWybrane(ids){naRecepturach(KARTY.gr,()=>drukujKartyWyb2(ids))}
+function drukujKartyWyb2(ids){
+  const data=KARTY.wirt?isoToday():WZ.data,d=KARTY.wirt?{}:(wozDni[data]||{}),lista=(KARTY.wirt||kursyD(data)).filter(k=>ids.includes(k.id));if(!lista.length)return;
+  const awar=emergencyMode||!!KARTY.gr;
   const karty=lista.map(k=>{
     const g=gr.find(x=>x.id===k.gid),m=masaK(k);let nar=0,i=0;
     const nd=(k.nd||[]).map(x=>{nar+=+x.kg||0;return '<tr class="nd"><td class="nr">♻</td><td class="l">NIEDOJADY'+(x.src?' <small>z '+escH(ndSrcName(x.src))+'</small>':'')+'</td><td><b>'+fK(x.kg)+'</b></td><td>'+fK(nar)+'</td><td></td></tr>'}).join('');
@@ -1692,8 +1889,8 @@ function drukujKartyWybrane(ids){
       const ex=(s?.sk_extra||[]).filter(x=>x.kg>0).map(x=>escH(gS(x.s)?.nazwa||'?')+' '+fK1(x.kg*(+s.sz||0))+' kg');
       return (ex.length?'<tr class="ex"><td class="l" colspan="5">➕ Przed wydaniem na <b>'+escH(s.n)+'</b> dosypać do wozu i wymieszać: '+ex.join(' · ')+'</td></tr>':'')+
         '<tr><td class="l"><b>'+escH(s?.n||'?')+'</b>'+(o?' <small>('+escH(o.g.nazwa)+')</small>':'')+'</td><td>'+(s?.sz??'')+'</td><td><b>'+fK(kg)+'</b></td><td>'+(s&&s.sz>0?fK1(kg/s.sz):'')+'</td><td></td></tr>'}).join('');
-    return '<div class="karta"><div class="kh"><span class="wn">WÓZ '+nrKursu(data,k.id)+'</span><span>'+k.z+'. zadanie ('+(k.z===1?'rano':'po południu')+')</span><span>'+escH(g?.nazwa||'bez receptury')+'</span><span class="dt">'+data+'</span></div>'+
-      (emergencyMode?'<div class="awar">⚠ DAWKI AWARYJNE</div>':'')+
+    return '<div class="karta"><div class="kh"><span class="wn">WÓZ '+kartyNr(data,k)+'</span><span>'+k.z+'. zadanie ('+(k.z===1?'rano':'po południu')+')</span><span>'+escH(g?.nazwa||'bez receptury')+'</span><span class="dt">'+data+'</span></div>'+
+      (awar?'<div class="awar">⚠ DAWKI AWARYJNE</div>':'')+(KARTY.wirt?'<div class="zrd">Receptura wyliczona z dawek – bez niedojadów</div>':'')+
       '<table class="zal"><colgroup><col style="width:15mm"><col><col style="width:38mm"><col style="width:38mm"><col style="width:16mm"></colgroup><thead><tr><th>Kol.</th><th class="l">Składnik</th><th>Załadować kg</th><th>W wozie kg</th><th>✓</th></tr></thead><tbody>'+nd+sk+'</tbody>'+
       '<tfoot><tr><td></td><td class="l">RAZEM W WOZIE</td><td>'+fK(m.tot)+'</td><td></td><td></td></tr></tfoot></table>'+
       '<table class="zal"><colgroup><col><col style="width:24mm"><col style="width:32mm"><col style="width:26mm"><col style="width:16mm"></colgroup><thead><tr><th class="l">Rozwieźć na sektory (w tej kolejności)</th><th>Sztuk</th><th>kg</th><th>kg/szt</th><th>✓</th></tr></thead><tbody>'+sek+'</tbody></table>'+
@@ -1701,7 +1898,7 @@ function drukujKartyWybrane(ids){
   printDoc('Karty załadunku — '+data+' ('+dzienTygPL(data)+')',karty,'portrait',
     '.karta{break-after:page;page-break-after:always}.karta:last-child{break-after:auto;page-break-after:auto}'+
     '.kh{display:flex;gap:7mm;align-items:baseline;flex-wrap:wrap;font-size:15pt;font-weight:700;margin:1mm 0 4mm}.kh .wn{font-size:26pt;font-weight:900}.kh .dt{margin-left:auto;font-size:11pt;font-weight:600}'+
-    '.awar{font-size:15pt;font-weight:900;border:2pt solid #000;padding:2mm;text-align:center;margin-bottom:3mm}'+
+    '.awar{font-size:15pt;font-weight:900;border:2pt solid #000;padding:2mm;text-align:center;margin-bottom:3mm}.zrd{font-size:11pt;margin:-2mm 0 3mm}'+
     'table.zal{margin-bottom:6mm}table.zal th,table.zal td{font-size:15pt;padding:2.2mm 3mm;text-align:right}table.zal th{font-size:11pt}'+
     '.l{text-align:left!important}td.nr{text-align:center;font-weight:800}small{font-size:70%;font-weight:600}'+
     'tr.nd td{font-weight:800}tr.ex td{font-size:12pt}tfoot td{font-size:17pt;font-weight:900;border-top:1.8pt solid #000}.uw{font-size:13pt;margin-top:2mm}');
@@ -1721,9 +1918,10 @@ function rWozRap(){
 function pWozRap(){const d=$('#wr-date')?$('#wr-date').value:isoToday();prn('Raport wozów paszowych — '+d,$('#wr-table').innerHTML)}
 
 // Sub-tab switching
-function switchRap(btn,id){btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$$('.rap-sub').forEach(s=>s.style.display='none');$('#'+id).style.display='block';
-  if(id==='rap-woz')rWozRap();if(id==='rap-nied')rNied();if(id==='rap-zuzycie')rZuzycie();if(id==='rap-dawki')rDawkiHist();if(id==='rap-dek')rDek()}
-function rRaporty(){rWozRap()}
+let RAP_AKT='rap-koszty';
+function switchRap(btn,id){RAP_AKT=id;$$('#tab-raporty .rap-kat .tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$$('.rap-sub').forEach(s=>s.style.display='none');$('#'+id).style.display='block';
+  if(id==='rap-koszty')rKoszty();if(id==='rap-zuzycie')rZuzycie();if(id==='rap-dawki')rDawkiHist()}
+function rRaporty(){const b=$$('#tab-raporty .rap-kat .tab-btn').find(x=>x.getAttribute('onclick').includes("'"+RAP_AKT+"'"));if(b)switchRap(b,RAP_AKT)}
 
 // === NIEDOJADY REPORT ===
 function rNied(){
@@ -2095,7 +2293,7 @@ function pDek(){
 // Wszystkie obliczenia (alarmy, statystyki sektorów) liczy aplikacja.
 // Dni są cache'owane w IndexedDB — pobieramy tylko nowe.
 // ===================================================================
-const AFI={meta:null,krowy:null,dni:{},start:false,idb:null,v:'dzis',okres:90,filtr:'razem',pokaz:'sektory',krowa:'',C:null,wszGrupy:false};
+const AFI={meta:null,krowy:null,dni:{},start:false,idb:null,v:'mleko',okres:90,filtr:'razem',pokaz:'sektory',krowa:'',C:null,wszGrupy:false};
 const AFI_KOD={30010:'Ruja',30011:'Inseminacja',30016:'Zasuszenie',30017:'Wycielenie',30239:'Badanie ciąży: cielna',30240:'Badanie wet. (po insem.: niecielna)',30003:'Wybrakowanie',32590:'Zmiana grupy',30002:'Wejście / urodzenie',30141:'Wejście (status)',30015:'Ronienie (?)'};
 const AFI_KOL=['#2E7D32','#81C784','#EF6C00','#FFB74D','#1565C0','#64B5F6','#AD1457','#F06292','#6A1B9A','#00897B','#5D4037','#9E9D24'];
 const afiIso=n=>new Date(Date.UTC(1899,11,30)+n*864e5).toISOString().slice(0,10);
@@ -2148,7 +2346,7 @@ function afiPobierzDni(){
   }).catch(e=>console.warn('afi dni',e));
 }
 function afiPrzytnij(){if(!AFI.meta)return;const gr0=afiIso(AFI.meta.d-420);Object.keys(AFI.dni).forEach(k=>{if(k<gr0){delete AFI.dni[k];afiIdbDel('d:'+k)}})}
-function afiOdswiez(){const ab=document.querySelector('.tab-btn.active');if(!ab)return;if(ab.dataset.t==='stado')rStado();else if(ab.dataset.t==='dawki')afiWypelnijDawki()}
+function afiOdswiez(){const ab=aktTab();if(!ab)return;if(ab.dataset.t==='stado')rStado();else if(ab.dataset.t==='dzis')rDzis();else if(ab.dataset.t==='dawki')afiWypelnijDawki()}
 
 // ---------- Obliczenia pomocnicze ----------
 function afiPrzelicz(){
@@ -2259,9 +2457,9 @@ function rStado(){
   afiStart();
   const el=$('#afi-w');if(!el)return;
   const pelny=lvl('stado')>=3;
-  if(AFI.v==='ust'&&!pelny)AFI.v='dzis';
+  if((AFI.v==='ust'&&!pelny)||AFI.v==='dzis')AFI.v='mleko';
   let h='<div class="afi-gora"><div class="chips">';
-  [['dzis','Dziś – alarmy'],['mleko','Mleko sektorów'],['rozrod','Rozród'],['ekon','Ekonomia'],['krowa','Krowa']].concat(pelny?[['ust','⚙ Ustawienia']]:[]).forEach(([k,t])=>h+='<button class="chip'+(AFI.v===k?' on':'')+'" onclick="AFI.v=\''+k+'\';rStado()">'+t+'</button>');
+  [['mleko','Mleko sektorów'],['rozrod','Rozród'],['ekon','Ekonomia'],['krowa','Krowa']].concat(pelny?[['ust','⚙ Ustawienia']]:[]).forEach(([k,t])=>h+='<button class="chip'+(AFI.v===k?' on':'')+'" onclick="AFI.v=\''+k+'\';rStado()">'+t+'</button>');
   h+='</div>'+afiSwiezosc()+'</div>';
   if(!AFI.meta||!AFI.krowy||!Object.keys(AFI.dni).length){
     h+='<div class="card afi-pusto"><b>Brak danych z AfiFarm.</b><br>Agent na komputerze w oborze nie został jeszcze zainstalowany albo nie wysłał danych'+(AFI.start?'':' (ładowanie…)')+'.'+(pelny?'<br><br>Awaryjnie możesz wczytać plik .json zapisany przez agenta: <button class="btn bs bo" onclick="AFI.v=\'ust\';rStado()">⚙ Ustawienia → Wczytaj plik</button>':'')+'</div>';
@@ -2269,8 +2467,7 @@ function rStado(){
     el.innerHTML=h;return;
   }
   if(!AFI.C)afiPrzelicz();
-  if(AFI.v==='dzis')h+=afiDzisHTML();
-  else if(AFI.v==='mleko')h+=afiMlekoHTML();
+  if(AFI.v==='mleko')h+=afiMlekoHTML();
   else if(AFI.v==='krowa')h+=afiKrowaHTML();
   else if(AFI.v==='rozrod')h+=afiRozrodHTML();
   else if(AFI.v==='ekon')h+=afiEkonHTML();
@@ -2288,7 +2485,7 @@ function afiSwiezosc(){
 // ----- Dziś -----
 function afiDzisHTML(){
   const A=afiAlarmy(),pr=afiProg(),Y=AFI.C.Y,D=AFI.C.D;
-  const kr=id=>'<a class="afi-nr" onclick="AFI.v=\'krowa\';AFI.krowa=\''+id+'\';rStado()">'+id+'</a>';
+  const kr=id=>'<a class="afi-nr" onclick="afiPokazKrowe(\''+id+'\')">'+id+'</a>';
   let h='<div class="afi-row"><div style="flex:1.35;min-width:0">';
   h+='<div class="card afi-card"><h3>🔥 Podejrzenie rui <span class="cnt r">'+A.ruja.length+'</span> <span class="sub">aktywność ≥ '+pr.ruja+'% ponad własną średnią z 10 dni</span></h3>';
   if(A.ruja.length){
@@ -2519,7 +2716,7 @@ function afiRozrod(){
 const AFI_RL=[['ins','Do inseminacji','po okresie spoczynku: bez inseminacji albo puste po badaniu',''],['bez','Bez rui po VWP','brak rui i inseminacji','w'],['pd','Do badania ciąży','dni po inseminacji','a'],['zas','Do zasuszenia','w najbliższych dniach',''],['wyc','Do wycielenia','w najbliższych dniach',''],['pow','Powtarzające','≥ 3 inseminacje, niecielne','w']];
 function afiRozrodTabela(key,L,druk){
   const pr=afiProg(),D=AFI.C.D;
-  const kr=id=>druk?'<b>'+id+'</b>':'<a class="afi-nr" onclick="AFI.v=\'krowa\';AFI.krowa=\''+id+'\';rStado()">'+id+'</a>';
+  const kr=id=>druk?'<b>'+id+'</b>':'<a class="afi-nr" onclick="afiPokazKrowe(\''+id+'\')">'+id+'</a>';
   const sek=r=>escH(r.jal?'jałówka · '+r.sek:r.sek),lk=r=>r.jal?'—':(r.lakt??'—'),ins=r=>r.ost?afiPlK(r.ost[0])+' ('+r.dIns+' dni)':'—';
   const tag=(t,c)=>druk?t:'<span class="tag '+(c||'')+'">'+t+'</span>';
   let th='',rows='';const lst=L[key];

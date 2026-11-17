@@ -6,6 +6,8 @@ Właściciel nie jest programistą: odpowiadaj po polsku, prostym językiem, bez
 - Aplikacja PWA w jednym pliku `index.html` (HTML + CSS + JS, bez budowania). `sw.js` = tryb offline, `manifest.json` = instalacja na telefonie.
 - Dane: Firebase Firestore, projekt `ohz-bobrowniki-po-app`, kolekcja `ohz_data` (dokument na moduł + `config` z uprawnieniami i blokadami ról).
 - Logowanie: Firebase Authentication, jedno konto na rolę: `<rola>@ohz-bobrowniki.app` (tworca, zootechnik, prezes, magazynier, paszowoz). Ekran logowania ma tylko pole hasła — aplikacja sprawdza je kolejno na kontach ról, więc hasła ról muszą być różne.
+- Zakładki: kolejność w `TAB_ORDER`; rzadko używane schowane w menu „Więcej” (`TAB_WIECEJ`). „Dziś” = alarmy z AfiFarm. Koszty są w Raportach.
+- Wóz paszowy (wzór: aplikacja Weibloem, repo piterds7-blip/weibloem): wozy dnia w `wozDni[data].kursy` w kolejności ładowania; plan kolejności w `wozOrder` (zapisuje go „🔢 Kolejność wozów”).
 - Zasady bazy: `firestore.rules` — po zmianie trzeba je wkleić w konsoli Firebase (Firestore → Rules → Publish).
 
 ## Zasady
