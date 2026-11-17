@@ -652,43 +652,68 @@ function pRealna(){printDoc('Dawka realnie zadana — '+fmtDate(new Date()),rRea
 
 // ===== KARTKA NA RANO (zakładka Dziś) =====
 function kartkaDane(){
-  const C=AFI.C,D=C.D,pr=afiProg(),A=afiAlarmy(),AN=afiDojAnomalia(A),L=afiRozrod(),poz={};
-  const dodaj=(id,ikona,co,zrob,typ)=>{if(!afiSekOk(id,D))return;if(typ&&alStan(typ,id))return;
-    const sek=afiEtykietaKrowy(id,D);(poz[sek]=poz[sek]||{}).hasOwnProperty(id)||(poz[sek][id]=[]);poz[sek][id].push({ikona,co,zrob})};
-  A.ruja.forEach(r=>{const t=r.tag||'';const zrob=/cieln/.test(t)?'ruja u cielnej – sprawdzić':/przed okresem/.test(t)?'tylko obserwować (przed okresem spoczynku)':/za wcześnie/.test(t)?'obserwować (za wcześnie po insem.)':/zainseminowana/.test(t)?'obserwować (świeżo zainseminowana)':'zgłosić inseminatorowi';
-    dodaj(r.id,'🔥','ruja'+(r.dIns!=null?' · '+r.dIns+' dni po insem.':''),zrob,'ruja')});
-  if(!AN.flag)A.spadek.filter(r=>!r.przes).forEach(r=>dodaj(r.id,'📉',r.brak?'brak doju wczoraj':'mleko −'+Math.round(r.sp)+'%'+(r.dim!=null&&r.dim<30?' · '+r.dim+' dni po wycieleniu':''),r.dim!=null&&r.dim<30?'temperatura, apetyt (ketoza? zapalenie macicy?)':'zmierzyć temperaturę, sprawdzić apetyt i racice','spadek'));
-  A.cond.forEach(r=>dodaj(r.id,'💧','przewodność +'+Math.round(r.wz)+'%'+(r.dbl?' i spadek mleka':''),'test CMT przed dojem','cond'));
-  A.ped.forEach(r=>dodaj(r.id,'📡','brak odczytu pedometru '+(r.n>=30?'30+':r.n)+' dni','sprawdzić pedometr na nodze','ped'));
-  L.pd.forEach(r=>dodaj(r.id,'🔍','do badania ciąży · '+r.dIns+' dni po insem.'+(r.zal?' (zaległe)':''),'zgłosić weterynarzowi'));
-  L.zas.filter(r=>r.za<=7).forEach(r=>dodaj(r.id,'⏸',r.za<=0?'do zasuszenia – termin minął':'do zasuszenia za '+r.za+' dni',r.za<=0?'zasuszyć':'przygotować do zasuszenia'));
-  L.wyc.filter(r=>r.za<=7).forEach(r=>dodaj(r.id,'🐄',r.za<=0?'wycielenie – termin minął':'wycielenie za ok. '+r.za+' dni','przenieść na porodówkę, obserwować'));
-  L.ins.filter(r=>r.pusta).forEach(r=>dodaj(r.id,'♀','pusta po badaniu','obserwować ruję – do inseminacji'));
-  // kolejność sektorów jak w Dawkach (kolejność obchodu), potem pozostałe
-  const kol=afiSektory().map(x=>x.s),sek=Object.keys(poz).sort((a,b)=>{const i=kol.indexOf(a),j=kol.indexOf(b);return (i<0?999:i)-(j<0?999:j)||a.localeCompare(b,'pl')});
-  return {poz,sek,AN,A};
+  const C=AFI.C,D=C.D,A=afiAlarmy(),AN=afiDojAnomalia(A),L=afiRozrod();
+  const pil={},zas=[],puste=[],ped={};
+  const ok=(id,typ)=>afiSekOk(id,D)&&!(typ&&alStan(typ,id));
+  const dodaj=(id,ikona,co,zrob,typ)=>{if(!ok(id,typ))return;const sek=afiEtykietaKrowy(id,D);((pil[sek]=pil[sek]||{})[id]=pil[sek][id]||[]).push({ikona,co,zrob})};
+  A.ruja.forEach(r=>{const t=r.tag||'';const zrob=/cieln/.test(t)?'sprawdzić (ronienie?)':/przed okresem/.test(t)?'obserwować':/za wcześnie/.test(t)?'obserwować':/zainseminowana/.test(t)?'obserwować':'inseminator';
+    dodaj(r.id,'🔥',(/cieln/.test(t)?'ruja u cielnej':'ruja')+(r.dIns!=null&&!/cieln/.test(t)?' · '+r.dIns+' dni po insem.':''),zrob,'ruja')});
+  A.cond.forEach(r=>dodaj(r.id,'💧','przewodność +'+Math.round(r.wz)+'%'+(r.dbl?', mleko ↓':''),'CMT przed dojem','cond'));
+  if(!AN.flag)A.spadek.filter(r=>!r.przes).forEach(r=>dodaj(r.id,'📉',r.brak?'brak doju wczoraj':'mleko −'+Math.round(r.sp)+'%'+(r.dim!=null&&r.dim<30?' · '+r.dim+' dni po wyc.':''),r.dim!=null&&r.dim<30?'temperatura, apetyt (ketoza?)':'temperatura, apetyt, racice','spadek'));
+  L.pd.forEach(r=>dodaj(r.id,'🔍','badanie ciąży · '+r.dIns+' dni'+(r.zal?' (zaległe)':''),'weterynarz'));
+  L.wyc.filter(r=>r.za<=7).forEach(r=>dodaj(r.id,'🐄',r.za<=0?'wycielenie – termin minął':'wycielenie za '+r.za+' '+(r.za===1?'dzień':'dni'),r.za<=1?'porodówka, obserwować':'porodówka'));
+  L.zas.forEach(r=>{if(r.za<=0)dodaj(r.id,'⏸',r.za<0?'zasuszenie – termin minął':'zasuszenie dziś','zasuszyć');else if(r.za<=7&&ok(r.id))zas.push({id:r.id,d:r.zd})});
+  L.ins.filter(r=>r.pusta&&ok(r.id)).forEach(r=>puste.push(r.id));
+  A.ped.forEach(r=>{if(!ok(r.id,'ped'))return;const sek=afiEtykietaKrowy(r.id,D);(ped[sek]=ped[sek]||[]).push({id:r.id,n:r.n})});
+  const kol=afiSektory().map(x=>x.s),por=(a,b)=>{const i=kol.indexOf(a),j=kol.indexOf(b);return (i<0?999:i)-(j<0?999:j)||a.localeCompare(b,'pl')};
+  const num=(a,b)=>(+a)-(+b);
+  zas.sort((a,b)=>a.d-b.d||num(a.id,b.id));puste.sort(num);Object.values(ped).forEach(l=>l.sort((a,b)=>num(a.id,b.id)));
+  const nPil=Object.values(pil).reduce((a,o)=>a+Object.keys(o).length,0),nPed=Object.values(ped).reduce((a,l)=>a+l.length,0);
+  return {pil,pilSek:Object.keys(pil).sort(por),zas,puste,ped,pedSek:Object.keys(ped).sort(por),nPil,nPed,AN,A};
 }
+const KARTKA_DOM={pil:true,zas:true,puste:true,ped:false};
 function drukujKartke(){
   if(!AFI.meta||!AFI.krowy||!AFI.C){toast('Brak danych z AfiFarm');return}
-  const K=kartkaDane(),D=AFI.C.D,ts=AFI.meta.ts||'',t=Date.parse(ts.replace(' ','T')),stare=!isNaN(t)&&Date.now()-t>26*3600e3;
-  let ile=0;const typy={};K.sek.forEach(s=>Object.values(K.poz[s]).forEach(l=>l.forEach(x=>{ile++;typy[x.ikona]=(typy[x.ikona]||0)+1})));
-  const nazwy={'🔥':'ruja','📉':'spadek mleka','💧':'mastitis','📡':'pedometry','🔍':'badanie ciąży','⏸':'zasuszenie','🐄':'wycielenie','♀':'puste'};
-  let h='<div class="pod">'+dzienTygPL(isoToday()).replace(/^./,c=>c.toUpperCase())+' '+fmtDate(new Date())+' · dane AfiFarm: '+escH(ts)+' · <b>'+ile+'</b> zadań'+
-    Object.entries(typy).map(([k,v])=>' · '+k+' '+nazwy[k]+' <b>'+v+'</b>').join('')+((AFI.sekF||[]).length?' · tylko: '+AFI.sekF.map(escH).join(', '):'')+'</div>';
+  const K=kartkaDane(),o=Object.assign({},KARTKA_DOM,LD('kartkaOpc',{}));
+  const poz=[['pil','Działaj dziś','ruja, mastitis, spadek mleka, badanie ciąży, wycielenie, zasuszenie na dziś',K.nPil],['zas','Zasuszenia w ciągu 7 dni','lista numerów z datą',K.zas.length],['puste','Puste po badaniu','lista numerów',K.puste.length],['ped','Pedometry bez odczytu','lista numerów wg sektorów',K.nPed]];
+  opM('🖨 Kartka na rano – co wydrukować?','<div class="wybor-woz" id="kartka-opc">'+poz.map(([k,t,d,n])=>'<label><input type="checkbox" value="'+k+'"'+(o[k]?' checked':'')+'><span><b>'+t+'</b> ('+n+')<br><small>'+d+'</small></span></label>').join('')+'</div>'+
+    ((AFI.sekF||[]).length?'<div class="opis-b" style="margin-top:8px">Tylko wybrane sektory: '+AFI.sekF.map(escH).join(', ')+'</div>':''),
+    '<button class="btn bo" onclick="clM()">Anuluj</button><button class="btn bp" onclick="const w={};$$(\'#kartka-opc input\').forEach(x=>w[x.value]=x.checked);if(!Object.values(w).some(Boolean)){toast(\'Zaznacz co najmniej jedną część\');return}SV(\'kartkaOpc\',w);clM();drukujKartke2(w)">🖨 Drukuj</button>');
+}
+function drukujKartke2(o){
+  const K=kartkaDane(),ts=AFI.meta.ts||'',t=Date.parse(ts.replace(' ','T')),stare=!isNaN(t)&&Date.now()-t>26*3600e3;
+  const ik={};K.pilSek.forEach(s=>Object.values(K.pil[s]).forEach(l=>l.forEach(x=>ik[x.ikona]=(ik[x.ikona]||0)+1)));
+  const nz={'🔥':'ruja','💧':'mastitis','📉':'spadek mleka','🔍':'badanie','🐄':'wycielenie','⏸':'zasuszenie'};
+  const plDz=d=>{const p=afiIso(d).split('-');return p[2]+'.'+p[1]};
+  let h='<div class="pod">'+dzienTygPL(isoToday()).replace(/^./,c=>c.toUpperCase())+' '+fmtDate(new Date())+' · AfiFarm '+escH(ts)+
+    (o.pil?Object.entries(ik).map(([k,v])=>' · '+k+' '+nz[k]+' <b>'+v+'</b>').join(''):'')+(o.zas?' · ⏸ do zasuszenia 7 dni <b>'+K.zas.length+'</b>':'')+(o.puste?' · ♀ puste <b>'+K.puste.length+'</b>':'')+(o.ped?' · 📡 pedometry <b>'+K.nPed+'</b>':'')+
+    ((AFI.sekF||[]).length?' · tylko: '+AFI.sekF.map(escH).join(', '):'')+'</div>';
   if(stare)h+='<div class="ost">⚠ DANE Z AFIFARM SĄ NIEAKTUALNE – sprawdź agenta na komputerze w oborze.</div>';
-  if(K.AN.flag)h+='<div class="ost">⚠ Podejrzenie braku udoju w danych z '+afiPlK(AFI.C.Y)+' – spadki mleka pominięte (sprawdź AfiFarm).</div>';
-  if(!ile)h+='<p style="font-size:14pt;margin-top:8mm">Brak zadań na dziś.</p>';
-  K.sek.forEach(sek=>{
-    h+='<div class="sek"><div class="sn">'+escH(sek)+'</div><table><colgroup><col style="width:9mm"><col style="width:18mm"><col><col style="width:48mm"></colgroup><tbody>';
-    Object.entries(K.poz[sek]).sort((a,b)=>(+a[0])-(+b[0])).forEach(([id,l])=>{
-      h+='<tr><td class="bx">☐</td><td class="n">'+escH(id)+'</td><td>'+l.map(x=>x.ikona+' '+escH(x.co)+' – <b>'+escH(x.zrob)+'</b>').join('<br>')+'</td><td></td></tr>'});
-    h+='</tbody></table></div>'});
-  h+='<div class="st"><span>Obchód: ……………………… godz. ………</span><span>☐ = zrobione · w pustej kolumnie uwagi</span></div>';
+  if(K.AN.flag&&o.pil)h+='<div class="ost">⚠ Podejrzenie braku udoju w danych z '+afiPlK(AFI.C.Y)+' – spadki mleka pominięte (sprawdź AfiFarm).</div>';
+  h+='<div class="kol">';
+  if(o.pil){
+    h+='<div class="h">Działaj dziś</div>';
+    if(!K.nPil)h+='<div class="zb">Brak pilnych zadań.</div>';
+    K.pilSek.forEach(sek=>{const l=Object.entries(K.pil[sek]).sort((a,b)=>(+a[0])-(+b[0]));
+      l.forEach(([id,zad],i)=>{h+=(i===0?'<div class="blok"><div class="sn">'+escH(sek)+'</div>':'')+'<div class="w"><span class="bx">☐</span><span class="n">'+escH(id)+'</span><span class="co">'+zad.map(x=>x.ikona+' '+escH(x.co)+' → <b>'+escH(x.zrob)+'</b>').join('<br>')+'</span></div>'+(i===0?'</div>':'')})});
+  }
+  if(o.zas||o.puste||o.ped){
+    h+='<div class="h">Listy zbiorcze</div>';
+    if(o.zas)h+='<div class="zb"><b>⏸ Zasuszenia w ciągu 7 dni ('+K.zas.length+'):</b> '+(K.zas.map(z=>escH(z.id)+' <small>('+plDz(z.d)+')</small>').join(', ')||'brak')+'</div>';
+    if(o.puste)h+='<div class="zb"><b>♀ Puste po badaniu – obserwować ruję ('+K.puste.length+'):</b> '+(K.puste.map(escH).join(', ')||'brak')+'</div>';
+    if(o.ped){h+='<div class="zb"><b>📡 Pedometry bez odczytu ('+K.nPed+')</b> – pogrubione: ponad 14 dni, do wymiany</div>';
+      K.pedSek.forEach(sek=>h+='<div class="zb"><b>'+escH(sek)+' ('+K.ped[sek].length+'):</b> '+K.ped[sek].map(r=>r.n>=14?'<b>'+escH(r.id)+'</b>':escH(r.id)).join(', ')+'</div>')}
+  }
+  h+='</div><div class="st"><span>Obchód: ……………………… godz. ………</span><span>☐ = zrobione · uwagi na marginesie</span></div>';
   printDoc('Kartka na rano — obchód',h,'portrait',
-    '.pod{font-size:10pt;margin:0 0 2mm}.ost{border:1.5pt solid #000;padding:1.5mm 2.5mm;font-size:10.5pt;font-weight:700;margin:2mm 0}'+
-    '.sek{break-inside:avoid;page-break-inside:avoid;margin-top:3.5mm}.sn{font-size:13pt;font-weight:800;border-bottom:1.5pt solid #000;margin-bottom:1mm}'+
-    'td{font-size:10.5pt;padding:1.6mm 2mm;vertical-align:top}td.bx{font-size:14pt;text-align:center;padding:0.6mm 0}td.n{font-size:13pt;font-weight:800;text-align:center}'+
-    '.st{display:flex;justify-content:space-between;font-size:9pt;margin-top:5mm;color:#333}');
+    '.pod{font-size:8.5pt;margin:0 0 1.5mm}.ost{border:1.2pt solid #000;padding:1mm 2mm;font-size:9pt;font-weight:700;margin:1mm 0 2mm}'+
+    '.kol{column-count:2;column-gap:6mm;column-rule:0.6pt solid #999;font-size:9pt;line-height:1.3}'+
+    '.h{column-span:all;font-size:10pt;font-weight:800;text-transform:uppercase;letter-spacing:.4pt;border-bottom:1.2pt solid #000;margin:2.5mm 0 1.5mm}'+
+    '.blok{break-inside:avoid;page-break-inside:avoid}.sn{font-size:10pt;font-weight:800;border-bottom:0.7pt solid #000;margin-top:2mm}'+
+    '.w{display:grid;grid-template-columns:4mm 10mm 1fr;gap:1.2mm;padding:0.9mm 0;border-bottom:0.5pt dotted #888;break-inside:avoid;page-break-inside:avoid}'+
+    '.bx{font-size:10pt;line-height:1}.n{font-weight:800;font-size:10.5pt}.co b{font-weight:700}'+
+    '.zb{margin:0.8mm 0;break-inside:avoid;page-break-inside:avoid}.zb small{font-size:7.5pt}'+
+    '.st{display:flex;justify-content:space-between;font-size:8pt;margin-top:4mm;color:#333;border-top:0.6pt solid #999;padding-top:1mm}');
 }
 // ===== ZAKŁADKA DZIŚ: alarmy z AfiFarm =====
 function rDzis(){
