@@ -40,6 +40,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--txt);line-height:1
 .rap-grupa{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
 .rap-gl{font:800 11px var(--font);text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);margin-right:6px}
 .dzis-tyt{margin:0;font-size:18px;color:var(--pri)}
+.rr-spr{font:700 10px var(--font);color:var(--red);background:var(--red-bg);border-radius:8px;padding:1px 6px;white-space:nowrap}
 td.al-k{white-space:normal;min-width:170px}
 .al-btns{display:flex;flex-wrap:wrap;gap:4px}
 .al-btns button{font:600 11.5px var(--font);border:1px solid #9FB79F;background:#fff;color:var(--txt);border-radius:14px;padding:4px 9px;cursor:pointer;min-height:28px}
@@ -367,10 +368,13 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
   <div class="rap-kat">
     <div class="rap-grupa"><span class="rap-gl">💰 Koszty</span>
       <button class="tab-btn active" onclick="switchRap(this,'rap-koszty')">Koszty żywienia</button></div>
+    <div class="rap-grupa"><span class="rap-gl">🐄 Stado</span>
+      <button class="tab-btn" onclick="switchRap(this,'rap-realna')">Dawka realnie zadana</button></div>
     <div class="rap-grupa"><span class="rap-gl">🌾 Pasze</span>
       <button class="tab-btn" onclick="switchRap(this,'rap-zuzycie')">Zużycie surowców</button>
       <button class="tab-btn" onclick="switchRap(this,'rap-dawki')">Dawki (historia)</button></div>
   </div>
+  <div id="rap-realna" class="rap-sub" style="display:none"><div id="rr-w"></div></div>
   <div id="rap-koszty" class="rap-sub">
   <div class="card"><div class="ch"><span>Sekcja 1 — Dawki i koszt na sztukę/dzień</span><button class="btn bs bpdf" onclick="pKoszty()">📄 PDF</button></div><div class="tw" id="kos-s1"></div></div>
   <div class="card"><div class="ch">Sekcja 2 — Zużycie surowców wg kategorii (dzienne/miesięczne)</div><div class="tw" id="kos-s2"></div></div>
@@ -524,7 +528,7 @@ function applyRO(){setTimeout(()=>{
   if(t==='woz'||t==='stado'||t==='uzytkownicy'||lvl(t)>=3||(t==='dzis'&&lvl(t)>=2))return;
   const tp=$('#tab-'+t);if(!tp)return;
   tp.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.closest('.fr'))el.disabled=true});
-  tp.querySelectorAll('button').forEach(el=>{if(el.classList.contains('tab-btn'))return;if(el.closest('.fr')&&!el.classList.contains('bpdf'))return;el.style.display='none'});
+  tp.querySelectorAll('button').forEach(el=>{if(el.classList.contains('tab-btn')||el.closest('.afi-filtry'))return;if(el.closest('.fr')&&!el.classList.contains('bpdf'))return;el.style.display='none'});
   tp.querySelectorAll('[onclick]').forEach(el=>{if(el.tagName!=='BUTTON'&&!el.closest('.fr')&&!el.closest('.rd-head'))el.style.pointerEvents='none'});
 },40)}
 // ===== ZAKŁADKA: UŻYTKOWNICY (tylko Twórca) =====
@@ -605,10 +609,91 @@ function tabMenu(e){
 }
 function tabMenuZamknij(){const m=$('#tab-menu');if(m)m.remove()}
 function oT(t){const m={dzis:rDzis,mleko:rMl,surowce:rSur,dawki:rDk,cielaki:loadCiUI,awaryjne:rEmerg,woz:rWoz,stado:rStado,raporty:rRaporty,harmonogram:()=>rSch('hr'),obecnosc:()=>rSch('ob'),nasienie:rNas,kalendarz:rKal,uzytkownicy:rUz};if(t==='dawki')afiStart();if(m[t])m[t]();applyRO()}
+// ===== RAPORT: DAWKA REALNIE ZADANA =====
+// TMR liczy się ze sztuk technicznych (sztuki × zadania), a w sektorze stoi realna liczba krów
+// (AfiFarm albo wpisana ręcznie w Dawkach). Raport pokazuje, ile paszy naprawdę dostaje krowa.
+function realneSektora(sek){const kody=afiCfg.map?.[sek];if(kody&&kody.length)return AFI.krowy&&AFI.C?afiRealne(sek):null;const r=afiCfg.real?.[sek];return r!=null?+r:null}
+function rRealnaDane(){
+  const W=[];let zad=0,real=0,nad=0,nie=0,zlNad=0,zlNie=0,kgD=0,kgP=0,spr=0;
+  gr.forEach(g=>{const dawka=g.sk.reduce((a,x)=>a+(+x.kg||0),0),zz=g.z||1;
+    const zlSzt=g.sk.reduce((a,x)=>{const su=gS(x.s);return a+(su?(+x.kg||0)*(+su.cena_t||0)/1000:0)},0),zlKg=dawka>0?zlSzt/dawka:0;
+    g.se.forEach(se=>{const z=(+se.sz||0)*zz,n=realneSektora(se.n),kg=dawka*z;
+      const w={g:g.nazwa,s:se.n,sz:+se.sz||0,zz,z,n,dawka,kg,af:!!(afiCfg.map?.[se.n]||[]).length};
+      if(n!=null&&n>0&&dawka>0){w.pot=n*dawka;w.r=kg-w.pot;w.kk=kg/n;w.pr=w.kk/dawka*100;w.zl=w.r*zlKg;w.spr=Math.abs(w.pr-100)>30;
+        zad+=z;real+=n;kgD+=kg;kgP+=w.pot;if(w.r>0){nad+=w.r;zlNad+=w.zl}else{nie+=-w.r;zlNie+=-w.zl}if(w.spr)spr++}
+      W.push(w)})});
+  return {W,zad,real,nad,nie,zlNad,zlNie,kgD,kgP,spr};
+}
+function rRealnaHTML(druk){
+  const R=rRealnaDane(),fz=v=>Math.round(v).toLocaleString('pl-PL'),pk=pr=>{const o=Math.abs(pr-100);return o<=5?'z':o<=10?'p':'m'};
+  let h='';
+  if(!druk)h+='<div class="afi-kpi">'+
+    '<div class="k"><span>Sztuki zadawane / realne</span><b>'+R.zad+' / '+R.real+'</b><em class="sub">'+(R.zad-R.real>=0?'+':'−')+Math.abs(R.zad-R.real)+' sztuk technicznych</em></div>'+
+    '<div class="k"><span>Nadwyżka paszy na dobę</span><b style="color:var(--amber)">'+fz(R.nad)+' kg</b><em class="sub">ok. '+fz(R.zlNad)+' zł · '+fz(R.zlNad*30)+' zł / mies.</em></div>'+
+    '<div class="k"><span>Niedobór paszy na dobę</span><b style="color:var(--red)">'+fz(R.nie)+' kg</b><em class="sub">ok. '+fz(R.zlNie)+' zł</em></div>'+
+    '<div class="k"><span>Do sprawdzenia</span><b style="color:'+(R.spr?'var(--red)':'var(--pri)')+'">'+R.spr+'</b><em class="sub">sektory z odchyleniem ponad 30%</em></div></div>';
+  else h+='<p style="font-size:11pt;margin:0 0 3mm">Sztuki zadawane / realne: <b>'+R.zad+' / '+R.real+'</b> · nadwyżka: <b>'+fz(R.nad)+' kg</b> (ok. '+fz(R.zlNad)+' zł/dobę) · niedobór: <b>'+fz(R.nie)+' kg</b> (ok. '+fz(R.zlNie)+' zł/dobę)'+(emergencyMode?' · ⚠ DAWKI AWARYJNE':'')+'</p>';
+  h+=(druk?'':'<div class="card"><div class="ch"><span>Dawka realnie zadana – sektory'+(emergencyMode?' <small style="color:var(--red)">⚠ dawki awaryjne</small>':'')+'</span><button class="btn bs bpdf" onclick="pRealna()">📄 PDF</button></div>')+
+    '<div class="tw"><table class="dt sek-t"><thead><tr><th class="l">Grupa</th><th class="l">Sektor</th><th>Zadawane szt.</th><th>Realnie szt.</th><th>Różnica</th><th>kg TMR / dobę</th><th>Potrzeba wg realnych</th><th>Nadwyżka (+) / niedobór (−) kg</th><th>kg / krowę realnie</th><th>Dawka kg/szt</th><th>% dawki</th><th>zł / dobę</th></tr></thead><tbody>';
+  let ost='';const bez=[];
+  R.W.forEach(w=>{const pierwszy=w.g!==ost;ost=w.g;
+    if(w.pot==null){bez.push(w);return}
+    h+='<tr'+(pierwszy?' style="border-top:2px solid var(--pri)"':'')+'><td class="l" style="font-weight:700">'+(pierwszy?escH(w.g):'')+'</td><td class="l">'+escH(w.s)+(w.spr?' <span class="rr-spr">sprawdź przypisanie</span>':'')+'</td>'+
+      '<td>'+(w.zz>1?w.sz+' × '+w.zz+' = '+w.z:w.z)+'</td><td>'+w.n+(w.af?' 🔒':' ✎')+'</td><td>'+(w.z-w.n>=0?'+':'−')+Math.abs(w.z-w.n)+'</td>'+
+      '<td>'+fz(w.kg)+'</td><td>'+fz(w.pot)+'</td><td style="font-weight:700;color:'+(w.r>=0?'var(--amber)':'var(--red)')+'">'+(w.r>=0?'+':'−')+fz(Math.abs(w.r))+'</td>'+
+      '<td>'+afiF(w.kk)+'</td><td>'+afiF(w.dawka)+'</td><td><span class="afi-proc '+pk(w.pr)+'">'+Math.round(w.pr)+'%</span></td><td>'+(w.r>=0?'+':'−')+fz(Math.abs(w.zl))+'</td></tr>'});
+  h+='</tbody><tfoot><tr><td class="l" colspan="2">RAZEM (sektory z realnymi sztukami)</td><td>'+R.zad+'</td><td>'+R.real+'</td><td>'+(R.zad-R.real>=0?'+':'−')+Math.abs(R.zad-R.real)+'</td><td>'+fz(R.kgD)+'</td><td>'+fz(R.kgP)+'</td><td>+'+fz(R.nad)+(R.nie>0.5?' / −'+fz(R.nie):'')+'</td><td></td><td></td><td></td><td>+'+fz(R.zlNad)+(R.zlNie>0.5?' / −'+fz(R.zlNie):'')+'</td></tr></tfoot></table></div>';
+  if(bez.length)h+='<div class="'+(druk?'':'afi-note')+'" style="margin:8px 0 0">Bez realnej liczby sztuk (nie liczone): '+bez.map(w=>'<b>'+escH(w.s)+'</b>').join(', ')+(druk?'':'. Przypisz grupy AfiFarm w Stado → ⚙ Ustawienia albo wpisz liczbę ręcznie w Dawkach → Sektory.')+'</div>';
+  if(!druk)h+='<div class="uz-info">🔒 = liczba z AfiFarm, ✎ = wpisana ręcznie. <b>Różnica</b> = sztuki zadawane – realne. <b>zł / dobę</b> = wartość nadwyżki lub niedoboru wg cen z zakładki Surowce. „Sprawdź przypisanie” przy odchyleniu ponad 30% – to zwykle źle przypisana grupa AfiFarm albo nieaktualne sztuki, a nie żywienie.</div></div>';
+  return h;
+}
+function rRealna(){afiStart();const el=$('#rr-w');if(el)el.innerHTML=rRealnaHTML(false)}
+function pRealna(){printDoc('Dawka realnie zadana — '+fmtDate(new Date()),rRealnaHTML(true),'landscape','table{font-size:9.5pt}th,td{padding:1.4mm 1.2mm;text-align:center}.l{text-align:left!important}.rr-spr{font-size:7.5pt;font-weight:700}.afi-proc{font-weight:800}')}
+
+// ===== KARTKA NA RANO (zakładka Dziś) =====
+function kartkaDane(){
+  const C=AFI.C,D=C.D,pr=afiProg(),A=afiAlarmy(),AN=afiDojAnomalia(A),L=afiRozrod(),poz={};
+  const dodaj=(id,ikona,co,zrob,typ)=>{if(!afiSekOk(id,D))return;if(typ&&alStan(typ,id))return;
+    const sek=afiEtykietaKrowy(id,D);(poz[sek]=poz[sek]||{}).hasOwnProperty(id)||(poz[sek][id]=[]);poz[sek][id].push({ikona,co,zrob})};
+  A.ruja.forEach(r=>{const t=r.tag||'';const zrob=/cieln/.test(t)?'ruja u cielnej – sprawdzić':/przed okresem/.test(t)?'tylko obserwować (przed okresem spoczynku)':/za wcześnie/.test(t)?'obserwować (za wcześnie po insem.)':/zainseminowana/.test(t)?'obserwować (świeżo zainseminowana)':'zgłosić inseminatorowi';
+    dodaj(r.id,'🔥','ruja'+(r.dIns!=null?' · '+r.dIns+' dni po insem.':''),zrob,'ruja')});
+  if(!AN.flag)A.spadek.filter(r=>!r.przes).forEach(r=>dodaj(r.id,'📉',r.brak?'brak doju wczoraj':'mleko −'+Math.round(r.sp)+'%'+(r.dim!=null&&r.dim<30?' · '+r.dim+' dni po wycieleniu':''),r.dim!=null&&r.dim<30?'temperatura, apetyt (ketoza? zapalenie macicy?)':'zmierzyć temperaturę, sprawdzić apetyt i racice','spadek'));
+  A.cond.forEach(r=>dodaj(r.id,'💧','przewodność +'+Math.round(r.wz)+'%'+(r.dbl?' i spadek mleka':''),'test CMT przed dojem','cond'));
+  A.ped.forEach(r=>dodaj(r.id,'📡','brak odczytu pedometru '+(r.n>=30?'30+':r.n)+' dni','sprawdzić pedometr na nodze','ped'));
+  L.pd.forEach(r=>dodaj(r.id,'🔍','do badania ciąży · '+r.dIns+' dni po insem.'+(r.zal?' (zaległe)':''),'zgłosić weterynarzowi'));
+  L.zas.filter(r=>r.za<=7).forEach(r=>dodaj(r.id,'⏸',r.za<=0?'do zasuszenia – termin minął':'do zasuszenia za '+r.za+' dni',r.za<=0?'zasuszyć':'przygotować do zasuszenia'));
+  L.wyc.filter(r=>r.za<=7).forEach(r=>dodaj(r.id,'🐄',r.za<=0?'wycielenie – termin minął':'wycielenie za ok. '+r.za+' dni','przenieść na porodówkę, obserwować'));
+  L.ins.filter(r=>r.pusta).forEach(r=>dodaj(r.id,'♀','pusta po badaniu','obserwować ruję – do inseminacji'));
+  // kolejność sektorów jak w Dawkach (kolejność obchodu), potem pozostałe
+  const kol=afiSektory().map(x=>x.s),sek=Object.keys(poz).sort((a,b)=>{const i=kol.indexOf(a),j=kol.indexOf(b);return (i<0?999:i)-(j<0?999:j)||a.localeCompare(b,'pl')});
+  return {poz,sek,AN,A};
+}
+function drukujKartke(){
+  if(!AFI.meta||!AFI.krowy||!AFI.C){toast('Brak danych z AfiFarm');return}
+  const K=kartkaDane(),D=AFI.C.D,ts=AFI.meta.ts||'',t=Date.parse(ts.replace(' ','T')),stare=!isNaN(t)&&Date.now()-t>26*3600e3;
+  let ile=0;const typy={};K.sek.forEach(s=>Object.values(K.poz[s]).forEach(l=>l.forEach(x=>{ile++;typy[x.ikona]=(typy[x.ikona]||0)+1})));
+  const nazwy={'🔥':'ruja','📉':'spadek mleka','💧':'mastitis','📡':'pedometry','🔍':'badanie ciąży','⏸':'zasuszenie','🐄':'wycielenie','♀':'puste'};
+  let h='<div class="pod">'+dzienTygPL(isoToday()).replace(/^./,c=>c.toUpperCase())+' '+fmtDate(new Date())+' · dane AfiFarm: '+escH(ts)+' · <b>'+ile+'</b> zadań'+
+    Object.entries(typy).map(([k,v])=>' · '+k+' '+nazwy[k]+' <b>'+v+'</b>').join('')+((AFI.sekF||[]).length?' · tylko: '+AFI.sekF.map(escH).join(', '):'')+'</div>';
+  if(stare)h+='<div class="ost">⚠ DANE Z AFIFARM SĄ NIEAKTUALNE – sprawdź agenta na komputerze w oborze.</div>';
+  if(K.AN.flag)h+='<div class="ost">⚠ Podejrzenie braku udoju w danych z '+afiPlK(AFI.C.Y)+' – spadki mleka pominięte (sprawdź AfiFarm).</div>';
+  if(!ile)h+='<p style="font-size:14pt;margin-top:8mm">Brak zadań na dziś.</p>';
+  K.sek.forEach(sek=>{
+    h+='<div class="sek"><div class="sn">'+escH(sek)+'</div><table><colgroup><col style="width:9mm"><col style="width:18mm"><col><col style="width:48mm"></colgroup><tbody>';
+    Object.entries(K.poz[sek]).sort((a,b)=>(+a[0])-(+b[0])).forEach(([id,l])=>{
+      h+='<tr><td class="bx">☐</td><td class="n">'+escH(id)+'</td><td>'+l.map(x=>x.ikona+' '+escH(x.co)+' – <b>'+escH(x.zrob)+'</b>').join('<br>')+'</td><td></td></tr>'});
+    h+='</tbody></table></div>'});
+  h+='<div class="st"><span>Obchód: ……………………… godz. ………</span><span>☐ = zrobione · w pustej kolumnie uwagi</span></div>';
+  printDoc('Kartka na rano — obchód',h,'portrait',
+    '.pod{font-size:10pt;margin:0 0 2mm}.ost{border:1.5pt solid #000;padding:1.5mm 2.5mm;font-size:10.5pt;font-weight:700;margin:2mm 0}'+
+    '.sek{break-inside:avoid;page-break-inside:avoid;margin-top:3.5mm}.sn{font-size:13pt;font-weight:800;border-bottom:1.5pt solid #000;margin-bottom:1mm}'+
+    'td{font-size:10.5pt;padding:1.6mm 2mm;vertical-align:top}td.bx{font-size:14pt;text-align:center;padding:0.6mm 0}td.n{font-size:13pt;font-weight:800;text-align:center}'+
+    '.st{display:flex;justify-content:space-between;font-size:9pt;margin-top:5mm;color:#333}');
+}
 // ===== ZAKŁADKA DZIŚ: alarmy z AfiFarm =====
 function rDzis(){
   afiStart();const el=$('#dzis-w');if(!el)return;
-  let h='<div class="afi-gora"><h2 class="dzis-tyt">'+dzienTygPL(isoToday()).replace(/^./,c=>c.toUpperCase())+', '+new Date().toLocaleDateString('pl-PL')+'</h2>'+afiSwiezosc()+'</div>';
+  let h='<div class="afi-gora"><h2 class="dzis-tyt">'+dzienTygPL(isoToday()).replace(/^./,c=>c.toUpperCase())+', '+new Date().toLocaleDateString('pl-PL')+'</h2><button class="btn bp bpdf" onclick="drukujKartke()" title="Jedna kartka A4 na obchód, wg sektorów, bez odhaczonych">🖨 Kartka na rano</button>'+afiSwiezosc()+'</div>';
   if(!AFI.meta||!AFI.krowy||!Object.keys(AFI.dni).length){el.innerHTML=h+'<div class="card afi-pusto"><b>Brak danych z AfiFarm'+(AFI.start?'':' (ładowanie…)')+'.</b><br>Alarmy pojawią się po wysyłce agenta z komputera w oborze.</div>';return}
   if(!AFI.C)afiPrzelicz();
   el.innerHTML=h+afiSekFiltrHTML()+afiDzisHTML();afiWyrownaj(el);
@@ -1905,7 +1990,7 @@ function pWozRap(){const d=$('#wr-date')?$('#wr-date').value:isoToday();prn('Rap
 // Sub-tab switching
 let RAP_AKT='rap-koszty';
 function switchRap(btn,id){RAP_AKT=id;$$('#tab-raporty .rap-kat .tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$$('.rap-sub').forEach(s=>s.style.display='none');$('#'+id).style.display='block';
-  if(id==='rap-koszty')rKoszty();if(id==='rap-zuzycie')rZuzycie();if(id==='rap-dawki')rDawkiHist()}
+  if(id==='rap-koszty')rKoszty();if(id==='rap-realna')rRealna();if(id==='rap-zuzycie')rZuzycie();if(id==='rap-dawki')rDawkiHist()}
 function rRaporty(){const b=$$('#tab-raporty .rap-kat .tab-btn').find(x=>x.getAttribute('onclick').includes("'"+RAP_AKT+"'"));if(b)switchRap(b,RAP_AKT)}
 
 // === NIEDOJADY REPORT ===
@@ -2327,7 +2412,7 @@ function afiPobierzDni(){
   }).catch(e=>console.warn('afi dni',e));
 }
 function afiPrzytnij(){if(!AFI.meta)return;const gr0=afiIso(AFI.meta.d-420);Object.keys(AFI.dni).forEach(k=>{if(k<gr0){delete AFI.dni[k];afiIdbDel('d:'+k)}})}
-function afiOdswiez(){const ab=aktTab();if(!ab)return;if(ab.dataset.t==='stado')rStado();else if(ab.dataset.t==='dzis')rDzis();else if(ab.dataset.t==='dawki'||ab.dataset.t==='awaryjne')afiWypelnijDawki()}
+function afiOdswiez(){const ab=aktTab();if(!ab)return;if(ab.dataset.t==='stado')rStado();else if(ab.dataset.t==='dzis')rDzis();else if(ab.dataset.t==='raporty'&&RAP_AKT==='rap-realna')rRealna();else if(ab.dataset.t==='dawki'||ab.dataset.t==='awaryjne')afiWypelnijDawki()}
 
 // ---------- Obliczenia pomocnicze ----------
 function afiPrzelicz(){
