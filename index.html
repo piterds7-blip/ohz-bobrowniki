@@ -40,6 +40,17 @@ body{font-family:var(--font);background:var(--bg);color:var(--txt);line-height:1
 .rap-grupa{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
 .rap-gl{font:800 11px var(--font);text-transform:uppercase;letter-spacing:.05em;color:var(--txt2);margin-right:6px}
 .dzis-tyt{margin:0;font-size:18px;color:var(--pri)}
+td.al-k{white-space:normal;min-width:170px}
+.al-btns{display:flex;flex-wrap:wrap;gap:4px}
+.al-btns button{font:600 11.5px var(--font);border:1px solid #9FB79F;background:#fff;color:var(--txt);border-radius:14px;padding:4px 9px;cursor:pointer;min-height:28px}
+.al-btns button.g{border-color:var(--pri);color:var(--pri)}
+.al-btns button:hover{background:var(--pri-bg)}
+.al-ok{font-weight:700;color:var(--pri)}
+td.al-k small{color:var(--txt2)}
+.al-cof{border:0;background:none;color:var(--blue);text-decoration:underline;cursor:pointer;font-size:11.5px}
+table.afi-t tr.al-zrob td{background:#F4F8F4;color:#7A867A}
+table.afi-t tr.al-zrob .afi-bar{opacity:.35}
+.cnt small{font-weight:600;opacity:.85}
 .afi-anom{background:#FFF4D6;border:1px solid #F1D48A;border-left:5px solid #B8860B;border-radius:8px;padding:9px 12px;font-size:13px;line-height:1.5;margin-bottom:8px}
 .afi-znl{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--txt2);margin:8px 0 2px 4px}
 .afi-znl span{display:inline-flex;align-items:center;gap:5px}
@@ -436,7 +447,7 @@ const TAB_ORDER=['dzis','dawki','surowce','stado','woz','awaryjne','mleko','rapo
 const TAB_WIECEJ=['cielaki','harmonogram','obecnosc','nasienie'];
 const TL={dzis:'Dziś',mleko:'Mleko',surowce:'Surowce',dawki:'Dawki',woz:'Wóz paszowy',stado:'Stado (AfiFarm)',awaryjne:'Dawki awaryjne',cielaki:'Cielaki',koszty:'Koszty',planowanie:'Planowanie wozów',raporty:'Raporty',harmonogram:'Harmonogram',obecnosc:'Obecność',nasienie:'Nasienie',kalendarz:'Kalendarz',uzytkownicy:'Użytkownicy'};
 const POZIOMY=['brak','podgląd','wpis','pełny'];
-const POZ_ZAKL={dzis:[0,1,3],mleko:[0,1,3],surowce:[0,1,3],dawki:[0,1,3],woz:[0,1,2,3],stado:[0,1,3],awaryjne:[0,1,3],cielaki:[0,1,3],koszty:[0,1,3],planowanie:[0,1,3],raporty:[0,1,3],harmonogram:[0,1,3],obecnosc:[0,1,3],nasienie:[0,1,3],kalendarz:[0,1,3]};
+const POZ_ZAKL={dzis:[0,1,2,3],mleko:[0,1,3],surowce:[0,1,3],dawki:[0,1,3],woz:[0,1,2,3],stado:[0,1,3],awaryjne:[0,1,3],cielaki:[0,1,3],koszty:[0,1,3],planowanie:[0,1,3],raporty:[0,1,3],harmonogram:[0,1,3],obecnosc:[0,1,3],nasienie:[0,1,3],kalendarz:[0,1,3]};
 const DEF_UPR={
   zootechnik:{dzis:3,mleko:3,surowce:3,dawki:3,woz:3,stado:3,awaryjne:3,cielaki:3,koszty:3,planowanie:3,raporty:3,harmonogram:3,obecnosc:3,nasienie:3,kalendarz:3},
   prezes:{dzis:1,mleko:1,surowce:1,dawki:1,woz:0,stado:1,awaryjne:0,cielaki:1,koszty:1,planowanie:0,raporty:1,harmonogram:3,obecnosc:3,nasienie:1,kalendarz:1},
@@ -511,7 +522,7 @@ function startCfg(){if(!fbDb||window._cfgOn)return;window._cfgOn=true;
 // Podgląd: zablokuj edycję w aktywnej zakładce (filtry daty/miesiąca w .fr zostają aktywne)
 function applyRO(){setTimeout(()=>{
   const ab=aktTab();if(!ab)return;const t=ab.dataset.t;
-  if(t==='woz'||t==='stado'||t==='uzytkownicy'||lvl(t)>=3)return;
+  if(t==='woz'||t==='stado'||t==='uzytkownicy'||lvl(t)>=3||(t==='dzis'&&lvl(t)>=2))return;
   const tp=$('#tab-'+t);if(!tp)return;
   tp.querySelectorAll('input,select,textarea').forEach(el=>{if(!el.closest('.fr'))el.disabled=true});
   tp.querySelectorAll('button').forEach(el=>{if(el.classList.contains('tab-btn'))return;if(el.closest('.fr')&&!el.classList.contains('bpdf'))return;el.style.display='none'});
@@ -535,7 +546,7 @@ function rUz(){
     '<div class="uz-info">Każda rola loguje się jednym hasłem — wszyscy pracownicy danej roli używają tego samego, a po haśle aplikacja rozpoznaje rolę, więc hasła muszą być różne dla każdej roli. Hasło zmienia się przyciskiem 🔒 u góry ekranu — zmienia hasło roli, na którą jesteś zalogowany (żeby zmienić hasło innej roli, zaloguj się na nią). Awaryjnie: konsola Firebase → Authentication → usuń konto i utwórz je ponownie z nowym hasłem. Zablokowana rola zostaje od razu wylogowana na wszystkich urządzeniach i nie może się zalogować.</div></div>'+
     '<div class="card"><div class="ch"><span>Co może każda rola <small style="font-weight:500;color:var(--txt2)">zmiana działa od razu na wszystkich urządzeniach</small></span><button class="btn bs bo" onclick="uzDomyslne()">Przywróć domyślne</button></div>'+
     '<div class="tw"><table class="dt upr" style="max-width:900px"><thead><tr><th class="l">Zakładka</th>'+ROLE_ORDER.map(r=>'<th><span class="rola-zn" style="background:'+ROLE_KOL[r]+'">'+RL[r]+'</span></th>').join('')+'</tr></thead><tbody>'+macierz+'</tbody></table></div>'+
-    '<div class="uz-info"><b>brak</b> – zakładka ukryta · <b>podgląd</b> – tylko odczyt, bez edycji i wydruków (filtry miesiąca i dat działają) · <b>wpis</b> – Wóz paszowy: zadane kilogramy, niedojady, „Gotowe”; układ wozów ustala zootechnik · <b>pełny</b> – wszystko. Twórca ma zawsze pełny dostęp, żeby nie dało się zablokować aplikacji.</div></div>';
+    '<div class="uz-info"><b>brak</b> – zakładka ukryta · <b>podgląd</b> – tylko odczyt, bez edycji i wydruków (filtry miesiąca i dat działają) · <b>wpis</b> – Wóz paszowy: zadane kilogramy, niedojady, „Gotowe”; układ wozów ustala zootechnik; Dziś: odhaczanie alarmów · <b>pełny</b> – wszystko. Twórca ma zawsze pełny dostęp, żeby nie dało się zablokować aplikacji.</div></div>';
 }
 function lvl2(r,t){if(r==='tworca')return 3;const v=UPR?.[r]?.[t];return v==null?(DEF_UPR[r]?.[t]??0):+v}
 function uzUpr(r,t,v){UPR=JSON.parse(JSON.stringify(UPR||{}));UPR[r]=UPR[r]||{};UPR[r][t]=+v;cfgSave({upr:UPR});toast(RL[r]+' – '+TL[t]+': '+POZIOMY[+v]);rUz()}
@@ -602,6 +613,7 @@ function rDzis(){
   if(!AFI.meta||!AFI.krowy||!Object.keys(AFI.dni).length){el.innerHTML=h+'<div class="card afi-pusto"><b>Brak danych z AfiFarm'+(AFI.start?'':' (ładowanie…)')+'.</b><br>Alarmy pojawią się po wysyłce agenta z komputera w oborze.</div>';return}
   if(!AFI.C)afiPrzelicz();
   el.innerHTML=h+afiSekFiltrHTML()+afiDzisHTML();afiWyrownaj(el);
+  el.querySelectorAll('td[data-odh]').forEach(td=>td.parentElement.classList.add('al-zrob'));
 }
 // numer krowy w alarmach i listach: otwiera kartę krowy w zakładce Stado
 function afiPokazKrowe(id){AFI.v='krowa';AFI.krowa=String(id);const a=aktTab();if(a&&a.dataset.t==='stado')rStado();else goTab('stado')}
@@ -783,6 +795,7 @@ const fbTimers={},fbEditTs={};
 let fbAuth=null;
 try{firebase.initializeApp(firebaseConfig);fbDb=firebase.firestore();fbAuth=firebase.auth()}catch(e){console.warn('Firebase init failed',e)}
 let afiCfg=LD('afiCfg',{map:{},prog:{}});
+let alOdh=LD('alOdh',{}); // odhaczone alarmy: {'typ|krowa':{s:kod,kto:rola,ts:czas,d:dzień alarmu}}
 const MODULES={
   surowce:{get:()=>({sur,gtMap}),set:d=>{if(d.sur)sur=d.sur;if(d.gtMap)gtMap=d.gtMap},sv:()=>{SV('sur2',sur);SV('gtMap',gtMap)}},
   grupy:{get:()=>({gr,wozOrder,emergencyMode,grNormal,grEmergency}),set:d=>{if(d.gr)gr=d.gr;if(d.wozOrder)wozOrder=d.wozOrder;if(d.emergencyMode!==undefined)emergencyMode=d.emergencyMode;if(d.grNormal)grNormal=d.grNormal;if(d.grEmergency)grEmergency=d.grEmergency},sv:()=>{SV('gr2',gr);SV('wozOrder',wozOrder);SV('emergMode',emergencyMode);SV('grNormal',grNormal);SV('grEmerg',grEmergency)}},
@@ -792,6 +805,7 @@ const MODULES={
   kalendarz:{get:()=>({kal}),set:d=>{if(d.kal)kal=d.kal},sv:()=>SV('kal',kal)},
   cielaki:{get:()=>({ciData}),set:d=>{if(d.ciData)ciData=d.ciData},sv:()=>SV('ciData3',ciData)},
   afi:{get:()=>({afiCfg}),set:d=>{if(d.afiCfg)afiCfg=d.afiCfg;if(AFI.krowy)afiPrzelicz()},sv:()=>SV('afiCfg',afiCfg)},
+  alarmy:{get:()=>({alOdh}),set:d=>{if(d.alOdh)alOdh=d.alOdh},sv:()=>SV('alOdh',alOdh)},
   wozy:{get:()=>({wozDni,wozPoj}),set:d=>{if(d.wozDni)wozDni=d.wozDni;if(d.wozPoj!=null)wozPoj=d.wozPoj},sv:()=>{SV('wozDni',wozDni);SV('wozPoj',wozPoj)}},
   logi:{get:()=>({hist,lastDed,wozLog,dawkiHist}),set:d=>{
     if(d.hist){Object.keys(d.hist).forEach(k=>{if(!hist[k])hist[k]=d.hist[k]})}
@@ -1412,7 +1426,7 @@ function updateEmergBanner(){
 }
 
 function rKoszty(){
-  if(emergencyMode)$('#tab-koszty .card:first-child .ch span').textContent='⚠ Sekcja 1 — Koszty (DAWKI AWARYJNE)';
+  {const t=$('#rap-koszty .card:first-child .ch span');if(t)t.textContent=emergencyMode?'⚠ Sekcja 1 — Koszty (DAWKI AWARYJNE)':'Sekcja 1 — Dawki i koszt na sztukę/dzień'}
   const katLabels={obj:'Objętościowe',tres:'Treściwe',dod:'Dodatki paszowe'};
   const katOrder=['obj','tres','dod'];
   // Collect used surowce
@@ -2485,26 +2499,56 @@ function afiDojAnomalia(A){
   const flag=n>=20&&(nSp/n>=0.12||(avg7>0&&sumY<avg7*0.88));
   return {flag,n,nSp,sumY,avg7,hs};
 }
+// ===== Odhaczanie alarmów =====
+const AL_OPCJE={
+  ruja:[['ins','✓ Zainseminowana'],['obs','Obserwuję'],['brak','Brak objawów']],
+  spadek:[['ok','✓ Sprawdzona – OK'],['wet','Wezwany weterynarz'],['lecz','Leczona'],['doj','Błąd udoju']],
+  cond:[['ok','✓ OK (test CMT)'],['mast','Mastitis – leczona'],['wet','Wezwany weterynarz']],
+  ped:[['wym','✓ Pedometr wymieniony'],['ok','Pedometr na miejscu']]};
+const AL_WAZN={ruja:2,spadek:3,cond:3,ped:14}; // przez ile dni odhaczenie ukrywa ten sam alarm
+function alStan(typ,id){const o=alOdh[typ+'|'+id];if(!o||!AFI.C)return null;return AFI.C.Y-o.d<AL_WAZN[typ]?o:null}
+function alOpis(typ,kod){const o=(AL_OPCJE[typ]||[]).find(x=>x[0]===kod);return (o?o[1]:kod).replace(/^✓ /,'')}
+function alOdhacz(typ,id,kod){
+  if(lvl('dzis')<2||!AFI.C)return;
+  const k=typ+'|'+id,v=kod?{s:kod,kto:cR,ts:Date.now(),d:AFI.C.Y}:null;
+  if(v)alOdh[k]=v;else delete alOdh[k];
+  // stare wpisy (ponad 30 dni) usuwamy
+  const st={};Object.keys(alOdh).forEach(x=>{if(AFI.C.Y-alOdh[x].d>30){delete alOdh[x];st[x]=firebase.firestore.FieldValue.delete()}});
+  SV('alOdh',alOdh);
+  if(fbDb)fbDb.collection('ohz_data').doc('alarmy').set({alOdh:Object.assign(st,{[k]:v||firebase.firestore.FieldValue.delete()}),_ts:Date.now()},{merge:true}).catch(()=>toast('Nie zapisano w chmurze – sprawdź internet'));
+  if(v)toast('Krowa '+id+': '+alOpis(typ,kod));
+  afiOdswiez();
+}
+function alKom(typ,id){
+  const o=alStan(typ,id),mozna=lvl('dzis')>=2;
+  if(o){const t=new Date(o.ts),g=String(t.getDate()).padStart(2,'0')+'.'+String(t.getMonth()+1).padStart(2,'0')+' '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+    return '<td class="t al-k" data-odh="1"><span class="al-ok">✓ '+escH(alOpis(typ,o.s))+'</span> <small>'+escH(RL[o.kto]||o.kto||'')+' · '+g+'</small>'+(mozna?' <button class="al-cof" onclick="alOdhacz(\''+typ+'\',\''+id+'\',null)">Cofnij</button>':'')+'</td>'}
+  if(!mozna)return '<td class="t al-k"></td>';
+  return '<td class="t al-k"><span class="al-btns">'+AL_OPCJE[typ].map(([k,t],i)=>'<button class="'+(i===0?'g':'')+'" onclick="alOdhacz(\''+typ+'\',\''+id+'\',\''+k+'\')">'+t+'</button>').join('')+'</span></td>';
+}
+// licznik: do zrobienia (+ ile odhaczonych)
+function alLicz(typ,l){const o=l.filter(r=>alStan(typ,r.id)).length;return (l.length-o)+(o?' <small>+'+o+' ✓</small>':'')}
+function alSort(typ,l){return l.slice().sort((a,b)=>(alStan(typ,a.id)?1:0)-(alStan(typ,b.id)?1:0))}
 function afiDzisHTML(){
   const A0=afiAlarmy(),pr=afiProg(),Y=AFI.C.Y,D=AFI.C.D,AN=afiDojAnomalia(A0);
-  const fs=r=>afiSekOk(r.id,D),A={ruja:A0.ruja.filter(fs),cond:A0.cond.filter(fs),spadek:A0.spadek.filter(fs),ped:A0.ped.filter(fs)};
+  const fs=r=>afiSekOk(r.id,D),A={ruja:alSort('ruja',A0.ruja.filter(fs)),cond:alSort('cond',A0.cond.filter(fs)),spadek:alSort('spadek',A0.spadek.filter(fs)),ped:alSort('ped',A0.ped.filter(fs))};
   const kr=id=>'<a class="afi-nr" onclick="afiPokazKrowe(\''+id+'\')">'+id+'</a>';
   let h='<div class="afi-row"><div style="flex:1.35;min-width:0">';
-  h+='<div class="card afi-card"><h3>🔥 Podejrzenie rui <span class="cnt r">'+A.ruja.length+'</span> <span class="sub">aktywność ≥ '+pr.ruja+'% ponad własną średnią z 10 dni</span></h3>';
+  h+='<div class="card afi-card"><h3>🔥 Podejrzenie rui <span class="cnt r">'+alLicz('ruja',A.ruja)+'</span> <span class="sub">aktywność ≥ '+pr.ruja+'% ponad własną średnią z 10 dni</span></h3>';
   if(A.ruja.length){
-    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Dzień lakt.</th><th>Akt. '+afiPlK(Y)+'</th><th>Akt. dziś*</th><th>Śr. 10 dni</th><th>Wzrost</th><th>Ost. insem.</th><th>Status</th></tr>';
-    A.ruja.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td>'+(r.lakt??'—')+'</td><td>'+(r.dim??'—')+'</td><td'+(r.dzis?'':' class="b"')+'>'+(r.aY||'—')+'</td><td'+(r.dzis?' class="b"':'')+'>'+(r.aD||'—')+'</td><td>'+afiF(r.sr,0)+'</td><td class="up">+'+Math.round(r.wz)+'%<span class="afi-bar" style="width:'+Math.min(60,Math.round(r.wz*.6))+'px"></span></td><td class="t">'+(r.dIns==null?'—':r.dIns===0?'dziś':r.dIns===1?'wczoraj':r.dIns+' dni temu')+'</td><td class="t st"><span class="tag '+r.cls+'">'+r.tag+'</span></td></tr>'});
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Lakt.</th><th>Dzień lakt.</th><th>Akt. '+afiPlK(Y)+'</th><th>Akt. dziś*</th><th>Śr. 10 dni</th><th>Wzrost</th><th>Ost. insem.</th><th>Status</th><th>Odhaczenie</th></tr>';
+    A.ruja.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td>'+(r.lakt??'—')+'</td><td>'+(r.dim??'—')+'</td><td'+(r.dzis?'':' class="b"')+'>'+(r.aY||'—')+'</td><td'+(r.dzis?' class="b"':'')+'>'+(r.aD||'—')+'</td><td>'+afiF(r.sr,0)+'</td><td class="up">+'+Math.round(r.wz)+'%<span class="afi-bar" style="width:'+Math.min(60,Math.round(r.wz*.6))+'px"></span></td><td class="t">'+(r.dIns==null?'—':r.dIns===0?'dziś':r.dIns===1?'wczoraj':r.dIns+' dni temu')+'</td><td class="t st"><span class="tag '+r.cls+'">'+r.tag+'</span></td>'+alKom('ruja',r.id)+'</tr>'});
     h+='</table></div><div class="afi-note">* dziś = tylko po porannym doju (dzień niepełny). <b>do inseminacji</b> – ruja w dobrym czasie; <b>powtórka</b> – 18–24 dni po inseminacji (krowa najpewniej nie zaszła); <b>cielna – sprawdź</b> – alarm u krowy z dodatnim badaniem ciąży.</div>';
   } else h+='<div class="afi-pusto">Brak krów z podwyższoną aktywnością.</div>';
   h+='</div>';
-  h+='<div class="card afi-card afi-cond"><h3>💧 Przewodność – możliwe mastitis <span class="cnt b">'+A.cond.length+'</span> <span class="sub">'+afiPlK(Y)+' ≥ '+pr.cond+'% ponad własną średnią z 7 dni</span></h3>';
+  h+='<div class="card afi-card afi-cond"><h3>💧 Przewodność – możliwe mastitis <span class="cnt b">'+alLicz('cond',A.cond)+'</span> <span class="sub">'+afiPlK(Y)+' ≥ '+pr.cond+'% ponad własną średnią z 7 dni</span></h3>';
   if(A.cond.length){
-    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Dzień l.</th><th>Przewodność '+afiPlK(Y)+'</th><th>Śr. 7 dni</th><th>Wzrost</th><th>Mleko vs śr. 7 dni</th><th>Sygnał</th></tr>';
-    A.cond.forEach(r=>{h+='<tr'+(r.dbl?' class="afi-dbl"':'')+'><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td'+(r.dim!=null&&r.dim<30?' class="fresh"':'')+'>'+(r.dim??'—')+'</td><td>'+r.c+'</td><td>'+afiF(r.sr,0)+'</td><td class="up">+'+Math.round(r.wz)+'%</td><td class="'+(r.mz!=null&&r.mz<=-10?'dn':'')+'">'+(r.mz==null?'—':(r.mz>=0?'+':'−')+Math.abs(Math.round(r.mz))+'%')+'</td><td class="t st">'+(r.dbl?'<span class="tag w">mleko ↓ + przewodność ↑</span>':'<span class="tag c">tylko przewodność</span>')+'</td></tr>'});
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Dzień l.</th><th>Przewodność '+afiPlK(Y)+'</th><th>Śr. 7 dni</th><th>Wzrost</th><th>Mleko vs śr. 7 dni</th><th>Sygnał</th><th>Odhaczenie</th></tr>';
+    A.cond.forEach(r=>{h+='<tr'+(r.dbl?' class="afi-dbl"':'')+'><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td'+(r.dim!=null&&r.dim<30?' class="fresh"':'')+'>'+(r.dim??'—')+'</td><td>'+r.c+'</td><td>'+afiF(r.sr,0)+'</td><td class="up">+'+Math.round(r.wz)+'%</td><td class="'+(r.mz!=null&&r.mz<=-10?'dn':'')+'">'+(r.mz==null?'—':(r.mz>=0?'+':'−')+Math.abs(Math.round(r.mz))+'%')+'</td><td class="t st">'+(r.dbl?'<span class="tag w">mleko ↓ + przewodność ↑</span>':'<span class="tag c">tylko przewodność</span>')+'</td>'+alKom('cond',r.id)+'</tr>'});
     h+='</table></div><div class="afi-note">Na górze krowy z <b>podwójnym sygnałem</b> (mleko spadło o ≥ 10% i przewodność wzrosła) – największe prawdopodobieństwo mastitis. Takie krowy mają też 💧 w liście „Spadek mleka”.</div>';
   } else h+='<div class="afi-pusto">Brak krów z podwyższoną przewodnością.</div>';
   h+='</div></div><div style="flex:1;min-width:0">';
-  h+='<div class="card afi-card"><h3>📉 Spadek mleka <span class="cnt a">'+A.spadek.length+'</span> <span class="sub">'+afiPlK(Y)+' ≥ '+pr.spadek+'% poniżej średniej z 7 dni</span></h3>';
+  h+='<div class="card afi-card"><h3>📉 Spadek mleka <span class="cnt a">'+alLicz('spadek',A.spadek)+'</span> <span class="sub">'+afiPlK(Y)+' ≥ '+pr.spadek+'% poniżej średniej z 7 dni</span></h3>';
   if(AN.flag){
     const zm=AN.avg7>0?(AN.sumY/AN.avg7-1)*100:null;
     h+='<div class="afi-anom"><b>⚠ Podejrzenie braku udoju w danych z '+afiPlK(Y)+'</b><br>'+
@@ -2514,16 +2558,16 @@ function afiDzisHTML(){
       (A.spadek.length?'<br><button class="btn bs bo" style="margin-top:6px" onclick="AFI.spWsz=!AFI.spWsz;afiOdswiez()">'+(AFI.spWsz?'Zwiń listę':'Pokaż listę mimo to ('+A.spadek.length+')')+'</button>':'')+'</div>';
   }
   if(A.spadek.length&&(!AN.flag||AFI.spWsz)){
-    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Dzień l.</th><th>Wczoraj kg</th><th>Śr. 7 dni</th><th>Zmiana</th></tr>';
-    A.spadek.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+(r.c?' 💧':'')+'</td><td class="t">'+escH(r.sek)+'</td><td'+(r.dim!=null&&r.dim<30?' class="fresh"':'')+'>'+(r.dim??'—')+'</td><td>'+(r.brak?'<span class="tag w">brak doju</span>':afiF(r.m/1000))+'</td><td>'+afiF(r.sr/1000)+'</td><td class="dn">'+(r.brak?'—':'−'+Math.round(r.sp)+'%')+(r.przes?' <span class="tag" title="Dzień wcześniej krowa dała dużo więcej niż zwykle, a suma z dwóch dni jest normalna — doj prawdopodobnie zapisał się na zły dzień. Raczej nie choroba.">przesunięty doj?</span>':'')+'</td></tr>'});
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Dzień l.</th><th>Wczoraj kg</th><th>Śr. 7 dni</th><th>Zmiana</th><th>Odhaczenie</th></tr>';
+    A.spadek.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+(r.c?' 💧':'')+'</td><td class="t">'+escH(r.sek)+'</td><td'+(r.dim!=null&&r.dim<30?' class="fresh"':'')+'>'+(r.dim??'—')+'</td><td>'+(r.brak?'<span class="tag w">brak doju</span>':afiF(r.m/1000))+'</td><td>'+afiF(r.sr/1000)+'</td><td class="dn">'+(r.brak?'—':'−'+Math.round(r.sp)+'%')+(r.przes?' <span class="tag" title="Dzień wcześniej krowa dała dużo więcej niż zwykle, a suma z dwóch dni jest normalna — doj prawdopodobnie zapisał się na zły dzień. Raczej nie choroba.">przesunięty doj?</span>':'')+'</td>'+alKom('spadek',r.id)+'</tr>'});
     h+='</table></div><div class="afi-note">Dzień laktacji na czerwono = świeżo wycielona (&lt; 30 dni) – spadek to częsty sygnał ketozy, przemieszczenia trawieńca lub zapalenia macicy.</div>';
   } else if(!A.spadek.length)h+='<div class="afi-pusto">Brak krów ze spadkiem mleka.</div>';
   h+='</div>';
-  h+='<div class="card afi-card"><h3>📡 Pedometry do sprawdzenia <span class="cnt g">'+A.ped.length+'</span> <span class="sub">krowa dojona, brak odczytu aktywności ≥ '+pr.ped+' dni</span></h3>';
+  h+='<div class="card afi-card"><h3>📡 Pedometry do sprawdzenia <span class="cnt g">'+alLicz('ped',A.ped)+'</span> <span class="sub">krowa dojona, brak odczytu aktywności ≥ '+pr.ped+' dni</span></h3>';
   if(A.ped.length){
     const pok=AFI.pedWsz?A.ped:A.ped.slice(0,8);
-    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Pedometr</th><th>Bez odczytu</th></tr>';
-    pok.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td>'+(r.t>0?r.t:'brak')+'</td><td>'+(r.n>=30?'30+':r.n)+' dni</td></tr>'});
+    h+='<div class="tw"><table class="afi-t"><tr><th>Krowa</th><th>Sektor</th><th>Pedometr</th><th>Bez odczytu</th><th>Odhaczenie</th></tr>';
+    pok.forEach(r=>{h+='<tr><td class="t">'+kr(r.id)+'</td><td class="t">'+escH(r.sek)+'</td><td>'+(r.t>0?r.t:'brak')+'</td><td>'+(r.n>=30?'30+':r.n)+' dni</td>'+alKom('ped',r.id)+'</tr>'});
     h+='</table></div>';
     if(A.ped.length>8)h+='<button class="btn bs bo" style="margin-top:6px" onclick="AFI.pedWsz=!AFI.pedWsz;afiOdswiez()">'+(AFI.pedWsz?'Zwiń':'Pokaż wszystkie ('+A.ped.length+')')+'</button>';
   } else h+='<div class="afi-pusto">Wszystkie pedometry przesyłają odczyty.</div>';
