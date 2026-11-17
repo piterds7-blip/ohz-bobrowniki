@@ -387,7 +387,6 @@ table.uz td{vertical-align:middle}table.uz td,table.upr td{font-family:var(--fon
     </div>
     <div id="rz-info" style="padding:4px 12px;font-size:11px;color:var(--txt2)"></div>
     <div class="card"><div class="ch">Zużycie surowców</div><div class="tw" id="rz-main"></div></div>
-    <div class="card"><div class="ch">Rozbicie na grupy żywieniowe</div><div class="tw" id="rz-groups"></div></div>
   </div>
   <div id="rap-dawki" class="rap-sub" style="display:none">
     <div class="card"><div class="ch"><span>Historia zmian receptur</span><button class="btn bs bo" onclick="snapDawki()">📸 Zapisz snapshot teraz</button></div><div id="rd-list"></div></div>
@@ -1987,11 +1986,7 @@ function rZuzycie(){
   h+='<p style="font-size:10px;color:var(--txt2);margin-top:6px">Ceny: z dziennych snapshotów (zamrożone w dniu zużycia), brak = cena bieżąca.</p>';
   $('#rz-main').innerHTML=h;
 
-  // Groups breakdown
-  const gtKeys=Object.values(GT);
-  let gh='<table class="dt"><thead><tr><th style="text-align:left">Surowiec</th>';gtKeys.forEach(g=>gh+='<th>'+g+'</th>');gh+='</tr></thead><tbody>';
-  surIds.forEach(sid=>{const s=gS(sid);gh+='<tr><td>'+(s?s.nazwa:sid)+'</td>';gtKeys.forEach(g=>{const v=(byGroup[sid]||{})[g]||0;gh+='<td>'+(v>0?r2(v,0):'—')+'</td>'});gh+='</tr>'});
-  gh+='</tbody></table>';$('#rz-groups').innerHTML=gh;
+  // (rozbicie na grupy technologiczne usunięte – kategorie nie są już używane)
 }
 function getWeekKey(dateStr){const d=new Date(dateStr);const jan1=new Date(d.getFullYear(),0,1);const wn=Math.ceil(((d-jan1)/86400000+jan1.getDay()+1)/7);return d.getFullYear()+'-W'+String(wn).padStart(2,'0')}
 
