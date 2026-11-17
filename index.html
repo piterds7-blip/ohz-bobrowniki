@@ -143,8 +143,14 @@ table.afi-t td.fresh{color:var(--red);font-weight:700}
 .afi-progi label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;padding:5px 0;border-bottom:1px solid #EEF1EE}
 .afi-progi input{width:70px;text-align:right}
 .afi-info{background:#E3F2FD;border:1px solid #90CAF9;border-radius:8px;padding:8px 12px;font-size:12px;line-height:1.5;margin:8px}
-#dk-s th.afi-th{background:#455A64}
-#dk-s td.afi-td{background:#F5F7F8;text-align:center;font-family:var(--mono)}
+#dk-s th.afi-th,#emerg-table th.afi-th{background:#455A64}
+#dk-s td.afi-td,#emerg-table td.afi-td{background:#F5F7F8;text-align:center;font-family:var(--mono)}
+table.dt.sek-t th,table.dt.sek-t td{text-align:center;vertical-align:middle}
+table.dt.sek-t th.l,table.dt.sek-t td.l{text-align:left}
+table.dt.sek-t td input{text-align:center}
+#emerg-table .sub,#dk-s .sub{font-size:11px;color:var(--txt2);font-weight:400}
+input.afi-recz{width:56px!important;text-align:center!important;border:1px dashed #90A4AE}
+.afi-proc{font:700 11.5px var(--mono);padding:1px 7px;border-radius:9px}.afi-proc.z{background:var(--pri-bg);color:var(--pri)}.afi-proc.p{background:var(--amber-bg);color:var(--amber)}.afi-proc.m{background:var(--red-bg);color:var(--red)}
 .afi-real{display:inline-block;background:#ECEFF1;border:1px dashed #90A4AE;border-radius:4px;padding:1px 7px;font-weight:700;color:#37474F}
 .afi-diff{font:700 11.5px var(--mono);padding:1px 7px;border-radius:9px}.afi-diff.z{background:var(--pri-bg);color:var(--pri)}.afi-diff.p{background:var(--amber-bg);color:var(--amber)}.afi-diff.m{background:var(--red-bg);color:var(--red)}
 .cnt.b{background:#1565C0}
@@ -1039,39 +1045,7 @@ function rDk(){
   gr.forEach(g=>{h+='<td style="font-size:13px">'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
   h+='</tr></tfoot></table>';$('#dk-w').innerHTML=h;
 
-  // Sectors - colored by group, with extra ingredients per sector
-  const grpColors=['#E8F5E9','#FFF3E0','#E3F2FD','#FCE4EC','#F3E5F5','#E0F7FA','#FFF8E1','#EFEBE9','#F1F8E9','#E8EAF6'];
-  const AF=afiDawkiOn();
-  let sh=AF?'<div class="afi-info"><b>Sztuki</b> (pole do wpisania) – techniczne, sterują ilością TMR i kartami załadunku. <b>🔒 AfiFarm</b> – liczba zwierząt w sektorze wg AfiFarm (aktualizowana automatycznie), tylko do podglądu i statystyk – <u>nie zmienia TMR</u>. Przy grupach karmionych <b>2× dziennie</b> porównanie uwzględnia zadania: sztuki × 2, a kg TMR / krowę = kg na sektor × 2 ÷ krowy wg AfiFarm (cała doba).</div>':'';
-  sh+='<table class="dt" style="min-width:auto"><thead><tr><th style="width:80px">Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th>'+(AF?'<th class="afi-th">🔒 AfiFarm</th><th class="afi-th">Różnica</th><th class="afi-th">kg TMR / krowę realnie</th>':'')+'<th style="width:130px">Grupa techn.</th><th style="width:30px"></th></tr></thead><tbody>';
-  gr.forEach((g,gi)=>{
-    const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);
-    const bgColor=grpColors[gi%grpColors.length];
-    const borderTop=gi>0?'border-top:3px solid var(--pri);':'';
-    g.se.forEach((sk,si)=>{
-      const mapKey=g.nazwa+'|'+sk.n;
-      const curGt=gtMap[mapKey]||DEF_GT_MAP[g.nazwa]||'un';
-      sh+='<tr style="background:'+bgColor+';'+(si===0?borderTop:'')+'"><td style="font-size:11px;font-weight:700;color:var(--pri)">'+(si===0?g.nazwa:'')+'</td><td>'+sk.n+' <button style="background:var(--pri);color:#fff;border:none;border-radius:3px;font-size:9px;padding:0 4px;cursor:pointer" onclick="addSekExtra('+gi+','+si+')" title="Dodaj surowiec do sektora">+</button></td>';
-      sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=pf(this.value);sa();scheduleAutoSnap();rDk();rSur()"></td>';
-      sh+='<td>'+r2(totKg,1)+'</td><td style="font-weight:700">'+r2(totKg*sk.sz,0)+'</td>';
-      if(AF){const zz=g.z||1,da=' data-afi-sek="'+escH(sk.n)+'" data-afi-z="'+zz+'" data-afi-sz="'+((+sk.sz||0)*zz)+'" data-afi-kg="'+(totKg*sk.sz*zz)+'"';sh+='<td class="afi-td"'+da+' data-afi-typ="n"></td><td class="afi-td"'+da+' data-afi-typ="r"></td><td class="afi-td"'+da+' data-afi-typ="k"></td>'}
-      sh+='<td><select style="width:125px;font-size:10px;padding:2px" onchange="gtMap[\''+mapKey.replace(/'/g,"\\'")+'\']=this.value;sa()">';
-      Object.entries(GT).forEach(([k,v])=>{sh+='<option value="'+k+'"'+(curGt===k?' selected':'')+'>'+v+'</option>'});
-      sh+='</select></td>';
-      sh+='<td style="white-space:nowrap"><button class="btn bs bo" style="padding:1px 4px;font-size:8px" onclick="moveSek('+gi+','+si+')" title="Przenieś">⇄</button> <button class="btn bs bd" style="padding:1px 4px" onclick="delSek('+gi+','+si+')">✕</button></td></tr>';
-      // Extra ingredients for this sector
-      if(sk.sk_extra&&sk.sk_extra.length){
-        sk.sk_extra.forEach((ex,ei)=>{
-          const exS=gS(ex.s);const exName=exS?exS.nazwa:'?';
-          sh+='<tr style="background:#E3F2FD"><td></td><td style="font-size:10px;color:var(--pri);padding-left:20px">↳ '+exName+'</td>';
-          sh+='<td></td><td><input type="number" step="0.1" value="'+ex.kg+'" style="width:48px;font-size:10px" onchange="gr['+gi+'].se['+si+'].sk_extra['+ei+'].kg=pf(this.value);sa();rDk();rSur()"></td>';
-          sh+='<td>'+r2(ex.kg*sk.sz,0)+'</td>'+(AF?'<td></td><td></td><td></td>':'')+'<td></td>';
-          sh+='<td><button class="btn bs bd" style="padding:0 3px;font-size:8px" onclick="gr['+gi+'].se['+si+'].sk_extra.splice('+ei+',1);sa();rDk();rSur()">✕</button></td></tr>';
-        });
-      }
-    });
-  });
-  sh+='</tbody></table>';
+  let sh=sekTabelaHTML(gr,'dk');
   sh+='<div class="fr"><button class="btn bs bo" onclick="addSek()">+ Sektor</button><button class="btn bs bp" onclick="addGrp()">+ Nowa grupa</button></div>';
   $('#dk-s').innerHTML=sh;sa();afiWypelnijDawki();
 }
@@ -1368,23 +1342,8 @@ function rEmerg(){
   h+='</tbody><tfoot><tr><td>Całość kg</td>';
   eGr.forEach(g=>{h+='<td>'+r2(g.sk.reduce((a,sk)=>a+sk.kg,0),1)+'</td>'});
   h+='</tr></tfoot></table>';
-  // If emergency mode is ON, show sektory here (since normal Dawki is locked)
-  if(emergencyMode){
-    const grpColors=['#E8F5E9','#FFF3E0','#E3F2FD','#FCE4EC','#F3E5F5','#E0F7FA','#FFF8E1'];
-    h+='<h3 style="color:var(--red);margin:16px 0 6px">Sektory — podział sztuk (awaryjne)</h3>';
-    h+='<table class="dt" style="min-width:auto"><thead><tr><th>Grupa</th><th>Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th><th></th></tr></thead><tbody>';
-    gr.forEach((g,gi)=>{
-      const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0);const bg=grpColors[gi%grpColors.length];
-      g.se.forEach((sk,si)=>{
-        h+='<tr style="background:'+bg+';'+(si===0?'border-top:3px solid var(--red);':'')+'"><td style="font-size:11px;font-weight:700;color:var(--red)">'+(si===0?g.nazwa:'')+'</td>';
-        h+='<td>'+sk.n+'</td><td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="gr['+gi+'].se['+si+'].sz=pf(this.value);sa();rEmerg()"></td>';
-        h+='<td>'+r2(totKg,1)+'</td><td style="font-weight:700">'+r2(totKg*sk.sz,0)+'</td>';
-        h+='<td><button class="btn bs bd" style="padding:1px 4px" onclick="if(gr['+gi+'].se.length>1){gr['+gi+'].se.splice('+si+',1);sa();rEmerg()}else if(confirm(\'Usunąć grupę?\')){gr.splice('+gi+',1);sa();rEmerg()}">✕</button></td></tr>';
-      });
-    });
-    h+='</tbody></table>';
-  }
-  $('#emerg-table').innerHTML=h;
+  h+='<h3 style="color:var(--red);margin:16px 0 6px">Sektory — podział sztuk '+(emergencyMode?'(dawki awaryjne – aktywne)':'(wg receptur awaryjnych)')+'</h3>'+sekTabelaHTML(eGr,'em');
+  $('#emerg-table').innerHTML=h;afiWypelnijDawki();
 }
 function uEmergDk(gi,sid,el){
   const target=emergencyMode?gr:grEmergency;
@@ -2359,7 +2318,7 @@ function afiPobierzDni(){
   }).catch(e=>console.warn('afi dni',e));
 }
 function afiPrzytnij(){if(!AFI.meta)return;const gr0=afiIso(AFI.meta.d-420);Object.keys(AFI.dni).forEach(k=>{if(k<gr0){delete AFI.dni[k];afiIdbDel('d:'+k)}})}
-function afiOdswiez(){const ab=aktTab();if(!ab)return;if(ab.dataset.t==='stado')rStado();else if(ab.dataset.t==='dzis')rDzis();else if(ab.dataset.t==='dawki')afiWypelnijDawki()}
+function afiOdswiez(){const ab=aktTab();if(!ab)return;if(ab.dataset.t==='stado')rStado();else if(ab.dataset.t==='dzis')rDzis();else if(ab.dataset.t==='dawki'||ab.dataset.t==='awaryjne')afiWypelnijDawki()}
 
 // ---------- Obliczenia pomocnicze ----------
 function afiPrzelicz(){
@@ -2878,15 +2837,55 @@ function afiCenaUsun(od){if(!confirm('Usunąć cenę od '+od+'?'))return;afiCfg.
 
 // ---------- Dawki: sztuki realne z AfiFarm ----------
 function afiDawkiOn(){return Object.keys(afiCfg.map||{}).length>0}
+// zapis zmian w dawkach awaryjnych (gdy tryb awaryjny jest włączony, gr = receptury awaryjne)
+function zapEm(){if(emergencyMode){sa()}else{SV('grEmerg',grEmergency);saM('grupy',false)}}
+// Tabela „Sektory — podział sztuk” (Dawki i Dawki awaryjne)
+// ctx 'dk' = Dawki (gr), 'em' = Dawki awaryjne (gr w trybie awaryjnym, inaczej grEmergency)
+function sekTabelaHTML(G,ctx){
+  const grpColors=['#E8F5E9','#FFF3E0','#E3F2FD','#FCE4EC','#F3E5F5','#E0F7FA','#FFF8E1','#EFEBE9','#F1F8E9','#E8EAF6'];
+  const arr=ctx==='em'&&!emergencyMode?'grEmergency':'gr',po=ctx==='dk'?'sa();scheduleAutoSnap();rDk();rSur()':'zapEm();rEmerg()';
+  const pelna=ctx==='dk'||emergencyMode;
+  let sh='<div class="afi-info"><b>Sztuki</b> (pole do wpisania) – techniczne, sterują ilością TMR i kartami załadunku. '+
+    '<b>Realnie</b> – ile zwierząt naprawdę jest w sektorze: 🔒 z AfiFarm (gdy sektor ma przypisane grupy w Stado → ⚙ Ustawienia) albo wpisane ręcznie. Tylko do porównania – <u>nie zmienia TMR</u>. '+
+    '<b>Różnica</b> = sztuki zadawane – realne: <b>+</b> znaczy, że pasza liczona jest na więcej sztuk, niż jest w sektorze. Przy grupach karmionych <b>2× dziennie</b> sztuki zadawane = sztuki × 2. '+
+    '<b>% dawki</b> = ile kg TMR realnie dostaje krowa w stosunku do dawki (kg/szt.).</div>';
+  sh+='<div class="tw"><table class="dt sek-t"><thead><tr><th class="l" style="width:80px">Grupa</th><th class="l">Sektor</th><th style="width:60px">Sztuk</th><th>kg/szt.</th><th>kg na sektor</th>'+
+    '<th class="afi-th">Realnie sztuk</th><th class="afi-th">Różnica</th><th class="afi-th">kg TMR / krowę realnie</th><th class="afi-th">% dawki</th><th style="width:60px"></th></tr></thead><tbody>';
+  G.forEach((g,gi)=>{
+    const totKg=g.sk.reduce((a,sk)=>a+sk.kg,0),bg=grpColors[gi%grpColors.length],zz=g.z||1;
+    g.se.forEach((sk,si)=>{
+      sh+='<tr style="background:'+bg+';'+(si===0&&gi>0?'border-top:3px solid '+(ctx==='em'?'var(--red)':'var(--pri)')+';':'')+'"><td class="l" style="font-size:11px;font-weight:700;color:'+(ctx==='em'?'var(--red)':'var(--pri)')+'">'+(si===0?escH(g.nazwa):'')+'</td>'+
+        '<td class="l">'+escH(sk.n)+(ctx==='dk'?' <button style="background:var(--pri);color:#fff;border:none;border-radius:3px;font-size:9px;padding:0 4px;cursor:pointer" onclick="addSekExtra('+gi+','+si+')" title="Dodaj surowiec do sektora">+</button>':'')+'</td>';
+      sh+='<td><input min="0" step="0.5" value="'+sk.sz+'" style="width:50px" onchange="'+arr+'['+gi+'].se['+si+'].sz=pf(this.value);'+po+'"></td>';
+      sh+='<td>'+r2(totKg,1)+'</td><td style="font-weight:700">'+r2(totKg*sk.sz,0)+'</td>';
+      const da=' data-afi-sek="'+escH(sk.n)+'" data-afi-z="'+zz+'" data-afi-sz="'+((+sk.sz||0)*zz)+'" data-afi-kg="'+(totKg*sk.sz*zz)+'" data-afi-dawka="'+totKg+'"';
+      sh+='<td class="afi-td"'+da+' data-afi-typ="n"></td><td class="afi-td"'+da+' data-afi-typ="r"></td><td class="afi-td"'+da+' data-afi-typ="k"></td><td class="afi-td"'+da+' data-afi-typ="p"></td>';
+      sh+='<td style="white-space:nowrap">'+(ctx==='dk'?'<button class="btn bs bo" style="padding:1px 4px;font-size:8px" onclick="moveSek('+gi+','+si+')" title="Przenieś">⇄</button> <button class="btn bs bd" style="padding:1px 4px" onclick="delSek('+gi+','+si+')">✕</button>':
+        pelna?'<button class="btn bs bd" style="padding:1px 4px" onclick="if(gr['+gi+'].se.length>1){gr['+gi+'].se.splice('+si+',1);sa();rEmerg()}else if(confirm(\'Usunąć grupę?\')){gr.splice('+gi+',1);sa();rEmerg()}">✕</button>':'')+'</td></tr>';
+      (sk.sk_extra||[]).forEach((ex,ei)=>{const exS=gS(ex.s);
+        sh+='<tr style="background:#E3F2FD"><td></td><td class="l" style="font-size:10px;color:var(--pri);padding-left:20px">↳ '+escH(exS?exS.nazwa:'?')+'</td><td></td>'+
+          '<td><input type="number" step="0.1" value="'+ex.kg+'" style="width:48px;font-size:10px" onchange="'+arr+'['+gi+'].se['+si+'].sk_extra['+ei+'].kg=pf(this.value);'+po+'"></td>'+
+          '<td>'+r2(ex.kg*sk.sz,0)+'</td><td></td><td></td><td></td><td></td>'+
+          '<td><button class="btn bs bd" style="padding:0 3px;font-size:8px" onclick="'+arr+'['+gi+'].se['+si+'].sk_extra.splice('+ei+',1);'+po+'">✕</button></td></tr>'});
+    });
+  });
+  return sh+'</tbody></table></div>';
+}
+// ręcznie wpisana realna liczba sztuk (sektory bez przypisania do AfiFarm); wspólna dla Dawek i Dawek awaryjnych
+function afiRealUstaw(sek,v){afiCfg.real=afiCfg.real||{};const t=String(v).trim();if(t===''){delete afiCfg.real[sek]}else{afiCfg.real[sek]=Math.max(0,Math.round(pf(t)))}saM('afi');afiWypelnijDawki()}
 function afiWypelnijDawki(){
-  if(!afiDawkiOn())return;
   if(AFI.krowy&&!AFI.C)afiPrzelicz();
-  document.querySelectorAll('#dk-s td[data-afi-sek]').forEach(td=>{
-    const sek=td.dataset.afiSek,typ=td.dataset.afiTyp,sz=+td.dataset.afiSz,kg=+td.dataset.afiKg;
-    const n=AFI.krowy&&AFI.C?afiRealne(sek):null,kody=afiCfg.map?.[sek];
-    if(typ==='n')td.innerHTML=!kody?'<span class="afi-real">🔒 —</span><div class="sub">nie przypisano</div>':(n==null?'<span class="afi-real">🔒 …</span>':'<span class="afi-real">🔒 '+n+'</span><div class="sub">gr. '+kody.map(afiKrotkoGrupa).join(', ')+'</div>');
-    else if(typ==='r'){if(n==null||!kody){td.innerHTML='—';return}const z=+td.dataset.afiZ||1,d=n-sz;td.innerHTML='<span class="afi-diff '+(d===0?'z':Math.abs(d)<=3?'p':'m')+'">'+(d===0?'zgodne':(d>0?'+':'−')+Math.abs(d))+'</span>'+(z>1?'<div class="sub">'+(sz/z)+' szt × '+z+' zadania = '+sz+'</div>':'')}
-    else if(typ==='k')td.innerHTML=n>0&&kody&&kg>0?afiF(kg/n):'—';
+  document.querySelectorAll('#dk-s td[data-afi-sek],#emerg-table td[data-afi-sek]').forEach(td=>{
+    const sek=td.dataset.afiSek,typ=td.dataset.afiTyp,sz=+td.dataset.afiSz,kg=+td.dataset.afiKg,dawka=+td.dataset.afiDawka,z=+td.dataset.afiZ||1;
+    const kody=afiCfg.map?.[sek],reczne=afiCfg.real?.[sek];
+    const n=kody&&kody.length?(AFI.krowy&&AFI.C?afiRealne(sek):null):(reczne!=null?+reczne:null);
+    if(typ==='n'){
+      if(kody&&kody.length)td.innerHTML=n==null?'<span class="afi-real">🔒 …</span>':'<span class="afi-real">🔒 '+n+'</span><div class="sub">AfiFarm gr. '+kody.map(afiKrotkoGrupa).join(', ')+'</div>';
+      else td.innerHTML='<input class="afi-recz" inputmode="numeric" value="'+(reczne??'')+'" placeholder="—" aria-label="Realna liczba sztuk w sektorze '+escH(sek)+'" onchange="afiRealUstaw(\''+escH(sek).replace(/'/g,"\\'")+'\',this.value)"><div class="sub">wpisz ręcznie</div>';
+    }
+    else if(typ==='r'){if(n==null){td.innerHTML='—';return}const d=sz-n;td.innerHTML='<span class="afi-diff '+(d===0?'z':Math.abs(d)<=3?'p':'m')+'">'+(d===0?'zgodne':(d>0?'+':'−')+Math.abs(d))+'</span>'+(z>1?'<div class="sub">'+(sz/z)+' szt × '+z+' zadania = '+sz+'</div>':'')}
+    else if(typ==='k')td.innerHTML=n>0&&kg>0?afiF(kg/n):'—';
+    else if(typ==='p'){if(!(n>0&&kg>0&&dawka>0)){td.innerHTML='—';return}const pr=kg/n/dawka*100,o=Math.abs(pr-100);td.innerHTML='<span class="afi-proc '+(o<=5?'z':o<=10?'p':'m')+'">'+Math.round(pr)+'%</span>'}
   });
 }
 
